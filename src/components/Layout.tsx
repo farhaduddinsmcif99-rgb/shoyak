@@ -97,6 +97,15 @@ export default function Layout() {
                 transition={{ duration: 0.2 }}
               >
                 <Outlet />
+                
+                <footer className="mt-20 pt-8 border-t border-slate-100 dark:border-slate-800 text-center pb-8">
+                  <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.4em]">
+                    Shayok.AI • {new Date().getFullYear()}
+                  </p>
+                  <p className="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-2">
+                    © All Copyright goes to MD TOFIQUR RAHAMAN
+                  </p>
+                </footer>
               </motion.div>
             </AnimatePresence>
           </div>
