@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #00A651;
+  --color-brand-dark: #008541;
+  --color-surface: #F3F4F6;
+  --color-surface-dark: #0F172A;
+  
+  --font-sans: 'Helvetica Neue', Arial, 'Inter', "AdorshoLipi", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-slate-900 transition-colors duration-300;
+  }
+  
+  body.dark {
+    @apply bg-surface-dark text-slate-100;
+  }
+}
+
+.bangla-font {
+  font-family: "AdorshoLipi", "Inter", sans-serif;
+}
+
+/* Professional Polish Glass & Bento Effects */
+.glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.bento-card {
+  @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl transition-all duration-200;
+}
+
+.bento-card:hover {
+  @apply border-brand shadow-lg;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-active {
+  @apply border-b-3 border-brand text-brand font-bold;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
