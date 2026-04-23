@@ -57,7 +57,14 @@ export const translations = {
     filter_high_value: 'উচ্চ মূল্যের',
     risk_low: 'কম ঝুঁকি',
     risk_med: 'মাঝারি ঝুঁকি',
-    risk_high: 'উচ্চ ঝুঁকি'
+    risk_high: 'উচ্চ ঝুঁকি',
+    hub: 'হাব',
+    marketplace: 'মার্কেটপ্লেস',
+    loan_checker: 'লোন চেকার',
+    land_verification: 'ভূমি যাচাইকরণ',
+    healthcare: 'স্বাস্থ্যসেবা',
+    disaster_sos: 'দুর্যোগ এসওএস',
+    waste_reporting: 'বর্জ্য রিপোর্ট'
   },
   en: {
     app_name: 'Shayok.AI',
@@ -117,7 +124,14 @@ export const translations = {
     filter_high_value: 'High Value',
     risk_low: 'Low Risk',
     risk_med: 'Medium Risk',
-    risk_high: 'High Risk'
+    risk_high: 'High Risk',
+    hub: 'Hub',
+    marketplace: 'Marketplace',
+    loan_checker: 'Loan Checker',
+    land_verification: 'Land Verification',
+    healthcare: 'Healthcare',
+    disaster_sos: 'Disaster SOS',
+    waste_reporting: 'Waste Reporting'
   }
 };
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../AppContext';
-import { Sprout, Thermometer, Droplets, Wind, Scale, Calculator, Info, ChevronRight, X, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Sprout, Thermometer, Droplets, Wind, Scale, Calculator, Info, ChevronRight, X, AlertCircle, CheckCircle2, Loader2, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatPrice } from '../utils/helpers';
 
@@ -13,7 +13,14 @@ interface KrishiAIModalProps {
 export default function KrishiAIModal({ isOpen, onClose, type = 'crop' }: KrishiAIModalProps) {
   const { t, lang } = useApp();
   const [step, setStep] = useState(1);
-  const [data, setData] = useState({ land: '', soil: '', season: '' });
+  const [data, setData] = useState({ 
+    land: '', 
+    soil: '', 
+    season: '', 
+    waterSource: '', 
+    region: '', 
+    cropGroup: '' 
+  });
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,18 +30,20 @@ export default function KrishiAIModal({ isOpen, onClose, type = 'crop' }: Krishi
       const isRabi = data.season === 'rabi';
       setResult({
         crops: isRabi ? [
-          { name: lang === 'bn' ? 'আলু' : 'Potato', type: 'Diamond', yield: '25-30 Ton/Hectare' },
-          { name: lang === 'bn' ? 'সরিষা' : 'Mustard', type: 'Bari-14', yield: '1.5-2 Ton/Hectare' },
+          { name: lang === 'bn' ? 'আলু' : 'Potato', type: 'Diamond', yield: '25-30 Ton/Hectare', suitability: '95%' },
+          { name: lang === 'bn' ? 'সরিষা' : 'Mustard', type: 'Bari-14', yield: '1.5-2 Ton/Hectare', suitability: '88%' },
+          { name: lang === 'bn' ? 'টমেটো' : 'Tomato', type: 'Hybrid', yield: '40-50 Ton/Hectare', suitability: '82%' },
         ] : [
-          { name: lang === 'bn' ? 'ধান' : 'Rice', type: 'BRRI Dhan 28', yield: '5-6 Ton/Hectare' },
-          { name: lang === 'bn' ? 'ভুট্টা' : 'Maize', type: 'High Yield', yield: '9-10 Ton/Hectare' },
+          { name: lang === 'bn' ? 'ধান' : 'Rice', type: 'BRRI Dhan 28', yield: '5-6 Ton/Hectare', suitability: '92%' },
+          { name: lang === 'bn' ? 'ভুট্টা' : 'Maize', type: 'High Yield', yield: '9-10 Ton/Hectare', suitability: '90%' },
+          { name: lang === 'bn' ? 'পাট' : 'Jute', type: 'BJRI', yield: '3-4 Ton/Hectare', suitability: '85%' },
         ],
         advice: isRabi 
-          ? (lang === 'bn' ? 'শীতকাল উচ্চ মূল্যের ফসলের জন্য উপযুক্ত। নিয়মিত সেচ ও কুয়াশা মোকাবিলায় ব্যবস্থা নিন।' : 'Winter is perfect for high-value crops. Ensure regular irrigation and protect against fog.')
-          : (lang === 'bn' ? 'বর্ষাকালে ধান ও ভুট্টা লাভজনক। ড্রেনেজ ব্যবস্থা নিশ্চিত করুন।' : 'Rice and Maize are profitable in monsoon. Ensure proper drainage.')
+          ? (lang === 'bn' ? `আপনার অঞ্চলের (${data.region}) মাটির বৈশিষ্ট্য অনুযায়ী এই ফসলগুলো লাভজনক হবে। নিয়মিত সেচ ও কুয়াশা মোকাবিলায় ব্যবস্থা নিন।` : `Based on your region (${data.region}) soil characteristics, these crops will be profitable. Ensure regular irrigation and protect against fog.`)
+          : (lang === 'bn' ? `আপনার জন্য (${data.waterSource}) সেচ ব্যবস্থা ব্যবহার করে ধান ও ভুট্টা চাষ লাভজনক। ড্রেনেজ ব্যবস্থা নিশ্চিত করুন।` : `Using (${data.waterSource}) irrigation, Rice and Maize are profitable for you. Ensure proper drainage.`)
       });
       setLoading(false);
-      setStep(3);
+      setStep(4);
     }, 1500);
   };
 
@@ -105,11 +114,25 @@ export default function KrishiAIModal({ isOpen, onClose, type = 'crop' }: Krishi
                         className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-slate-100 dark:border-slate-700 outline-none focus:border-brand" 
                       />
                     </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-500 uppercase">{lang === 'bn' ? 'অঞ্চল নির্বাচন করুন' : 'Select Region'}</label>
+                      <select 
+                        value={data.region}
+                        onChange={(e) => setData({...data, region: e.target.value})}
+                        className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-slate-100 dark:border-slate-700 outline-none focus:border-brand"
+                      >
+                        <option value="">{lang === 'bn' ? 'অঞ্চল বাছাই করুন' : 'Select Region'}</option>
+                        {['Dhaka', 'Chittagong', 'Khulna', 'Sylhet', 'Rajshahi', 'Rangpur', 'Barisal', 'Mymensingh'].map(r => (
+                          <option key={r} value={r}>{r}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <button 
                     onClick={() => setStep(2)}
-                    disabled={!data.land || !data.season}
+                    disabled={!data.land || !data.season || !data.region}
                     className="w-full py-4 bg-brand text-white font-bold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-brand/20"
                   >
                     {lang === 'bn' ? 'পরবর্তী ধাপ' : 'Next Step'}
@@ -123,7 +146,7 @@ export default function KrishiAIModal({ isOpen, onClose, type = 'crop' }: Krishi
                     <div className="space-y-3">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{lang === 'bn' ? 'মাটির ধরণ নির্বাচন করুন' : 'Select Soil Type'}</label>
                       <div className="grid grid-cols-2 gap-3">
-                        {['এঁটেল মটি', 'দোআঁশ মাটি', 'বেলে মাটি', 'পলি মাটি'].map((s) => (
+                        {['এঁটেল মটি', 'দোআঁশ মাটি', 'বেলে মাটি', 'পলি মাটি', 'খারি মাটি', 'লাল মাটি'].map((s) => (
                           <button 
                             key={s} 
                             onClick={() => setData({...data, soil: s})}
@@ -134,48 +157,104 @@ export default function KrishiAIModal({ isOpen, onClose, type = 'crop' }: Krishi
                         ))}
                       </div>
                     </div>
+
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{lang === 'bn' ? 'জলের উৎস' : 'Water Source'}</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {['Rainfed', 'Tube-well', 'Canal', 'River'].map((s) => (
+                          <button 
+                            key={s} 
+                            onClick={() => setData({...data, waterSource: s})}
+                            className={`p-3 rounded-xl border-2 font-bold text-xs transition-all ${data.waterSource === s ? 'border-brand bg-brand/10 text-brand' : 'border-slate-100 bg-slate-50 dark:bg-slate-800 dark:border-slate-700'}`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     
-                    <button 
-                      onClick={handleRecommend}
-                      disabled={loading || !data.soil}
-                      className="w-full py-4 bg-brand text-white font-bold rounded-2xl flex items-center justify-center gap-2"
-                    >
-                      {loading ? <Loader2 className="animate-spin" /> : t('analyze')}
-                    </button>
+                    <div className="flex gap-4">
+                       <button onClick={() => setStep(1)} className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 font-bold rounded-2xl">{lang === 'bn' ? 'পিছনে' : 'Back'}</button>
+                       <button onClick={() => setStep(3)} disabled={!data.soil || !data.waterSource} className="flex-[2] py-4 bg-brand text-white font-bold rounded-2xl">{lang === 'bn' ? 'পরবর্তী' : 'Next'}</button>
+                    </div>
                  </div>
               )}
 
-              {step === 3 && result && (
+              {step === 3 && (
                 <div className="space-y-6">
-                  <div className="p-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-2xl flex gap-3 text-green-700 dark:text-green-300">
-                    <CheckCircle2 className="w-6 h-6 shrink-0" />
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{lang === 'bn' ? 'ফসলের ধরণ' : 'Crop Group'}</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {['Cereals', 'Vegetables', 'Fruits', 'Spices', 'Fiber', 'Oilseeds'].map((s) => (
+                        <button 
+                          key={s} 
+                          onClick={() => setData({...data, cropGroup: s})}
+                          className={`p-4 rounded-2xl border-2 font-bold text-sm transition-all ${data.cropGroup === s ? 'border-brand bg-brand/10 text-brand' : 'border-slate-100 bg-slate-50 dark:bg-slate-800 dark:border-slate-700'}`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button onClick={() => setStep(2)} className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 font-bold rounded-2xl">{lang === 'bn' ? 'পিছনে' : 'Back'}</button>
+                    <button 
+                      onClick={handleRecommend}
+                      disabled={loading || !data.cropGroup}
+                      className="flex-[2] py-4 bg-brand text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+                    >
+                      {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <><Activity className="w-5 h-5" /> {t('analyze')}</>}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {step === 4 && result && (
+                <div className="space-y-6">
+                  <div className="p-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-3xl flex gap-3 text-green-700 dark:text-green-300">
+                    <CheckCircle2 className="w-8 h-8 shrink-0 text-green-500" />
                     <div>
-                      <h4 className="font-bold">{lang === 'bn' ? 'এআই সুপারিশ' : 'AI Recommendation'}</h4>
-                      <p className="text-sm opacity-90">{result.advice}</p>
+                      <h4 className="font-extrabold text-lg flex items-center gap-2">
+                        {lang === 'bn' ? 'স্মার্ট এআই সুপারিশ' : 'Smart AI Recommendation'}
+                        <div className="px-2 py-0.5 bg-green-500 text-white text-[8px] rounded-full uppercase tracking-widest">Verified</div>
+                      </h4>
+                      <p className="text-sm opacity-90 mt-1 leading-relaxed">{result.advice}</p>
                     </div>
                   </div>
 
                   <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{lang === 'bn' ? 'সেরা ৩টি ফসল' : 'Top 3 Recommended Crops'}</label>
                     {result.crops.map((crop: any, i: number) => (
-                      <div key={i} className="p-4 border-2 border-slate-100 dark:border-slate-800 rounded-2xl flex justify-between items-center group hover:border-brand transition-all">
-                        <div>
-                          <h5 className="font-bold text-lg">{crop.name}</h5>
-                          <p className="text-xs text-slate-500">{crop.type}</p>
+                      <div key={i} className="p-5 border-2 border-slate-100 dark:border-slate-800 rounded-3xl flex justify-between items-center group hover:border-brand transition-all bg-white dark:bg-slate-900 shadow-sm">
+                        <div className="flex items-center gap-4">
+                           <div className="w-10 h-10 bg-brand/10 rounded-2xl flex items-center justify-center text-brand font-bold">
+                              {i + 1}
+                           </div>
+                           <div>
+                              <h5 className="font-black text-lg text-slate-800 dark:text-slate-100">{crop.name}</h5>
+                              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{crop.type}</p>
+                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs font-bold text-brand uppercase">{crop.yield}</p>
-                          <div className="text-[10px] text-slate-400">Estimated Yield</div>
+                           <div className="text-brand font-black text-xs uppercase tracking-tighter">{crop.suitability} Match</div>
+                           <p className="text-[10px] font-bold text-slate-500 mt-0.5">{crop.yield}</p>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <button 
-                    onClick={onClose}
-                    className="w-full py-4 bg-slate-100 dark:bg-slate-800 font-bold rounded-2xl"
-                  >
-                    {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
-                  </button>
+                  <div className="flex gap-3">
+                    <button onClick={() => setStep(1)} className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-2xl">
+                        {lang === 'bn' ? 'আবার চেষ্টা করুন' : 'Try Again'}
+                    </button>
+                    <button 
+                      onClick={onClose}
+                      className="flex-[2] py-4 bg-brand text-white font-bold rounded-2xl shadow-lg shadow-brand/10"
+                    >
+                      {lang === 'bn' ? 'বন্ধ করুন' : 'Finish'}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

@@ -41,6 +41,9 @@ export default function EntrepreneurHub() {
           steps_bn: ['দক্ষ কারিগর খুঁজুন', 'অনলাইন শপ খুলুন', 'সোশ্যাল মিডিয়া মার্কেটিং'],
           steps_en: ['Find skilled artisans', 'Open online shop', 'Social media marketing'],
           risk: 'medium',
+          risk_detail: lang === 'bn' ? 'মাঝারি ঝুঁকি (মার্কেট প্রতিযোগিতা)' : 'Medium (Market competition)',
+          investment: lang === 'bn' ? '৫০,০০০ - ৮০,০০০ টাকা' : '50k - 80k BDT',
+          profit_timeline: lang === 'bn' ? '৩-৫ মাস' : '3-5 Months',
           sector: 'retail',
           location: 'Dhaka',
           icon: 'ShoppingBag'
@@ -54,6 +57,9 @@ export default function EntrepreneurHub() {
           steps_bn: ['স্থানীয় কৃষকদের সাথে যোগাযোগ', 'ডেলিভারি নেটওয়ার্ক', 'সাবস্ক্রিপশন মডেল'],
           steps_en: ['Contact local farmers', 'Delivery network', 'Subscription model'],
           risk: 'low',
+          risk_detail: lang === 'bn' ? 'কম ঝুঁকি (বেসিক নেটওয়ার্ক)' : 'Low (Basic local network)',
+          investment: lang === 'bn' ? '২০,০০০ - ৩০,০০০ টাকা' : '20k - 30k BDT',
+          profit_timeline: lang === 'bn' ? '২ মাস' : '2 Months',
           sector: 'agriculture',
           location: 'Rural',
           icon: 'Leaf'
@@ -67,6 +73,9 @@ export default function EntrepreneurHub() {
           steps_bn: ['সরঞ্জাম ক্রয়', 'টেকনিশিয়ান নিয়োগ', 'লোকাল মার্কেটিং'],
           steps_en: ['Buy equipment', 'Hire technicians', 'Local marketing'],
           risk: 'high',
+          risk_detail: lang === 'bn' ? 'উচ্চ ঝুঁকি (টেকনিক্যাল দক্ষ সেটআপ)' : 'High (Technical expertise needed)',
+          investment: lang === 'bn' ? '২ - ৩ লক্ষ টাকা' : '200k - 300k BDT',
+          profit_timeline: lang === 'bn' ? '৬-৮ মাস' : '6-8 Months',
           sector: 'tech',
           location: 'Chittagong',
           icon: 'Smartphone'
@@ -80,6 +89,9 @@ export default function EntrepreneurHub() {
           steps_bn: ['পুকুর মেরামত', 'পোনা সংগ্রহ', 'সঠিক খাদ্য ব্যবস্থাপনা'],
           steps_en: ['Pond renovation', 'Stock fries', 'Proper feed management'],
           risk: 'medium',
+          risk_detail: lang === 'bn' ? 'মাঝারি ঝুঁকি (জৈব নিরাপত্তা)' : 'Medium (Bio-security risk)',
+          investment: lang === 'bn' ? '১.৫ - ২ লক্ষ টাকা' : '150k - 200k BDT',
+          profit_timeline: lang === 'bn' ? '৫-৬ মাস' : '5-6 Months',
           sector: 'agriculture',
           location: 'Khulna',
           icon: 'Droplets'
@@ -205,11 +217,17 @@ export default function EntrepreneurHub() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold">{lang === 'bn' ? idea.name_bn : idea.name_en}</h3>
-                    <div className="flex gap-2">
-                       <span className="text-[10px] uppercase font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full">
-                         {t(`risk_${idea.risk === 'medium' ? 'med' : idea.risk}` as any)} Risk
+                    <div className="flex flex-wrap gap-2">
+                       <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
+                         idea.risk === 'low' ? 'bg-green-100 text-green-700' :
+                         idea.risk === 'medium' ? 'bg-amber-100 text-amber-700' :
+                         'bg-red-100 text-red-700'
+                       }`}>
+                         {idea.risk_detail}
                        </span>
-                       <span className="text-[10px] uppercase font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">{lang === 'bn' ? idea.income_bn : idea.income_en}</span>
+                       <span className="text-[10px] uppercase font-black text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                         {lang === 'bn' ? 'আয়: ' : 'Income: '} {lang === 'bn' ? idea.income_bn : idea.income_en}
+                       </span>
                     </div>
                   </div>
                 </div>
@@ -219,6 +237,17 @@ export default function EntrepreneurHub() {
                 >
                   <BookmarkPlus className="w-5 h-5" />
                 </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{lang === 'bn' ? 'বিনিয়োগ' : 'Investment'}</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{idea.investment}</p>
+                 </div>
+                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{lang === 'bn' ? 'লাভের সময়' : 'Profit Starts'}</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{idea.profit_timeline}</p>
+                 </div>
               </div>
 
               <div className="space-y-2">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Sprout, MessageSquare, LayoutGrid, Bell } from 'lucide-react';
+import { Home, Sprout, MessageSquare, LayoutGrid, Bell, Box, Briefcase, User } from 'lucide-react';
 import { useApp } from '../AppContext';
 import { cn } from '../utils/helpers';
 
@@ -9,10 +9,10 @@ export default function BottomNav() {
 
   const navItems = [
     { to: '/', icon: Home, label: t('home') },
-    { to: '/krishi', icon: Sprout, label: t('krishi') },
-    { to: '/assistant', icon: MessageSquare, label: t('ai_assistant') },
-    { to: '/tools', icon: LayoutGrid, label: t('toolbox') },
-    { to: '/alerts', icon: Bell, label: t('alerts') },
+    { to: '/jobs', icon: Briefcase, label: 'Earn' },
+    { to: '/agriculture', icon: Sprout, label: 'Agri' },
+    { to: '/hub', icon: Box, label: 'Hub' },
+    { to: '/profile', icon: User, label: t('profile') },
   ];
 
   return (

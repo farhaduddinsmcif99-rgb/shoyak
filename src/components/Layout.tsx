@@ -3,7 +3,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 import Header from './Header';
 import BottomNav from './BottomNav';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, Sprout, MessageSquare, LayoutGrid, Bell } from 'lucide-react';
+import { Home, Sprout, MessageSquare, LayoutGrid, Bell, Box, Briefcase } from 'lucide-react';
 import { useApp } from '../AppContext';
 import { cn } from '../utils/helpers';
 
@@ -38,10 +38,11 @@ export default function Layout() {
 
   const navItems = [
     { to: '/', icon: Home, label: t('home') },
-    { to: '/krishi', icon: Sprout, label: t('krishi') },
-    { to: '/assistant', icon: MessageSquare, label: t('ai_assistant') },
+    { to: '/agriculture', icon: Sprout, label: 'Agri' },
+    { to: '/jobs', icon: Briefcase, label: 'Earn' },
+    { to: '/hub', icon: Box, label: 'Hub' },
+    { to: '/assistant', icon: MessageSquare, label: 'AI' },
     { to: '/tools', icon: LayoutGrid, label: t('toolbox') },
-    { to: '/alerts', icon: Bell, label: t('alerts') },
   ];
 
   return (
@@ -112,6 +113,20 @@ export default function Layout() {
         </main>
         <BottomNav />
       </div>
+
+      {/* Floating AI Assistant Button */}
+      <NavLink
+        to="/assistant"
+        className={({ isActive }) => 
+          cn(
+            "fixed bottom-24 right-6 w-14 h-14 bg-brand text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-brand/40 z-40 transition-all hover:scale-110 active:scale-95 group md:bottom-8 md:right-8",
+            isActive ? "hidden" : "flex"
+          )
+        }
+      >
+        <MessageSquare className="w-6 h-6 group-hover:animate-bounce" />
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
+      </NavLink>
     </div>
   );
 }

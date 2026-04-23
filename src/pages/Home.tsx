@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../AppContext';
-import { Search, ShieldCheck, Sprout, Siren, MessageSquare, TrendingUp, ChevronRight, Play, Info, Sparkles, MapPin } from 'lucide-react';
+import { Search, ShieldCheck, Sprout, Siren, MessageSquare, TrendingUp, ChevronRight, Play, Info, Sparkles, MapPin, ShoppingBag, Activity, DollarSign } from 'lucide-react';
 import { motion } from 'motion/react';
 import ScamCheckModal from '../components/ScamCheckModal';
 import KrishiAIModal from '../components/KrishiAIModal';
@@ -110,11 +110,32 @@ export default function Home() {
             {lang === 'bn' ? 'আপনার বাজেট ও দক্ষতা অনুযায়ী ব্যবসার আইডিয়া ও গাইডলাইন তৈরি করুন।' : 'Generate business ideas and guidelines based on your budget.'}
           </p>
           <Link 
-            to="/entrepreneur"
+            to="/hub"
+            onClick={() => {}}
             className="w-full py-3 bg-blue-600 text-white flex items-center justify-center rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all font-sans"
           >
             {t('generate_ideas')}
           </Link>
+        </div>
+      </section>
+
+      {/* Featured Services Section */}
+      <section className="space-y-4">
+        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">{lang === 'bn' ? 'ফিচারড সার্ভিস' : 'Featured Services'}</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+           {[
+             { title: t('marketplace'), icon: ShoppingBag, color: 'text-green-500', bg: 'bg-green-50', to: '/hub' },
+             { title: t('loan_checker'), icon: DollarSign, color: 'text-blue-500', bg: 'bg-blue-50', to: '/hub' },
+             { title: t('healthcare'), icon: Activity, color: 'text-red-500', bg: 'bg-red-50', to: '/hub' },
+             { title: t('disaster_sos'), icon: Siren, color: 'text-orange-500', bg: 'bg-orange-50', to: '/hub' }
+           ].map((s, i) => (
+             <Link key={i} to={s.to} className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-brand transition-all flex flex-col items-center gap-3 text-center shadow-sm group">
+                <div className={`w-12 h-12 ${s.bg} dark:bg-slate-800 rounded-2xl flex items-center justify-center ${s.color} transition-transform group-hover:scale-110`}>
+                   <s.icon className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">{s.title}</span>
+             </Link>
+           ))}
         </div>
       </section>
 

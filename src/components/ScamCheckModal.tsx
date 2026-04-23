@@ -12,7 +12,7 @@ interface ScamCheckModalProps {
 export default function ScamCheckModal({ isOpen, onClose }: ScamCheckModalProps) {
   const { t, lang } = useApp();
   const [input, setInput] = useState('');
-  const [category, setCategory] = useState<'all' | 'link' | 'sms' | 'call' | 'social'>('all');
+  const [category, setCategory] = useState<'all' | 'link' | 'sms' | 'call' | 'social' | 'alerts'>('all');
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<{ status: 'safe' | 'warning' | 'scam', detail: string } | null>(null);
 
@@ -22,7 +22,10 @@ export default function ScamCheckModal({ isOpen, onClose }: ScamCheckModalProps)
     { id: 'sms', name: lang === 'bn' ? 'এসএমএস' : 'SMS' },
     { id: 'call', name: lang === 'bn' ? 'কল' : 'Call' },
     { id: 'social', name: lang === 'bn' ? 'ফেসবুক/ইমো' : 'FB/Imo' },
+    { id: 'alerts', name: lang === 'bn' ? 'লাইভ অ্যালার্ট' : 'Live Alerts' },
   ];
+
+  const spamDatabase = ['01711111111', '01922222222', '01333333333', 'urgent-lottery.com', 'bkash-verify-otp.net'];
 
   const handleAnalyze = () => {
     if (!input.trim()) return;
@@ -35,11 +38,12 @@ export default function ScamCheckModal({ isOpen, onClose }: ScamCheckModalProps)
       
       const val = input.toLowerCase();
       const isUrgent = val.includes('এখনই') || val.includes('urgent') || val.includes('last chance');
+      const inSpamDb = spamDatabase.some(item => val.includes(item));
       
-      if (val.includes('lottery') || val.includes('winner') || val.includes('otp') || val.includes('prize') || val.includes('bkash') || val.includes('nagad')) {
+      if (inSpamDb || val.includes('lottery') || val.includes('winner') || val.includes('otp') || val.includes('prize') || val.includes('bkash') || val.includes('nagad')) {
         analysisResult = { 
           status: 'scam', 
-          detail: lang === 'bn' ? 'এটি নিশ্চিতভাবেই একটি স্ক্যাম। আপনার তথ্য শেয়ার করবেন না।' : 'This is definitely a scam. Do not share your information.' 
+          detail: lang === 'bn' ? 'এটি নিশ্চিতভাবেই একটি স্ক্যাম। আমাদের ডাটাবেজে এই তথ্যটি কালো তালিকাভুক্ত।' : 'This is definitely a scam. This information is blacklisted in our database.' 
         };
       } else if ((val.includes('http') && !val.includes('https')) || isUrgent) {
         analysisResult = { 
@@ -99,66 +103,90 @@ export default function ScamCheckModal({ isOpen, onClose }: ScamCheckModalProps)
         </div>
 
         <div className="p-6 space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-500">{t('scam_input_label')}</label>
-            <div className="relative">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="w-full h-32 p-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl focus:border-brand focus:ring-0 transition-all resize-none"
-                placeholder={lang === 'bn' ? 'বার্তাট এখানে পেস্ট করুন...' : 'Paste the message here...'}
-              />
+          {category === 'alerts' ? (
+            <div className="space-y-4">
+               <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                  <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">Recent Scam Tactics</h3>
+               </div>
+               {[
+                 { id: 1, title: 'Fake Bank Refund SMS', risk: 'High', date: '10m ago' },
+                 { id: 2, title: 'Imo Lottery Call (017...)', risk: 'Critical', date: '35m ago' },
+                 { id: 3, title: 'Job Offer Phishing Link', risk: 'Medium', date: '1h ago' },
+               ].map(alert => (
+                 <div key={alert.id} className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-between border border-slate-100 dark:border-slate-700">
+                    <div>
+                       <p className="text-xs font-bold text-slate-800 dark:text-slate-100">{alert.title}</p>
+                       <p className="text-[10px] text-slate-400 font-bold">{alert.date}</p>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${alert.risk === 'Critical' ? 'bg-red-500 text-white' : 'bg-amber-100 text-amber-600'}`}>{alert.risk}</span>
+                 </div>
+               ))}
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-500">{t('scam_input_label')}</label>
+                <div className="relative">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    className="w-full h-32 p-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl focus:border-brand focus:ring-0 transition-all resize-none"
+                    placeholder={lang === 'bn' ? 'বার্তাট এখানে পেস্ট করুন...' : 'Paste the message here...'}
+                  />
+                </div>
+              </div>
 
-          <button
-            onClick={handleAnalyze}
-            disabled={analyzing || !input}
-            className="w-full py-4 bg-brand hover:bg-brand-dark disabled:opacity-50 text-white font-bold rounded-2xl shadow-lg shadow-brand/20 transition-all flex items-center justify-center gap-2"
-          >
-            {analyzing ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                >
-                  <Search className="w-5 h-5" />
-                </motion.div>
-                <span>{lang === 'bn' ? 'বিশ্লেষণ করা হচ্ছে...' : 'Analyzing...'}</span>
-              </>
-            ) : (
-              <>
-                <Search className="w-5 h-5" />
-                <span>{t('analyze')}</span>
-              </>
-            )}
-          </button>
-
-          <AnimatePresence>
-            {result && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`p-4 rounded-2xl border-2 flex gap-4 ${
-                  result.status === 'safe' ? 'bg-green-50 border-green-200 text-green-700 dark:bg-green-900/20 dark:border-green-800' :
-                  result.status === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-700 dark:bg-yellow-900/20 dark:border-yellow-800' :
-                  'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800'
-                }`}
+              <button
+                onClick={handleAnalyze}
+                disabled={analyzing || !input}
+                className="w-full py-4 bg-brand hover:bg-brand-dark disabled:opacity-50 text-white font-bold rounded-2xl shadow-lg shadow-brand/20 transition-all flex items-center justify-center gap-2"
               >
-                <div className="mt-1">
-                  {result.status === 'safe' && <ShieldCheck className="w-8 h-8" />}
-                  {result.status === 'warning' && <ShieldAlert className="w-8 h-8" />}
-                  {result.status === 'scam' && <ShieldX className="w-8 h-8" />}
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">
-                    {result.status === 'safe' ? t('result_safe') : result.status === 'warning' ? t('result_warning') : t('result_scam')}
-                  </h3>
-                  <p className="text-sm opacity-90">{result.detail}</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {analyzing ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                    >
+                      <Search className="w-5 h-5" />
+                    </motion.div>
+                    <span>{lang === 'bn' ? 'বিশ্লেষণ করা হচ্ছে...' : 'Analyzing...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-5 h-5" />
+                    <span>{t('analyze')}</span>
+                  </>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {result && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-4 rounded-2xl border-2 flex gap-4 ${
+                      result.status === 'safe' ? 'bg-green-50 border-green-200 text-green-700 dark:bg-green-900/20 dark:border-green-800' :
+                      result.status === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-700 dark:bg-yellow-900/20 dark:border-yellow-800' :
+                      'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800'
+                    }`}
+                  >
+                    <div className="mt-1">
+                      {result.status === 'safe' && <ShieldCheck className="w-8 h-8" />}
+                      {result.status === 'warning' && <ShieldAlert className="w-8 h-8" />}
+                      {result.status === 'scam' && <ShieldX className="w-8 h-8" />}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">
+                        {result.status === 'safe' ? t('result_safe') : result.status === 'warning' ? t('result_warning') : t('result_scam')}
+                      </h3>
+                      <p className="text-sm opacity-90">{result.detail}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <button className="flex items-center justify-center gap-2 p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800">

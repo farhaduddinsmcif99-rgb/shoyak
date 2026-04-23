@@ -117,7 +117,7 @@ export default function AIToolbox() {
           { "type": "quote", "text": "Inspirational quote here", "author": "Famous Person" }
         ]
         \`\`\`
-        Create at least 5 slides.`;
+        Create exactly 15 to 16 high-quality, content-rich slides covering the topic in depth. Mix and match slide types for variety.`;
       }
 
       const prompt = `You are a professional AI tool: ${selectedTool.name_en}. 
