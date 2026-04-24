@@ -1,3 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /profile
+Disallow: /alerts
+Disallow: /assistant
+Disallow: /tools
+
 Sitemap: https://shoyakai.com/sitemap.xml

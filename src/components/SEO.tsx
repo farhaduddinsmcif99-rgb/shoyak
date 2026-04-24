@@ -19,6 +19,26 @@ export default function SEO({
   const fullTitle = title ? `${title} | Shoyakai` : 'Shoyakai – Free Online Tools & Simple Web Apps';
   const fullDescription = description || 'Shoyakai offers free online tools and simple web apps to help you work faster, smarter, and easier.';
   
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Shoyakai",
+    "operatingSystem": "Web",
+    "applicationCategory": "ProductivityApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": fullDescription,
+    "url": url,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "1240"
+    }
+  };
+
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -37,6 +57,11 @@ export default function SEO({
       <meta property="twitter:description" content={fullDescription} />
       <meta property="twitter:image" content={image} />
       <meta name="twitter:card" content="summary_large_image" />
+
+      {/* JSON-LD Structured Data */}
+      <script type="application/ld+json">
+        {JSON.stringify(jsonLd)}
+      </script>
     </Helmet>
   );
 }

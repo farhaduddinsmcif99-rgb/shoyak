@@ -1,0 +1,16 @@
+{
+  "name": "Shoyakai",
+  "short_name": "Shoyakai",
+  "description": "Free Online Tools & Simple Web Apps",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

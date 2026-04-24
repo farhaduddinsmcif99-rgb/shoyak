@@ -96,8 +96,8 @@ export default function PublicTools() {
               </div>
               <div className="pt-4 border-t border-slate-50 dark:border-slate-800 flex justify-between items-center">
                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{tool.category}</span>
-                 <Link to="/login" className="px-4 py-2 bg-brand/10 text-brand rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand hover:text-white transition-all">
-                    Use Tool
+                 <Link to={`/tools/${tool.id}`} className="px-4 py-2 bg-brand/10 text-brand rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand hover:text-white transition-all">
+                    Explore Tool
                  </Link>
               </div>
             </motion.div>
