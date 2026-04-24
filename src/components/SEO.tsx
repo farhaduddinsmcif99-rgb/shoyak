@@ -14,7 +14,7 @@ export default function SEO({
   description, 
   keywords, 
   image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
-  url = 'https://shoyakai.com/' 
+  url = 'https://shoyakai.farhaduddinsmcif99.workers.dev/' 
 }: SEOProps) {
   const fullTitle = title ? `${title} | Shoyakai` : 'Shoyakai – Free Online Tools & Simple Web Apps';
   const fullDescription = description || 'Shoyakai offers free online tools and simple web apps to help you work faster, smarter, and easier.';
