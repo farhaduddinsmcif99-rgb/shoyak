@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://shayok.ai/sitemap.xml
+Sitemap: https://shoyakai.com/sitemap.xml

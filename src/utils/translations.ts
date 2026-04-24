@@ -1,7 +1,7 @@
 export const translations = {
   bn: {
-    app_name: 'Shayok.AI',
-    tagline: 'আপনার পাশে, সবসময়',
+    app_name: 'Shoyakai',
+    tagline: 'মুক্ত এবং সহজ অনলাইন টুলস',
     home: 'হোম',
     krishi: 'কৃষি',
     ai_assistant: 'এআই অ্যাসিস্ট্যান্ট',
@@ -67,8 +67,8 @@ export const translations = {
     waste_reporting: 'বর্জ্য রিপোর্ট'
   },
   en: {
-    app_name: 'Shayok.AI',
-    tagline: 'Always by your side',
+    app_name: 'Shoyakai',
+    tagline: 'Free & Simple Online Tools',
     home: 'Home',
     krishi: 'Agriculture',
     ai_assistant: 'AI Assistant',

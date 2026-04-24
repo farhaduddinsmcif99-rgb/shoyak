@@ -16,16 +16,16 @@ export default function Header() {
             </div>
             <div className="flex flex-col">
                <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-slate-100 italic tracking-tighter leading-none">
-                 Shayok.AI
+                 Shoyakai
                </h1>
                <div className="flex items-center gap-1 mt-1">
                   <div className="w-1 h-1 bg-brand rounded-full animate-pulse"></div>
-                  <span className="text-[7px] font-black uppercase text-brand tracking-[0.2em]">DHAKA-NORTH-1A NODE</span>
+                  <span className="text-[7px] font-black uppercase text-brand tracking-[0.2em]">FAST ONLINE UTILITIES</span>
                </div>
             </div>
           </Link>
           <p className="hidden md:block text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mt-1 ml-10">
-            {lang === 'bn' ? 'আপনার পাশে, সবসময়' : 'Always by your side'}
+            {lang === 'bn' ? 'মুক্ত এবং সহজ অনলাইন টুলস' : 'Free & Simple Online Tools'}
           </p>
         </div>
 

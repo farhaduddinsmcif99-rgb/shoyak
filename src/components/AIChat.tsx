@@ -13,7 +13,7 @@ interface Message {
 export default function AIChat() {
   const { t, lang } = useApp();
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', content: lang === 'bn' ? 'নমস্কার! আমি সায়োক এআই। আমি আপনাকে কীভাবে সাহায্য করতে পারি?' : 'Hello! I am Shayok AI. How can I help you today?' }
+    { id: '1', role: 'assistant', content: lang === 'bn' ? 'নমস্কার! আমি শয়াকাই এআই। আমি আপনাকে কীভাবে সাহায্য করতে পারি?' : 'Hello! I am Shoyakai AI. How can I help you today?' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -117,11 +117,11 @@ export default function AIChat() {
         neutral: "Be helpful and direct."
       };
 
-      const systemPrompt = `You are Shayok.AI (Life-OS Edition), a futuristic Digital Guardian. 
+      const systemPrompt = `You are Shoyakai AI, a professional productivity assistant. 
       Emotion Mode: ${emotionalContext[detectedMood]}.
       Respond strictly in ${banglaMode ? 'Bangla' : 'English'}.
-      Vision 2050 capabilities: You track user goals, predict market trends (rice price, job demand), and act as a digital twin.
-      If user asks about future, provide predictive insights based on 2050 vision.`;
+      Context: You help users with online tools, productivity hacks, and simple web app tutorials.
+      Keep it professional, helpful, and concise.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",

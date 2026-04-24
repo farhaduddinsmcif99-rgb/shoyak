@@ -13,11 +13,11 @@ export default function SEO({
   title, 
   description, 
   keywords, 
-  image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shayok', 
-  url = 'https://shayok.ai/' 
+  image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
+  url = 'https://shoyakai.com/' 
 }: SEOProps) {
-  const fullTitle = title ? `${title} | Shayok.AI` : 'Shayok.AI | Your Personal Life-OS Companion';
-  const fullDescription = description || 'Futuristic Digital Guardian for Bangladesh. Empowering farmers, students, and entrepreneurs with AI.';
+  const fullTitle = title ? `${title} | Shoyakai` : 'Shoyakai – Free Online Tools & Simple Web Apps';
+  const fullDescription = description || 'Shoyakai offers free online tools and simple web apps to help you work faster, smarter, and easier.';
   
   return (
     <Helmet>

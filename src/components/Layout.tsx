@@ -7,7 +7,7 @@ import { Home, Sprout, MessageSquare, LayoutGrid, Bell, Box, Briefcase, Gamepad2
 import { useApp } from '../AppContext';
 import { cn } from '../utils/helpers';
 
-export default function Layout() {
+export default function Layout({ children }: { children?: React.ReactNode }) {
   const { t, user, isAdmin, addNotification, notifPrefs } = useApp();
 
   // Simulated Push Notification Service
@@ -99,19 +99,20 @@ export default function Layout() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <Outlet />
+                {children ? children : <Outlet />}
                 
                 <footer className="mt-20 pt-8 border-t border-slate-100 dark:border-slate-800 text-center pb-8">
-                  <div className="flex justify-center gap-6 mb-4">
+                  <div className="flex justify-center flex-wrap gap-6 mb-4">
+                    <NavLink to="/tools-list" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">All Tools</NavLink>
+                    <NavLink to="/blog" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Blog</NavLink>
+                    <NavLink to="/about" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">About</NavLink>
                     <NavLink to="/future/krishi" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Krishi AI</NavLink>
-                    <NavLink to="/future/students" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Job Tracker</NavLink>
-                    <NavLink to="/future/vision" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Vision 2050</NavLink>
                   </div>
                   <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.4em]">
-                    Shayok.AI • {new Date().getFullYear()}
+                    SHOYAKAI • {new Date().getFullYear()}
                   </p>
                   <p className="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-2">
-                    © All Copyright goes to MD TOFIQUR RAHAMAN
+                    © All Copyright goes to SHOYAKAI TEAM
                   </p>
                 </footer>
               </motion.div>

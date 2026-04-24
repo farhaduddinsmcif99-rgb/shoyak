@@ -15,6 +15,10 @@ import Entrepreneur from './pages/Entrepreneur';
 import JuniorMode from './pages/JuniorMode';
 import LifeCompanion from './pages/LifeCompanion';
 import Login from './pages/Login';
+import LandingPage from './pages/LandingPage';
+import About from './pages/About';
+import Blog from './pages/Blog';
+import PublicTools from './pages/PublicTools';
 import KrishiLanding from './pages/seo/KrishiLanding';
 import StudentLanding from './pages/seo/StudentLanding';
 import VisionLanding from './pages/seo/VisionLanding';
@@ -31,6 +35,19 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function HomeCheck() {
+  const { isAuthenticated } = useApp();
+  return isAuthenticated ? (
+    <AuthGuard>
+      <Layout>
+        <Home />
+      </Layout>
+    </AuthGuard>
+  ) : (
+    <LandingPage />
+  );
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -40,13 +57,17 @@ function AnimatedRoutes() {
         
         {/* Public SEO Landing Pages */}
         <Route element={<Layout />}>
+          <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/tools-list" element={<PublicTools />} />
           <Route path="/future/krishi" element={<KrishiLanding />} />
           <Route path="/future/students" element={<StudentLanding />} />
           <Route path="/future/vision" element={<VisionLanding />} />
         </Route>
 
+        <Route path="/" element={<HomeCheck />} />
+
         <Route element={<AuthGuard><Layout /></AuthGuard>}>
-          <Route path="/" element={<Home />} />
           <Route path="/krishi" element={<KrishiAI />} />
           <Route path="/hub" element={<Hub />} />
           <Route path="/jobs" element={<Jobs />} />
