@@ -1,12 +1,13 @@
 /**
  * Cloudflare Worker for Shoyakai
- * This script serves robots.txt, sitemap.xml, and the SPA application.
+ * Provides routes for robots.txt, sitemap.xml, and handles SPA routing.
  */
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
+    const domain = "shoyakai.farhaduddinsmcif99.workers.dev";
 
     // 1. Handle robots.txt
     if (path === "/robots.txt") {
@@ -17,10 +18,14 @@ Disallow: /alerts/
 Disallow: /assistant/
 Disallow: /tools/
 
-Sitemap: https://shoyakai.farhaduddinsmcif99.workers.dev/sitemap.xml`;
+Sitemap: https://${domain}/sitemap.xml`;
 
       return new Response(robots, {
-        headers: { "content-type": "text/plain; charset=utf-8" },
+        headers: { 
+          "content-type": "text/plain; charset=utf-8",
+          "Cache-Control": "public, max-age=3600",
+          "X-Robots-Tag": "index, follow"
+        },
       });
     }
 
@@ -28,62 +33,49 @@ Sitemap: https://shoyakai.farhaduddinsmcif99.workers.dev/sitemap.xml`;
     if (path === "/sitemap.xml") {
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://shoyakai.farhaduddinsmcif99.workers.dev/</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://shoyakai.farhaduddinsmcif99.workers.dev/tools-list</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://shoyakai.farhaduddinsmcif99.workers.dev/blog</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shoyakai.farhaduddinsmcif99.workers.dev/about</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://shoyakai.farhaduddinsmcif99.workers.dev/tools/article-writer</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shoyakai.farhaduddinsmcif99.workers.dev/tools/yt-script</loc>
-    <lastmod>2026-04-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  <url><loc>https://${domain}/</loc><lastmod>2026-04-24</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://${domain}/tools-list</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://${domain}/blog</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/about</loc><lastmod>2026-04-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://${domain}/tools/article-writer</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/yt-script</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/seo-keywords</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/resume-builder</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/business-plan</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/coding-assistant</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/ssc-hsc-helper</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/tin-reg</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://${domain}/tools/scholarship-search</loc><lastmod>2026-04-24</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>`;
 
       return new Response(sitemap, {
-        headers: { "content-type": "application/xml; charset=utf-8" },
+        headers: { 
+          "content-type": "application/xml; charset=utf-8",
+          "Cache-Control": "public, max-age=3600",
+          "X-Robots-Tag": "index, follow"
+        },
       });
     }
 
     // 3. Fallback to serve the SPA
-    // In a real env, you'd pull this from KV or fetch from a static asset bucket.
-    // For this demonstration, we assume the worker is configured with a static asset handler.
-    // If you're using Cloudflare Pages, this logic is often built-in.
-    
-    // If you are using a standard worker to serve static files:
     try {
-      // This is a placeholder for your static asset fetching logic
-      // e.g., return env.ASSETS.fetch(request);
-      return await env.ASSETS.fetch(request);
+      const asset = await env.ASSETS.fetch(request);
+      
+      if (asset.status === 200 || asset.status === 304) {
+        return asset;
+      }
+      
+      const indexHtml = await env.ASSETS.fetch(new Request(url.origin + "/index.html"));
+      return new Response(indexHtml.body, {
+        ...indexHtml,
+        headers: {
+          ...indexHtml.headers,
+          "content-type": "text/html; charset=utf-8",
+          "X-Robots-Tag": "index, follow"
+        }
+      });
     } catch (e) {
-      // If asset not found, serve index.html (SPA routing)
-      return await env.ASSETS.fetch(new Request(url.origin + "/index.html"));
+      return new Response("Shoyakai Server Error", { status: 500 });
     }
   },
 };

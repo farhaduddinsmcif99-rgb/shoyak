@@ -402,7 +402,7 @@ export default function LandingPage() {
                <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 lg:gap-24">
                   {[
                     { label: 'Platform', links: [{ n: 'All Tools', p: '/tools-list' }, { n: 'AI Assistant', p: '/assistant' }, { n: 'Digital Toolbox', p: '/tools' }] },
-                    { label: 'Resources', links: [{ n: 'Blog', p: '/blog' }, { n: 'Mission', p: '/about' }, { n: 'Krishi AI', p: '/future/krishi' }] },
+                    { label: 'Resources', links: [{ n: 'Blog', p: '/blog' }, { n: 'Mission', p: '/about' }, { n: 'Sitemap', p: '/sitemap' }, { n: 'Krishi AI', p: '/future/krishi' }] },
                     { label: 'Company', links: [{ n: 'About Us', p: '/about' }, { n: 'Careers', p: '/about' }, { n: 'Privacy', p: '/about' }] }
                   ].map((col, i) => (
                     <div key={i} className="space-y-8">

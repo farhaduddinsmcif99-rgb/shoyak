@@ -106,6 +106,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
                     <NavLink to="/tools-list" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">All Tools</NavLink>
                     <NavLink to="/blog" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Blog</NavLink>
                     <NavLink to="/about" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">About</NavLink>
+                    <NavLink to="/sitemap" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Sitemap</NavLink>
                     <NavLink to="/future/krishi" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Krishi AI</NavLink>
                   </div>
                   <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.4em]">

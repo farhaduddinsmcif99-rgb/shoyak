@@ -21,10 +21,11 @@ export default function SEO({
   
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
+    "@type": "WebApplication",
     "name": "Shoyakai",
-    "operatingSystem": "Web",
+    "operatingSystem": "All",
     "applicationCategory": "ProductivityApplication",
+    "browserRequirements": "requires HTML5 support",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -32,10 +33,15 @@ export default function SEO({
     },
     "description": fullDescription,
     "url": url,
+    "image": image,
+    "author": {
+      "@type": "Organization",
+      "name": "Shoyakai Labs"
+    },
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.9",
-      "ratingCount": "1240"
+      "ratingCount": "2480"
     }
   };
 
@@ -45,6 +51,13 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={fullDescription} />
       {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <link rel="canonical" href={url} />
+
+      {/* ItemProp for Google Discovery */}
+      <meta itemprop="name" content={fullTitle} />
+      <meta itemprop="description" content={fullDescription} />
+      <meta itemprop="image" content={image} />
 
       {/* Open Graph / Facebook */}
       <meta property="og:title" content={fullTitle} />

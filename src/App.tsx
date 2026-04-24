@@ -20,6 +20,7 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import PublicTools from './pages/PublicTools';
 import ToolDetail from './pages/ToolDetail';
+import Sitemap from './pages/Sitemap';
 import KrishiLanding from './pages/seo/KrishiLanding';
 import StudentLanding from './pages/seo/StudentLanding';
 import VisionLanding from './pages/seo/VisionLanding';
@@ -61,6 +62,7 @@ function AnimatedRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/tools-list" element={<PublicTools />} />
+          <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/tools/:toolId" element={<ToolDetail />} />
           <Route path="/future/krishi" element={<KrishiLanding />} />
           <Route path="/future/students" element={<StudentLanding />} />
