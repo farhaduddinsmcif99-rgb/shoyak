@@ -3,6 +3,7 @@ import { useApp } from '../AppContext';
 import { Sprout, BarChart3, CloudRain, Bug, Scissors, Calculator, Droplets, Info, ChevronRight, Sparkles } from 'lucide-react';
 import KrishiAIModal from '../components/KrishiAIModal';
 import { motion } from 'motion/react';
+import SEO from '../components/SEO';
 
 export default function KrishiAI() {
   const { t, lang } = useApp();
@@ -30,6 +31,11 @@ export default function KrishiAI() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-500 pb-8">
+      <SEO 
+        title="Krishi Pro AI | Smart Farming Bangladesh" 
+        description="Diagnose crop diseases, predict market prices, and optimize your harvest with Krishi Pro AI. The smartest tool for Bangladeshi farmers."
+        keywords="Krishi AI, Bangladesh Farmer, Crop Doctor, Vegetable Price BD, Agriculture AI"
+      />
       {/* Agriculture Header */}
       <section className="bg-green-600 rounded-[40px] p-8 text-white relative overflow-hidden">
         <div className="absolute right-0 bottom-0 opacity-10 scale-150">

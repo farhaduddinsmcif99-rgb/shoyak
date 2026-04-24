@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../AppContext';
-import { Bell, Moon, Sun, Languages, MessageSquare } from 'lucide-react';
+import { Bell, Moon, Sun, Languages, MessageSquare, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
@@ -14,9 +14,15 @@ export default function Header() {
             <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition-transform">
               S
             </div>
-            <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-slate-100 italic tracking-tighter">
-              Shayok.AI <span className="text-brand font-normal text-sm md:text-lg not-italic">| সহায়ক.এআই</span>
-            </h1>
+            <div className="flex flex-col">
+               <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-slate-100 italic tracking-tighter leading-none">
+                 Shayok.AI
+               </h1>
+               <div className="flex items-center gap-1 mt-1">
+                  <div className="w-1 h-1 bg-brand rounded-full animate-pulse"></div>
+                  <span className="text-[7px] font-black uppercase text-brand tracking-[0.2em]">DHAKA-NORTH-1A NODE</span>
+               </div>
+            </div>
           </Link>
           <p className="hidden md:block text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mt-1 ml-10">
             {lang === 'bn' ? 'আপনার পাশে, সবসময়' : 'Always by your side'}

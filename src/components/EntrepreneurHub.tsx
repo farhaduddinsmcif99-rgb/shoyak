@@ -1,275 +1,398 @@
 import React, { useState } from 'react';
 import { useApp } from '../AppContext';
-import { Lightbulb, Info, Wallet, MapPin, Star, BookmarkPlus, ChevronRight, Loader2, Sparkles, TrendingUp } from 'lucide-react';
+import { 
+  Lightbulb, Info, Wallet, MapPin, Star, BookmarkPlus, 
+  ChevronRight, Loader2, Sparkles, TrendingUp, Calculator,
+  Truck, Building2, Package, Percent, DollarSign, ArrowRight
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { storage } from '../utils/storage';
 
+interface CostItem {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+}
+
+interface BusinessIdea {
+  id: number;
+  name_bn: string;
+  name_en: string;
+  income_bn: string;
+  income_en: string;
+  steps_bn: string[];
+  steps_en: string[];
+  risk: 'low' | 'medium' | 'high';
+  risk_detail: string;
+  investment: string;
+  profit_timeline: string;
+  sector: string;
+  location: string;
+  costs: CostItem[];
+  suppliers: { name: string; contact: string; location: string }[];
+}
+
 export default function EntrepreneurHub() {
   const { t, lang } = useApp();
+  const [activeTab, setActiveTab] = useState<'generate' | 'calculator' | 'saved'>('generate');
   const [skills, setSkills] = useState('');
   const [budget, setBudget] = useState('50000');
   const [riskFilter, setRiskFilter] = useState('all');
   const [sector, setSector] = useState('all');
   const [location, setLocation] = useState('all');
   const [loading, setLoading] = useState(false);
-  const [ideas, setIdeas] = useState<any[]>([]);
+  const [ideas, setIdeas] = useState<BusinessIdea[]>([]);
+  const [selectedIdea, setSelectedIdea] = useState<BusinessIdea | null>(null);
 
-  const riskLevels = [
-    { id: 'all', name: t('filter_all') },
-    { id: 'low', name: t('risk_low') },
-    { id: 'medium', name: t('risk_med') },
-    { id: 'high', name: t('risk_high') }
-  ];
+  // Profit Calculator State
+  const [calcInvestment, setCalcInvestment] = useState(100000);
+  const [calcMonthlyExp, setCalcMonthlyExp] = useState(15000);
+  const [calcMonthlyRev, setCalcMonthlyRev] = useState(45000);
 
   const sectors = ['all', 'agriculture', 'tech', 'retail', 'services', 'food'];
   const locations = ['all', 'Dhaka', 'Chittagong', 'Khulna', 'Sylhet', 'Rajshahi', 'Rural'];
 
+  const MOCK_IDEAS: BusinessIdea[] = [
+    {
+      id: 1,
+      name_bn: 'দেশি হস্তশিল্প ই-কমার্স',
+      name_en: 'Native Handicrafts E-commerce',
+      income_bn: '৩০,০০০ - ৫০,০০০ টাকা/মাস',
+      income_en: '30,000 - 50,000 BDT/month',
+      steps_bn: ['দক্ষ কারিগর খুঁজুন', 'অনলাইন শপ খুলুন', 'সোশ্যাল মিডিয়া মার্কেটিং'],
+      steps_en: ['Find skilled artisans', 'Open online shop', 'Social media marketing'],
+      risk: 'medium',
+      risk_detail: lang === 'bn' ? 'মাঝারি ঝুঁকি' : 'Medium Risk',
+      investment: '৳৫০,০০০ - ৳৮০,০০০',
+      profit_timeline: '৩-৫ মাস',
+      sector: 'retail',
+      location: 'Dhaka',
+      costs: [
+        { id: '1', name: 'Website Setup', price: 15000, category: 'Tech' },
+        { id: '2', name: 'Initial Stock', price: 30000, category: 'Inventory' },
+        { id: '3', name: 'Marketing Ads', price: 10000, category: 'Marketing' }
+      ],
+      suppliers: [
+        { name: 'Khatib Artisans', contact: '01712-XXXXXX', location: 'Jamalpur' },
+        { name: 'Saree Wholesale Hub', contact: '01822-XXXXXX', location: 'Islampur' }
+      ]
+    },
+    {
+       id: 2,
+       name_bn: 'অরগানিক সবজি সরবরাহ',
+       name_en: 'Organic Vegetable Supply',
+       income_bn: '২০,০০০ - ৪০,০০০ টাকা/মাস',
+       income_en: '20,000 - 40,000 BDT/month',
+       steps_bn: ['স্থানীয় কৃষকদের সাথে যোগাযোগ', 'ডেলিভারি নেটওয়ার্ক', 'সাবস্ক্রিপশন মডেল'],
+       steps_en: ['Contact local farmers', 'Delivery network', 'Subscription model'],
+       risk: 'low',
+       risk_detail: lang === 'bn' ? 'কম ঝুঁকি' : 'Low Risk',
+       investment: '৳২০,০০০ - ৳৩০,০০০',
+       profit_timeline: '২ মাস',
+       sector: 'agriculture',
+       location: 'Rural',
+       costs: [
+         { id: '1', name: 'Delivery Van Hire', price: 5000, category: 'Logistics' },
+         { id: '2', name: 'Packaging Bags', price: 2000, category: 'Supplies' },
+         { id: '3', name: 'Farm Contracts', price: 15000, category: 'Inventory' }
+       ],
+       suppliers: [
+         { name: 'Savar Agri-Coop', contact: '01911-XXXXXX', location: 'Savar' },
+         { name: 'Packaging BD', contact: '01300-XXXXXX', location: 'Dhaka' }
+       ]
+    }
+  ];
+
   const generateIdeas = () => {
-    if (!skills || !budget) return;
     setLoading(true);
-    setIdeas([]);
-
-    // Simulated business idea generation logic with multi-context
     setTimeout(() => {
-      const allResults = [
-        {
-          id: 1,
-          name_bn: 'দেশি হস্তশিল্প ই-কমার্স',
-          name_en: 'Native Handicrafts E-commerce',
-          income_bn: '৩০,০০০ - ৫০,০০০ টাকা/মাস',
-          income_en: '30,000 - 50,000 BDT/month',
-          steps_bn: ['দক্ষ কারিগর খুঁজুন', 'অনলাইন শপ খুলুন', 'সোশ্যাল মিডিয়া মার্কেটিং'],
-          steps_en: ['Find skilled artisans', 'Open online shop', 'Social media marketing'],
-          risk: 'medium',
-          risk_detail: lang === 'bn' ? 'মাঝারি ঝুঁকি (মার্কেট প্রতিযোগিতা)' : 'Medium (Market competition)',
-          investment: lang === 'bn' ? '৫০,০০০ - ৮০,০০০ টাকা' : '50k - 80k BDT',
-          profit_timeline: lang === 'bn' ? '৩-৫ মাস' : '3-5 Months',
-          sector: 'retail',
-          location: 'Dhaka',
-          icon: 'ShoppingBag'
-        },
-        {
-          id: 2,
-          name_bn: 'অরগানিক সবজি সরবরাহ',
-          name_en: 'Organic Vegetable Supply',
-          income_bn: '২০,০০০ - ৪০,০০০ টাকা/মাস',
-          income_en: '20,000 - 40,000 BDT/month',
-          steps_bn: ['স্থানীয় কৃষকদের সাথে যোগাযোগ', 'ডেলিভারি নেটওয়ার্ক', 'সাবস্ক্রিপশন মডেল'],
-          steps_en: ['Contact local farmers', 'Delivery network', 'Subscription model'],
-          risk: 'low',
-          risk_detail: lang === 'bn' ? 'কম ঝুঁকি (বেসিক নেটওয়ার্ক)' : 'Low (Basic local network)',
-          investment: lang === 'bn' ? '২০,০০০ - ৩০,০০০ টাকা' : '20k - 30k BDT',
-          profit_timeline: lang === 'bn' ? '২ মাস' : '2 Months',
-          sector: 'agriculture',
-          location: 'Rural',
-          icon: 'Leaf'
-        },
-        {
-          id: 3,
-          name_bn: 'টেক সার্ভিস সেন্টার',
-          name_en: 'Tech Service Center',
-          income_bn: '৪০,০০০ - ৭০,০০০ টাকা/মাস',
-          income_en: '40,000 - 70,000 BDT/month',
-          steps_bn: ['সরঞ্জাম ক্রয়', 'টেকনিশিয়ান নিয়োগ', 'লোকাল মার্কেটিং'],
-          steps_en: ['Buy equipment', 'Hire technicians', 'Local marketing'],
-          risk: 'high',
-          risk_detail: lang === 'bn' ? 'উচ্চ ঝুঁকি (টেকনিক্যাল দক্ষ সেটআপ)' : 'High (Technical expertise needed)',
-          investment: lang === 'bn' ? '২ - ৩ লক্ষ টাকা' : '200k - 300k BDT',
-          profit_timeline: lang === 'bn' ? '৬-৮ মাস' : '6-8 Months',
-          sector: 'tech',
-          location: 'Chittagong',
-          icon: 'Smartphone'
-        },
-        {
-          id: 4,
-          name_bn: 'ক্ষুদ্র মৎস্য খামার',
-          name_en: 'Small Scale Fish Farm',
-          income_bn: '২৫,০০০ - ৪৫,০০০ টাকা/মাস',
-          income_en: '25,000 - 45,000 BDT/month',
-          steps_bn: ['পুকুর মেরামত', 'পোনা সংগ্রহ', 'সঠিক খাদ্য ব্যবস্থাপনা'],
-          steps_en: ['Pond renovation', 'Stock fries', 'Proper feed management'],
-          risk: 'medium',
-          risk_detail: lang === 'bn' ? 'মাঝারি ঝুঁকি (জৈব নিরাপত্তা)' : 'Medium (Bio-security risk)',
-          investment: lang === 'bn' ? '১.৫ - ২ লক্ষ টাকা' : '150k - 200k BDT',
-          profit_timeline: lang === 'bn' ? '৫-৬ মাস' : '5-6 Months',
-          sector: 'agriculture',
-          location: 'Khulna',
-          icon: 'Droplets'
-        }
-      ];
-
-      const filtered = allResults.filter(i => {
+      setIdeas(MOCK_IDEAS.filter(i => {
         const matchesRisk = riskFilter === 'all' || i.risk === riskFilter;
         const matchesSector = sector === 'all' || i.sector === sector;
-        const matchesLocation = location === 'all' || i.location === location;
-        const matchesBudget = true; // Simulating budget logic
-        return matchesRisk && matchesSector && matchesLocation;
-      });
-
-      setIdeas(filtered);
+        return matchesRisk && matchesSector;
+      }));
       setLoading(false);
-    }, 1200);
+    }, 800);
   };
 
-  const saveIdea = (idea: any) => {
-    const saved = storage.get('saved_ideas') || [];
-    if (!saved.find((i: any) => i.id === idea.id)) {
-      storage.set('saved_ideas', [...saved, { ...idea, savedAt: new Date().toISOString() }]);
-      alert(lang === 'bn' ? 'আইডিয়াটি সংরক্ষিত হয়েছে!' : 'Idea saved successfully!');
-    }
+  const calculateROI = () => {
+    const profit = calcMonthlyRev - calcMonthlyExp;
+    const months = Math.ceil(calcInvestment / profit);
+    return { profit, months };
   };
+
+  const { profit, months } = calculateROI();
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="w-5 h-5 text-brand" />
-          <h2 className="text-xl font-bold">{t('entrepreneur')}</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{lang === 'bn' ? 'সেক্টর' : 'Sector'}</label>
-            <select 
-              value={sector}
-              onChange={(e) => setSector(e.target.value)}
-              className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl focus:border-brand outline-none transition-all text-xs font-bold"
-            >
-              {sectors.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{lang === 'bn' ? 'অবস্থান' : 'Location'}</label>
-            <select 
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl focus:border-brand outline-none transition-all text-xs font-bold"
-            >
-              {locations.map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-             <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{lang === 'bn' ? 'দক্ষতা' : 'Skills'}</label>
-             <input
-               type="text"
-               value={skills}
-               onChange={(e) => setSkills(e.target.value)}
-               placeholder="Sales, Design..."
-               className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl focus:border-brand outline-none transition-all text-xs font-bold"
-             />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{lang === 'bn' ? 'বাজেট' : 'Budget'}</label>
-            <input
-              type="number"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className="w-full p-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl focus:border-brand outline-none transition-all text-xs font-bold"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-500">{lang === 'bn' ? 'ঝুঁকির মাত্রা' : 'Preferred Risk Level'}</label>
-          <div className="flex flex-wrap gap-2">
-            {riskLevels.map(r => (
-              <button
-                key={r.id}
-                onClick={() => setRiskFilter(r.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${riskFilter === r.id ? 'bg-brand border-brand text-white shadow-md shadow-brand/20' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500'}`}
-              >
-                {r.name}
-              </button>
+    <div className="space-y-8">
+      {/* Ecosystem Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm">
+         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
+            {['generate', 'calculator', 'saved'].map((t) => (
+               <button
+                  key={t}
+                  onClick={() => setActiveTab(t as any)}
+                  className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                    activeTab === t ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-400'
+                  }`}
+               >
+                  {t}
+               </button>
             ))}
-          </div>
-        </div>
-
-        <button
-          onClick={generateIdeas}
-          disabled={loading || !skills || !budget}
-          className="w-full py-4 bg-brand text-white font-bold rounded-2xl shadow-lg shadow-brand/20 hover:bg-brand-dark transition-all flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <>
-              <Sparkles className="w-5 h-5" />
-              <span>{t('generate_ideas')}</span>
-            </>
-          )}
-        </button>
+         </div>
+         <div className="flex items-center gap-2 px-4 py-2 bg-brand/10 rounded-full border border-brand/20">
+            <Sparkles className="w-4 h-4 text-brand" />
+            <span className="text-[10px] font-black text-brand uppercase tracking-widest">Ecosystem 2.0 Beta</span>
+         </div>
       </div>
 
-      <div className="space-y-4">
-        <AnimatePresence>
-          {ideas.map((idea, idx) => (
-            <motion.div
-              key={idea.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-white dark:bg-slate-900 p-5 rounded-3xl border-2 border-brand/10 shadow-sm hover:shadow-md transition-all group"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-brand/10 rounded-2xl flex items-center justify-center text-brand">
-                    <Lightbulb className="w-6 h-6" />
+      <AnimatePresence mode="wait">
+        {activeTab === 'generate' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-[48px] border border-slate-100 dark:border-slate-800 space-y-6">
+               <h2 className="text-2xl font-black italic tracking-tighter uppercase">{lang === 'bn' ? 'ব্যবসায়িক আইডিয়া জেনারেটর' : 'Idea Generator'}</h2>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Target Sector</label>
+                     <select 
+                        value={sector}
+                        onChange={(e) => setSector(e.target.value)}
+                        className="w-full h-14 px-5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-brand outline-none font-bold appearance-none"
+                     >
+                        {sectors.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                     </select>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold">{lang === 'bn' ? idea.name_bn : idea.name_en}</h3>
-                    <div className="flex flex-wrap gap-2">
-                       <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
-                         idea.risk === 'low' ? 'bg-green-100 text-green-700' :
-                         idea.risk === 'medium' ? 'bg-amber-100 text-amber-700' :
-                         'bg-red-100 text-red-700'
-                       }`}>
-                         {idea.risk_detail}
-                       </span>
-                       <span className="text-[10px] uppercase font-black text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
-                         {lang === 'bn' ? 'আয়: ' : 'Income: '} {lang === 'bn' ? idea.income_bn : idea.income_en}
-                       </span>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Available Budget</label>
+                     <input 
+                        type="number"
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className="w-full h-14 px-5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-brand outline-none font-bold"
+                     />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Risk Profile</label>
+                     <div className="flex gap-2">
+                        {['low', 'medium', 'high'].map(r => (
+                           <button 
+                              key={r}
+                              onClick={() => setRiskFilter(r as any)}
+                              className={`flex-1 h-14 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
+                                 riskFilter === r ? 'bg-brand border-brand text-white shadow-lg shadow-brand/20' : 'bg-slate-50 border-slate-100 text-slate-400'
+                              }`}
+                           >
+                              {r}
+                           </button>
+                        ))}
+                     </div>
+                  </div>
+               </div>
+               <button 
+                  onClick={generateIdeas}
+                  disabled={loading}
+                  className="w-full h-14 bg-slate-900 text-white rounded-[24px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+               >
+                  {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Sparkles className="w-5 h-5 text-brand" /> Generate Blueprints</>}
+               </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               {ideas.map((idea) => (
+                  <motion.div 
+                    key={idea.id}
+                    layoutId={`idea-${idea.id}`}
+                    onClick={() => setSelectedIdea(idea)}
+                    className="group bento-card p-8 cursor-pointer relative overflow-hidden"
+                  >
+                     <div className="absolute top-0 right-0 p-8 text-slate-100 dark:text-slate-800 -z-10">
+                        <TrendingUp className="w-24 h-24 rotate-12" />
+                     </div>
+                     <div className="space-y-6">
+                        <div className="space-y-2">
+                           <span className="px-3 py-1 bg-brand/10 text-brand text-[8px] font-black uppercase tracking-widest rounded-full">{idea.risk_detail}</span>
+                           <h3 className="text-3xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? idea.name_bn : idea.name_en}</h3>
+                           <p className="text-slate-400 text-sm font-bold">{idea.income_en}</p>
+                        </div>
+                        <div className="flex gap-4">
+                           <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
+                              <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Investment</p>
+                              <p className="text-sm font-black">{idea.investment}</p>
+                           </div>
+                           <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
+                              <p className="text-[8px] font-black uppercase text-slate-400 mb-1">ROI Starts</p>
+                              <p className="text-sm font-black">{idea.profit_timeline}</p>
+                           </div>
+                        </div>
+                        <button className="flex items-center gap-2 text-brand text-[10px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-all">
+                           Explore Blueprint <ArrowRight className="w-4 h-4" />
+                        </button>
+                     </div>
+                  </motion.div>
+               ))}
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'calculator' && (
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-white dark:bg-slate-900 p-10 rounded-[56px] border border-slate-100 dark:border-slate-800 space-y-8">
+                 <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-brand rounded-[32px] flex items-center justify-center text-white shadow-xl shadow-brand/20">
+                       <Calculator className="w-8 h-8" />
                     </div>
-                  </div>
-                </div>
+                    <h2 className="text-3xl font-black italic uppercase tracking-tighter">Profit<br/>Calculator</h2>
+                 </div>
+                 
+                 <div className="space-y-6">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase text-slate-400">Initial Setup Cost (৳)</label>
+                       <input 
+                          type="number"
+                          value={calcInvestment}
+                          onChange={(e) => setCalcInvestment(Number(e.target.value))}
+                          className="w-full h-16 px-6 bg-slate-50 dark:bg-slate-800 rounded-2xl font-black text-2xl border-0 focus:ring-4 ring-brand/5 outline-none"
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase text-slate-400">Monthly Expenses (৳)</label>
+                       <input 
+                          type="number"
+                          value={calcMonthlyExp}
+                          onChange={(e) => setCalcMonthlyExp(Number(e.target.value))}
+                          className="w-full h-16 px-6 bg-slate-50 dark:bg-slate-800 rounded-2xl font-black text-xl border-0 outline-none"
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase text-slate-400">Monthly Revenue (৳)</label>
+                       <input 
+                          type="number"
+                          value={calcMonthlyRev}
+                          onChange={(e) => setCalcMonthlyRev(Number(e.target.value))}
+                          className="w-full h-16 px-6 bg-slate-50 dark:bg-slate-800 rounded-2xl font-black text-xl border-0 outline-none"
+                       />
+                    </div>
+                 </div>
+              </div>
+
+              <div className="space-y-8">
+                 <div className="p-10 bg-slate-900 rounded-[56px] text-white flex flex-col justify-between aspect-square relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-brand/20 blur-[120px] rounded-full group-hover:scale-125 transition-all duration-1000" />
+                    <div className="relative z-10 space-y-2">
+                       <h3 className="text-lg font-black uppercase tracking-widest text-slate-400">ROI Forecast</h3>
+                       <p className="text-6xl font-black italic tracking-tighter">
+                          {months} <span className="text-2xl text-brand uppercase not-italic">Months</span>
+                       </p>
+                       <p className="text-slate-400 text-sm font-bold">Estimated time to recover your initial investment based on current projections.</p>
+                    </div>
+                    <div className="relative z-10 p-8 bg-white/5 rounded-[40px] border border-white/10 space-y-4">
+                        <div className="flex justify-between items-end">
+                           <span className="text-[10px] font-black uppercase text-slate-500">Monthly Net Profit</span>
+                           <span className="text-3xl font-black text-brand tracking-tighter">৳{profit.toLocaleString()}</span>
+                        </div>
+                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                           <div className="h-full bg-brand w-[60%]" />
+                        </div>
+                    </div>
+                 </div>
+              </div>
+           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Idea Blueprint Modal */}
+      <AnimatePresence>
+        {selectedIdea && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[100] flex items-center justify-center p-6 overflow-y-auto"
+          >
+             <motion.div 
+               initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
+               className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-[64px] border-8 border-slate-100 dark:border-slate-800 p-8 md:p-12 relative my-12"
+             >
                 <button 
-                  onClick={() => saveIdea(idea)}
-                  className="p-2 text-slate-400 hover:text-brand transition-colors"
+                  onClick={() => setSelectedIdea(null)}
+                  className="absolute top-8 right-8 w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-brand transition-all"
                 >
-                  <BookmarkPlus className="w-5 h-5" />
+                   <ArrowRight className="w-5 h-5 rotate-180" />
                 </button>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{lang === 'bn' ? 'বিনিয়োগ' : 'Investment'}</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{idea.investment}</p>
-                 </div>
-                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{lang === 'bn' ? 'লাভের সময়' : 'Profit Starts'}</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{idea.profit_timeline}</p>
-                 </div>
-              </div>
+                <div className="space-y-12">
+                   <header className="space-y-4">
+                      <div className="flex items-center gap-3">
+                         <span className="px-4 py-1.5 bg-brand/10 text-brand text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.sector}</span>
+                         <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.location}</span>
+                      </div>
+                      <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? selectedIdea.name_bn : selectedIdea.name_en}</h2>
+                   </header>
 
-              <div className="space-y-2">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{lang === 'bn' ? 'পরবর্তী ধাপসমূহ:' : 'Next Steps:'}</p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  {(lang === 'bn' ? idea.steps_bn : idea.steps_en).map((step: string, i: number) => (
-                    <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-xs leading-none border border-slate-100 dark:border-slate-700">
-                      <div className="w-4 h-4 bg-brand text-white rounded-full flex items-center justify-center text-[10px] shrink-0 font-bold">{i + 1}</div>
-                      <span className="font-medium text-slate-600 dark:text-slate-300">{step}</span>
-                    </div>
-                  ))}
+                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      <div className="lg:col-span-1 space-y-6">
+                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
+                            <Truck className="w-4 h-4" /> Startup Guide
+                         </h3>
+                         <div className="space-y-4">
+                            {(lang === 'bn' ? selectedIdea.steps_bn : selectedIdea.steps_en).map((step, i) => (
+                               <div key={i} className="flex gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-[32px] border-2 border-transparent hover:border-brand/20 transition-all">
+                                  <div className="w-8 h-8 bg-brand text-white rounded-xl flex items-center justify-center text-xs font-black shrink-0">{i+1}</div>
+                                  <p className="text-sm font-bold leading-tight">{step}</p>
+                               </div>
+                            ))}
+                         </div>
+                      </div>
+
+                      <div className="lg:col-span-1 space-y-6">
+                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
+                            <Package className="w-4 h-4" /> Cost Breakdown
+                         </h3>
+                         <div className="space-y-4">
+                            {selectedIdea.costs.map((cost) => (
+                               <div key={cost.id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800 rounded-[32px]">
+                                  <div>
+                                     <p className="text-sm font-black italic">{cost.name}</p>
+                                     <p className="text-[10px] font-bold text-slate-400 uppercase">{cost.category}</p>
+                                  </div>
+                                  <span className="text-sm font-black text-brand">৳{cost.price.toLocaleString()}</span>
+                               </div>
+                            ))}
+                            <div className="p-5 bg-brand text-white rounded-[32px] flex justify-between items-center">
+                               <span className="text-xs font-black uppercase tracking-widest">Total Seed Capital</span>
+                               <span className="text-xl font-black italic">৳{selectedIdea.costs.reduce((acc, curr) => acc + curr.price, 0).toLocaleString()}</span>
+                            </div>
+                         </div>
+                      </div>
+
+                      <div className="lg:col-span-1 space-y-6">
+                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
+                            <Building2 className="w-4 h-4" /> Verified Suppliers
+                         </h3>
+                         <div className="space-y-4">
+                            {selectedIdea.suppliers.map((sup, i) => (
+                               <div key={i} className="p-6 border-2 border-slate-100 dark:border-slate-800 rounded-[40px] space-y-3 group hover:border-brand transition-all">
+                                  <div className="flex justify-between items-start">
+                                     <h4 className="font-black italic">{sup.name}</h4>
+                                     <MapPin className="w-4 h-4 text-slate-300 group-hover:text-brand transition-colors" />
+                                  </div>
+                                  <div className="space-y-1">
+                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Contact</p>
+                                     <p className="text-xs font-bold text-brand">{sup.contact}</p>
+                                  </div>
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{sup.location}, Bangladesh</p>
+                               </div>
+                            ))}
+                            <button className="w-full py-6 bg-slate-900 text-white rounded-[40px] font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all">
+                               Connect via Shayok
+                            </button>
+                         </div>
+                      </div>
+                   </div>
                 </div>
-              </div>
-              
-              <button className="mt-4 w-full py-2.5 border-2 border-brand/20 text-brand font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-brand hover:text-white transition-all">
-                {lang === 'bn' ? 'ব্যবসা শুরু করুন' : 'Start Business'}
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

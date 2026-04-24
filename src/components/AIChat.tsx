@@ -17,6 +17,7 @@ export default function AIChat() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mood, setMood] = useState<'neutral' | 'happy' | 'sad' | 'anxious' | 'curious'>('neutral');
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [banglaMode, setBanglaMode] = useState(lang === 'bn');
@@ -54,11 +55,13 @@ export default function AIChat() {
     // Basic smart suggestions logic
     const lower = input.toLowerCase();
     if (lower.includes('কাজ') || lower.includes('job')) {
-      setSuggestions(lang === 'bn' ? ['চাকরির খবর', 'রিমোট জবস', 'পার্ট টাইম কাজ'] : ['Latest Jobs', 'Remote Jobs', 'Part-time Work']);
+      setSuggestions(lang === 'bn' ? ['চাকরির খবর', 'ভবিষ্যৎ কাজের চাহিদা', 'রিমোট জবস'] : ['Latest Jobs', 'Future Job Demand', 'Remote Jobs']);
     } else if (lower.includes('চাষ') || lower.includes('farm')) {
-      setSuggestions(lang === 'bn' ? ['ধানের চাষ', 'পোকা দমন', 'সার প্রয়োগ'] : ['Rice Farming', 'Pest Control', 'Fertilizer Tips']);
+      setSuggestions(lang === 'bn' ? ['ধানের চাষ', 'ভবিষ্যৎ বাজার দর', 'সার প্রয়োগ'] : ['Rice Farming', 'Future Market Price', 'Fertilizer Tips']);
+    } else if (lower.includes('ভবিষ্যৎ') || lower.includes('future')) {
+      setSuggestions(lang === 'bn' ? ['ক্যারিয়ার রোডম্যাপ', 'সাফল্যের সম্ভাবনা', 'আমার ডিজিটাল যমজ (Twin)'] : ['Career Roadmap', 'Success Probability', 'My Digital Twin']);
     } else {
-      setSuggestions([]);
+      setSuggestions(lang === 'bn' ? ['ভবিষ্যৎবাণী করুন', 'আমার লক্ষ্য', 'মানসিক সহায়তা'] : ['Predict Future', 'My Life Goals', 'Need Comfort']);
     }
   }, [input, lang]);
 
@@ -97,10 +100,28 @@ export default function AIChat() {
 
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const systemPrompt = `You are Shayok.AI, a helpful assistant for Bangladeshi citizens. Tagline: "আপনার পাশে, সবসময়". 
-      Talk friendly and culturally appropriate. Respond STRICTLY in ${banglaMode ? 'Bangla' : 'English'}. 
-      Key user groups: Farmers (Krishi), Entrepreneurs, Students.
-      Stay helpful, respectful, and informative about Bangladesh.`;
+      
+      // Emotional detection logic
+      const lowerText = textToSend.toLowerCase();
+      let detectedMood: 'neutral' | 'happy' | 'sad' | 'anxious' | 'curious' = 'neutral';
+      if (lowerText.includes('sad') || lowerText.includes('মন খারাপ') || lowerText.includes('বাজে')) detectedMood = 'sad';
+      if (lowerText.includes('worried') || lowerText.includes('চিন্তিত') || lowerText.includes('ভয়')) detectedMood = 'anxious';
+      if (lowerText.includes('happy') || lowerText.includes('ভালো') || lowerText.includes('ধন্যবাদ')) detectedMood = 'happy';
+      setMood(detectedMood);
+
+      const emotionalContext = {
+        sad: "User sounds sad. Be gentle, comforting, and provide hope.",
+        anxious: "User sounds anxious. Be calm, reassuring, and provide clear step-by-step guidance.",
+        happy: "User sounds happy. Be enthusiastic and celebrate with them!",
+        curious: "User sounds curious. Be detailed and intellectually stimulating.",
+        neutral: "Be helpful and direct."
+      };
+
+      const systemPrompt = `You are Shayok.AI (Life-OS Edition), a futuristic Digital Guardian. 
+      Emotion Mode: ${emotionalContext[detectedMood]}.
+      Respond strictly in ${banglaMode ? 'Bangla' : 'English'}.
+      Vision 2050 capabilities: You track user goals, predict market trends (rice price, job demand), and act as a digital twin.
+      If user asks about future, provide predictive insights based on 2050 vision.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
@@ -154,71 +175,110 @@ export default function AIChat() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar bg-slate-50/50 dark:bg-slate-950/20">
         <div className="flex justify-center mb-2">
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-400 rounded-full uppercase tracking-widest">
-            Today
+          <span className="px-4 py-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-[10px] font-black text-slate-400 rounded-full uppercase tracking-[0.3em] shadow-sm">
+            {new Date().toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', { day: 'numeric', month: 'long' })}
           </span>
         </div>
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
-            initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`max-w-[85%] p-3 rounded-2xl flex gap-3 ${
+            <div className={`max-w-[85%] p-4 rounded-3xl flex gap-3 shadow-sm ${
               msg.role === 'user' 
-                ? 'bg-brand text-white rounded-tr-none' 
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-200 dark:border-slate-700'
+                ? 'bg-brand text-white rounded-tr-none shadow-brand/10' 
+                : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-800'
             }`}>
-              {msg.role === 'assistant' && <Bot className="w-5 h-5 shrink-0 mt-1" />}
-              <p className="text-sm leading-relaxed">{msg.content}</p>
+              {msg.role === 'assistant' && (
+                <div className="w-8 h-8 bg-brand/10 rounded-xl flex items-center justify-center shrink-0">
+                  <Bot className="w-5 h-5 text-brand" />
+                </div>
+              )}
+              <div className="space-y-1">
+                <p className="text-sm leading-relaxed font-medium">{msg.content}</p>
+                <span className="text-[8px] opacity-40 uppercase font-bold tracking-widest">
+                  {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              {msg.role === 'user' && (
+                <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center shrink-0 order-last">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+              )}
             </div>
           </motion.div>
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-700">
-              <Loader2 className="w-5 h-5 animate-spin text-brand" />
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl rounded-tl-none shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-3">
+              <div className="flex gap-1">
+                {[0, 1, 2].map(i => (
+                  <motion.div 
+                    key={i}
+                    animate={{ y: [0, -4, 0] }}
+                    transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.2 }}
+                    className="w-1.5 h-1.5 bg-brand rounded-full"
+                  />
+                ))}
+              </div>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Thinking</span>
             </div>
           </div>
         )}
       </div>
 
-      <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 space-y-4">
+        {isRecording && (
+          <div className="flex items-center justify-center gap-1 h-8">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{ height: [8, 24, 8] }}
+                transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
+                className="w-1 bg-brand rounded-full opacity-60"
+              />
+            ))}
+          </div>
+        )}
+        
         {suggestions.length > 0 && (
           <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
             {suggestions.map((s, i) => (
               <button
                 key={i}
                 onClick={() => handleSend(s)}
-                className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-brand/20 text-brand text-[10px] font-bold rounded-xl whitespace-nowrap hover:bg-brand hover:text-white transition-all flex items-center gap-1.5"
+                className="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap hover:bg-brand hover:text-white transition-all flex items-center gap-2 shadow-sm"
               >
-                <Sparkles className="w-3 h-3" /> {s}
+                <Sparkles className="w-3 h-3 text-brand" /> {s}
               </button>
             ))}
           </div>
         )}
-        <div className="flex gap-2">
+        <div className="flex gap-3 items-center">
           <button
             onClick={toggleRecording}
-            className={`p-3 rounded-2xl transition-all ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 text-white shadow-xl shadow-red-500/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-brand'}`}
           >
             {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
           </button>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={banglaMode ? 'এখানে বার্তা লিখুন...' : 'Type message here...'}
-            className="flex-1 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm focus:border-brand transition-all outline-none"
-          />
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder={banglaMode ? 'এখানে বার্তা লিখুন...' : 'Type message here...'}
+              className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-3xl px-6 py-4 text-sm font-medium focus:ring-4 focus:ring-brand/5 focus:border-brand transition-all outline-none"
+            />
+          </div>
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || loading}
-            className="p-3 bg-brand text-white rounded-2xl hover:bg-brand-dark shadow-lg shadow-brand/20 disabled:opacity-50 transition-all"
+            className="w-14 h-14 bg-brand text-white rounded-2xl flex items-center justify-center hover:bg-brand-dark shadow-xl shadow-brand/20 disabled:opacity-50 transition-all active:scale-90"
           >
             <Send className="w-6 h-6" />
           </button>

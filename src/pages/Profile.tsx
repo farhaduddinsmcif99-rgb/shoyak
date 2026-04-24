@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../AppContext';
-import { User, Shield, CreditCard, Settings, LogOut, ChevronRight, Moon, Sun, Languages, Star, HelpCircle } from 'lucide-react';
+import { User, Shield, CreditCard, Settings, LogOut, ChevronRight, Moon, Sun, Languages, Star, HelpCircle, Fingerprint, Gauge, Award } from 'lucide-react';
 import { storage } from '../utils/storage';
 
 export default function Profile() {
@@ -43,8 +43,8 @@ export default function Profile() {
                 <div className="text-[10px] font-black uppercase opacity-60">Saves</div>
              </div>
              <div className="text-center">
-                <div className="text-xl font-bold">৪৮</div>
-                <div className="text-[10px] font-black uppercase opacity-60">Tasks</div>
+                <div className="text-xl font-bold">৭৮৫</div>
+                <div className="text-[10px] font-black uppercase opacity-60">Trust</div>
              </div>
              <div className="text-center">
                 <div className="text-xl font-bold">৪.৯</div>
@@ -52,6 +52,27 @@ export default function Profile() {
              </div>
           </div>
         </div>
+      </section>
+
+      {/* Trust & Guardian Section */}
+      <section className="grid grid-cols-2 gap-4">
+         <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-3">
+            <div className="flex items-center gap-3">
+               <Fingerprint className="w-5 h-5 text-brand" />
+               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Identity</span>
+            </div>
+            <p className="text-xs font-bold leading-relaxed">Verified Digital Twin v4.2 Active</p>
+            <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+               <div className="h-full bg-brand w-[85%]" />
+            </div>
+         </div>
+         <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-3">
+            <div className="flex items-center gap-3">
+               <Award className="w-5 h-5 text-indigo-500" />
+               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Reputation</span>
+            </div>
+            <p className="text-xs font-bold leading-relaxed">Top 1% Growth Milestone Achieved</p>
+         </div>
       </section>
 
       {/* Settings List */}

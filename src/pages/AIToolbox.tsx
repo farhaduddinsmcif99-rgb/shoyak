@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../AppContext';
 import { 
   Search, Filter, Sparkles, Send, Loader2, FileText, ChevronRight, Bookmark, ThumbsUp, 
@@ -10,7 +10,8 @@ import {
   AlertTriangle, Map, Home, List, Gift, Film, Utensils, RefreshCcw, Wind, Bug,
   Database, Terminal, Code2, Palette, FileJson, Repeat, Type, Figma,
   Megaphone, Mail, Star, ShoppingBag, Link, ShieldCheck as ShieldPlayIcon, Smartphone, Calendar,
-  Award, Video, Linkedin, Twitter, Lock, AlertCircle, CornerUpLeft, Briefcase, GraduationCap
+  Award, Video, Linkedin, Twitter, Lock, AlertCircle, CornerUpLeft, Briefcase, GraduationCap,
+  Play, Mic, ArrowRight
 } from 'lucide-react';
 
 const Icons: any = {
@@ -27,6 +28,7 @@ import { aiTools, AITool } from '../data/tools';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from 'react-markdown';
+import SEO from '../components/SEO';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function AIToolbox() {
@@ -38,8 +40,11 @@ export default function AIToolbox() {
   const [output, setOutput] = useState('');
   const [chartData, setChartData] = useState<any>(null);
   const [slidesData, setSlidesData] = useState<any[] | null>(null);
+  const [videoData, setVideoData] = useState<any[] | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentScene, setCurrentScene] = useState(0);
   const [generating, setGenerating] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'recent'>('all');
 
   const filteredTools = aiTools.filter(tool => {
@@ -91,6 +96,22 @@ export default function AIToolbox() {
       setSlidesData(null);
     }
 
+    // Check for video
+    const videoMatch = text.match(/```video\n([\s\S]*?)\n```/);
+    if (videoMatch) {
+      try {
+        const data = JSON.parse(videoMatch[1]);
+        setVideoData(data);
+        setCurrentScene(0);
+        setIsPlaying(false);
+        text = text.replace(videoMatch[0], '');
+      } catch (e) {
+        console.error('Failed to parse video data', e);
+      }
+    } else {
+      setVideoData(null);
+    }
+
     return text;
   };
 
@@ -100,6 +121,7 @@ export default function AIToolbox() {
     setOutput('');
     setChartData(null);
     setSlidesData(null);
+    setVideoData(null);
 
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -118,6 +140,19 @@ export default function AIToolbox() {
         ]
         \`\`\`
         Create exactly 15 to 16 high-quality, content-rich slides covering the topic in depth. Mix and match slide types for variety.`;
+      }
+
+      if (selectedTool.id === 'ai-story-teller' || selectedTool.id === 'whiteboard-animator') {
+        specialInstructions = `
+        CRITICAL: Provide the video screenplay as a JSON block in the 'video' format.
+        Format:
+        \`\`\`video
+        [
+          { "scene": 1, "text": "Dialogue or narration here", "image": "https://picsum.photos/seed/scene1/800/600", "duration": 5000, "style": "whiteboard" },
+          { "scene": 2, "text": "Next scene description", "image": "https://picsum.photos/seed/scene2/800/600", "duration": 4000, "style": "story" }
+        ]
+        \`\`\`
+        The video should have 5-8 scenes. Be creative with the narration. Style should be '${selectedTool.id === 'whiteboard-animator' ? 'whiteboard' : 'cinematic'}'.`;
       }
 
       const prompt = `You are a professional AI tool: ${selectedTool.name_en}. 
@@ -256,34 +291,156 @@ export default function AIToolbox() {
     );
   };
 
+  const VideoViewer = ({ scenes }: { scenes: any[] }) => {
+    const scene = scenes[currentScene];
+
+    useEffect(() => {
+      let timer: NodeJS.Timeout;
+      if (isPlaying) {
+        timer = setTimeout(() => {
+          if (currentScene < scenes.length - 1) {
+            setCurrentScene(prev => prev + 1);
+          } else {
+            setIsPlaying(false);
+          }
+        }, scene.duration || 5000);
+      }
+      return () => clearTimeout(timer);
+    }, [isPlaying, currentScene, scenes]);
+
+    return (
+      <div className="relative w-full aspect-video bg-black rounded-[40px] overflow-hidden shadow-2xl flex flex-col group/video border-8 border-slate-900">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentScene}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative flex-1"
+          >
+            <motion.img 
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: (scene.duration || 5000) / 1000 }}
+              src={scene.image} 
+              className="w-full h-full object-cover opacity-60" 
+              alt={`Scene showing ${scene.text}`}
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
+            
+            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 space-y-4">
+               <motion.div 
+                 initial={{ y: 20, opacity: 0 }}
+                 animate={{ y: 0, opacity: 1 }}
+                 transition={{ delay: 0.5 }}
+                 className="max-w-3xl"
+               >
+                  <p className="text-xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg italic">
+                    "{scene.text}"
+                  </p>
+               </motion.div>
+            </div>
+
+            {scene.style === 'whiteboard' && (
+               <div className="absolute top-10 right-10 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
+                  <Edit className="w-4 h-4 text-white" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Whiteboard Rendering</span>
+               </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="absolute bottom-8 left-8 right-8 flex justify-between items-center z-20">
+           <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="w-12 h-12 bg-brand text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg shadow-brand/20"
+              >
+                 {isPlaying ? <div className="flex gap-1"><div className="w-1 h-4 bg-white rounded-full" /><div className="w-1 h-4 bg-white rounded-full" /></div> : <Play className="w-5 h-5 ml-1" />}
+              </button>
+              <div className="px-4 py-2 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 text-white font-black text-[10px] uppercase tracking-widest">
+                 Scene {currentScene + 1} / {scenes.length}
+              </div>
+           </div>
+           {isPlaying && (
+              <div className="flex gap-1">
+                 {[1, 2, 3].map(i => (
+                    <motion.div 
+                      key={i}
+                      animate={{ height: [8, 20, 8] }}
+                      transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
+                      className="w-1 bg-brand rounded-full"
+                    />
+                 ))}
+              </div>
+           )}
+        </div>
+
+        {/* Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/10">
+           <motion.div 
+             initial={{ width: 0 }}
+             animate={{ width: `${((currentScene + 1) / scenes.length) * 100}%` }}
+             className="h-full bg-brand shadow-[0_0_10px_#00A651]"
+           />
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
+      <SEO 
+        title={selectedTool ? `${selectedTool.name_en} - AIToolbox` : "AI Toolbox"}
+        description={selectedTool ? selectedTool.description_en : "Access 100+ AI-powered tools for content creation, business, utility, and more in Bangladesh."}
+      />
       {!selectedTool && (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800 self-start shadow-sm">
-             <button 
-              onClick={() => setActiveTab('all')}
-              className={`px-6 py-2 rounded-[14px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'all' ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400'}`}
-             >
-               {lang === 'bn' ? 'সব টুল' : 'All Tools'}
-             </button>
-             <button 
-              onClick={() => setActiveTab('recent')}
-              className={`px-6 py-2 rounded-[14px] text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'recent' ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400'}`}
-             >
-               {lang === 'bn' ? 'সম্প্রতি ব্যবহৃত' : 'Recent'}
-             </button>
-          </div>
+        <header className="space-y-8">
+           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-4">
+                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/10 rounded-full border border-brand/20">
+                    <Zap className="w-3.5 h-3.5 text-brand" />
+                    <span className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">{lang === 'bn' ? 'এআই টুলবক্স' : 'Neural Toolbox'}</span>
+                 </div>
+                 <h1 className="text-4xl md:text-6xl font-display italic leading-none">
+                    {lang === 'bn' ? '১০০+ স্মার্ট টুল' : 'Empower your vision with 100+ AI Agents'}
+                 </h1>
+              </div>
+              <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm self-start">
+                 <button 
+                  onClick={() => setActiveTab('all')}
+                  className={`px-6 py-2 rounded-[14px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'all' ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400'}`}
+                 >
+                   {lang === 'bn' ? 'সব টুল' : 'Directory'}
+                 </button>
+                 <button 
+                  onClick={() => setActiveTab('recent')}
+                  className={`px-6 py-2 rounded-[14px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'recent' ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400'}`}
+                 >
+                   {lang === 'bn' ? 'সাম্প্রতিক' : 'Recents'}
+                 </button>
+              </div>
+           </div>
 
           <div className="relative group">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={lang === 'bn' ? '১০০+ এআই টুল খুঁজুন...' : 'Search 100+ AI tools...'}
-              className="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-3xl shadow-sm outline-none focus:border-brand transition-all ring-0 group-focus-within:ring-4 group-focus-within:ring-brand/5"
+              placeholder={lang === 'bn' ? 'টুল খুঁজুন (যেমন: ইউটিউব, সিভি)...' : 'Search for an agent (e.g. YouTube, CV)...'}
+              className="w-full h-20 pl-16 pr-24 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[32px] shadow-sm outline-none focus:ring-8 focus:ring-brand/5 focus:border-brand font-display font-medium text-lg transition-all"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brand transition-colors" />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300 group-focus-within:text-brand transition-colors" />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+               <button className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-brand transition-all tap-effect">
+                  <Mic className="w-5 h-5" />
+               </button>
+               <div className="hidden md:flex px-3 py-1 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-mono text-slate-400 gap-1 items-center">
+                  <span>⌘</span>
+                  <span>K</span>
+               </div>
+            </div>
           </div>
 
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -291,22 +448,56 @@ export default function AIToolbox() {
               <button
                 key={cat}
                 onClick={() => setCategory(cat as any)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border-2 flex items-center gap-2 ${
+                className={`h-11 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border flex items-center gap-2 ${
                   category === cat 
-                    ? 'bg-brand border-brand text-white shadow-lg shadow-brand/10' 
-                    : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-400 hover:border-brand/40'
+                    ? 'bg-slate-900 border-slate-900 text-white shadow-xl translate-y-[-2px]' 
+                    : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-400 hover:border-brand hover:text-brand'
                 }`}
               >
-                {cat === 'favorites' && <Star className={`w-3 h-3 ${category === 'favorites' ? 'fill-white' : ''}`} />}
-                {cat.toUpperCase()}
+                {cat === 'favorites' && <Star className={`w-3.5 h-3.5 ${category === 'favorites' ? 'fill-white' : ''}`} />}
+                {cat}
               </button>
             ))}
           </div>
-        </div>
+        </header>
+      )}
+
+      {!selectedTool && (
+        <section className="space-y-6">
+           <div className="flex items-center justify-between px-2">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Personalized Suggestions</h3>
+              <div className="flex gap-1">
+                 {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 bg-brand/20 rounded-full" />)}
+              </div>
+           </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { title: 'Market Trends 2026', icon: TrendingUp, color: 'bg-emerald-500', desc: 'Predicting stock surges in BD' },
+                { title: 'Skill Roadmap', icon: Target, color: 'bg-indigo-500', desc: 'Next items for your career path' },
+                { title: 'Job Match', icon: Briefcase, color: 'bg-amber-500', desc: 'Found 3 roles matching your CV' }
+              ].map((s, i) => (
+                <div key={i} className="relative group overflow-hidden bg-slate-900 rounded-[32px] p-6 text-white cursor-pointer hover:-translate-y-1 transition-all duration-500">
+                   <div className="relative z-10 flex flex-col h-full gap-4">
+                      <div className={`w-10 h-10 ${s.color} rounded-2xl flex items-center justify-center`}>
+                         <s.icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="space-y-1">
+                         <h4 className="font-bold text-lg leading-tight">{s.title}</h4>
+                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.desc}</p>
+                      </div>
+                   </div>
+                   <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 blur-[80px] group-hover:blur-[100px] transition-all" />
+                   <div className="absolute bottom-4 right-6 opacity-40 group-hover:opacity-100 group-hover:translate-x-2 transition-all">
+                      <ArrowRight className="w-5 h-5" />
+                   </div>
+                </div>
+              ))}
+           </div>
+        </section>
       )}
 
       {!selectedTool ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
             {(activeTab === 'all' ? filteredTools : recentTools).map((tool) => (
               <motion.div
@@ -315,34 +506,33 @@ export default function AIToolbox() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="group relative flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-brand transition-all text-left shadow-sm hover:shadow-md cursor-pointer overflow-hidden"
+                className="group bento-card p-6 flex flex-col gap-6 cursor-pointer"
+                onClick={() => handleToolSelect(tool)}
               >
-                <div 
-                  onClick={() => handleToolSelect(tool)}
-                  className="flex flex-1 items-center gap-4 min-w-0"
-                >
-                  <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-all shrink-0">
-                    {React.createElement(Icons[tool.icon] || FileText, { className: "w-6 h-6" })}
+                <div className="flex justify-between items-start">
+                  <div className="w-14 h-14 bg-slate-50 dark:bg-slate-800/50 rounded-3xl flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-white transition-all transform group-hover:rotate-6">
+                    {React.createElement(Icons[tool.icon] || FileText, { className: "w-7 h-7" })}
                   </div>
-                  <div className="flex-1 min-w-0 pr-4">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-brand transition-colors">
-                      {lang === 'bn' ? tool.name_bn : tool.name_en}
-                    </h3>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-slate-400 truncate opacity-60">
-                      {tool.category}
-                    </p>
-                  </div>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); toggleFavorite(tool.id); }}
+                    className={`h-10 w-10 flex items-center justify-center rounded-2xl transition-all ${favorites.includes(tool.id) ? 'bg-amber-50 text-amber-500' : 'bg-slate-50 dark:bg-slate-800/50 text-slate-300 hover:text-amber-500'}`}
+                  >
+                    <Star className={`w-4 h-4 ${favorites.includes(tool.id) ? 'fill-amber-500' : ''}`} />
+                  </button>
                 </div>
-                
-                <button 
-                  onClick={(e) => { e.stopPropagation(); toggleFavorite(tool.id); }}
-                  className={`p-2 rounded-xl transition-all ${favorites.includes(tool.id) ? 'bg-yellow-50 text-yellow-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-300 hover:text-yellow-500'}`}
-                >
-                  <Star className={`w-4 h-4 ${favorites.includes(tool.id) ? 'fill-yellow-500' : ''}`} />
-                </button>
-
-                <div className="absolute right-0 bottom-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <ChevronRight className="w-4 h-4 text-brand" />
+                <div className="space-y-1 flex-1">
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 leading-tight group-hover:text-brand transition-colors">
+                    {lang === 'bn' ? tool.name_bn : tool.name_en}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                    {lang === 'bn' ? tool.description_bn : tool.description_en}
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-slate-50 dark:border-slate-800/50 flex justify-between items-center">
+                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-brand transition-colors">{tool.category}</span>
+                   <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                      <ChevronRight className="w-4 h-4 text-brand" />
+                   </div>
                 </div>
               </motion.div>
             ))}
@@ -401,6 +591,7 @@ export default function AIToolbox() {
                     </label>
 
                     {slidesData && <SlideViewer slides={slidesData} />}
+                    {videoData && <VideoViewer scenes={videoData} />}
 
                     {chartData && (
                       <div className="h-64 w-full bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 p-4">

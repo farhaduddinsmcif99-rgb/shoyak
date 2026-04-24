@@ -3,7 +3,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 import Header from './Header';
 import BottomNav from './BottomNav';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, Sprout, MessageSquare, LayoutGrid, Bell, Box, Briefcase } from 'lucide-react';
+import { Home, Sprout, MessageSquare, LayoutGrid, Bell, Box, Briefcase, Gamepad2, Fingerprint, Mic } from 'lucide-react';
 import { useApp } from '../AppContext';
 import { cn } from '../utils/helpers';
 
@@ -41,6 +41,8 @@ export default function Layout() {
     { to: '/agriculture', icon: Sprout, label: 'Agri' },
     { to: '/jobs', icon: Briefcase, label: 'Earn' },
     { to: '/hub', icon: Box, label: 'Hub' },
+    { to: '/junior', icon: Gamepad2, label: 'Junior' },
+    { to: '/companion', icon: Fingerprint, label: 'Vision' },
     { to: '/assistant', icon: MessageSquare, label: 'AI' },
     { to: '/tools', icon: LayoutGrid, label: t('toolbox') },
   ];
@@ -100,6 +102,11 @@ export default function Layout() {
                 <Outlet />
                 
                 <footer className="mt-20 pt-8 border-t border-slate-100 dark:border-slate-800 text-center pb-8">
+                  <div className="flex justify-center gap-6 mb-4">
+                    <NavLink to="/future/krishi" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Krishi AI</NavLink>
+                    <NavLink to="/future/students" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Job Tracker</NavLink>
+                    <NavLink to="/future/vision" className="text-[10px] font-black text-slate-400 hover:text-brand uppercase tracking-widest">Vision 2050</NavLink>
+                  </div>
                   <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.4em]">
                     Shayok.AI • {new Date().getFullYear()}
                   </p>
@@ -114,18 +121,24 @@ export default function Layout() {
         <BottomNav />
       </div>
 
-      {/* Floating AI Assistant Button */}
+      {/* Floating AI Assistant Button (Modern FAB) */}
       <NavLink
         to="/assistant"
         className={({ isActive }) => 
           cn(
-            "fixed bottom-24 right-6 w-14 h-14 bg-brand text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-brand/40 z-40 transition-all hover:scale-110 active:scale-95 group md:bottom-8 md:right-8",
+            "fixed bottom-24 right-6 bg-brand text-white rounded-full flex items-center gap-3 px-6 py-4 shadow-[0_20px_50px_rgba(5,150,105,0.3)] z-40 transition-all hover:scale-105 hover:bg-brand-dark active:scale-95 group md:bottom-10 md:right-10",
             isActive ? "hidden" : "flex"
           )
         }
       >
-        <MessageSquare className="w-6 h-6 group-hover:animate-bounce" />
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
+        <div className="relative">
+          <MessageSquare className="w-5 h-5 transition-transform group-hover:scale-110" />
+          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-yellow-400 rounded-full border-2 border-brand animate-pulse"></div>
+        </div>
+        <span className="text-xs font-black uppercase tracking-widest">Ask AI</span>
+        <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+          <Mic className="w-3 h-3" />
+        </div>
       </NavLink>
     </div>
   );

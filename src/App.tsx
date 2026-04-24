@@ -12,7 +12,13 @@ import Jobs from './pages/Jobs';
 import Agriculture from './pages/Agriculture';
 import Finance from './pages/Finance';
 import Entrepreneur from './pages/Entrepreneur';
+import JuniorMode from './pages/JuniorMode';
+import LifeCompanion from './pages/LifeCompanion';
 import Login from './pages/Login';
+import KrishiLanding from './pages/seo/KrishiLanding';
+import StudentLanding from './pages/seo/StudentLanding';
+import VisionLanding from './pages/seo/VisionLanding';
+import { motion, AnimatePresence } from 'motion/react';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useApp();
@@ -25,27 +31,46 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<Login />} />
+        
+        {/* Public SEO Landing Pages */}
+        <Route element={<Layout />}>
+          <Route path="/future/krishi" element={<KrishiLanding />} />
+          <Route path="/future/students" element={<StudentLanding />} />
+          <Route path="/future/vision" element={<VisionLanding />} />
+        </Route>
+
+        <Route element={<AuthGuard><Layout /></AuthGuard>}>
+          <Route path="/" element={<Home />} />
+          <Route path="/krishi" element={<KrishiAI />} />
+          <Route path="/hub" element={<Hub />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/agriculture" element={<Agriculture />} />
+          <Route path="/finance" element={<Finance />} />
+          <Route path="/assistant" element={<AIAssistant />} />
+          <Route path="/tools" element={<AIToolbox />} />
+          <Route path="/entrepreneur" element={<Entrepreneur />} />
+          <Route path="/junior" element={<JuniorMode />} />
+          <Route path="/companion" element={<LifeCompanion />} />
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   return (
     <AppProvider>
       <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<AuthGuard><Layout /></AuthGuard>}>
-            <Route path="/" element={<Home />} />
-            <Route path="/krishi" element={<KrishiAI />} />
-            <Route path="/hub" element={<Hub />} />
-            <Route path="/jobs" element={<Jobs />} />
-            <Route path="/agriculture" element={<Agriculture />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/assistant" element={<AIAssistant />} />
-            <Route path="/tools" element={<AIToolbox />} />
-            <Route path="/entrepreneur" element={<Entrepreneur />} />
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <AnimatedRoutes />
       </Router>
     </AppProvider>
   );
