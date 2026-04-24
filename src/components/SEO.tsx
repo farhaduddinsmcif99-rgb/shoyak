@@ -16,13 +16,15 @@ export default function SEO({
   image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
   url = 'https://shoyakai.farhaduddinsmcif99.workers.dev/' 
 }: SEOProps) {
-  const fullTitle = title ? `${title} | Shoyakai` : 'Shoyakai – Free Online Tools & Simple Web Apps';
-  const fullDescription = description || 'Shoyakai offers free online tools and simple web apps to help you work faster, smarter, and easier.';
+  const fullTitle = title ? `${title} | Shoyakai (Shoyaki AI)` : 'Shoyakai – Free Online Tools & Shoyaki AI Assistant';
+  const fullDescription = description || 'Shoyakai (Shoyaki AI) offers free online tools and simple web apps to help you work faster, smarter, and easier.';
+  const fullKeywords = keywords ? `${keywords}, shoyaki ai, shoyakai, ai tools` : 'shoyakai, shoyaki ai, shoyaikai ai, free online tools, simple web apps, ai assistant, productivity tools';
   
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "Shoyakai",
+    "name": "Shoyakai AI",
+    "alternateName": "Shoyaki AI",
     "operatingSystem": "All",
     "applicationCategory": "ProductivityApplication",
     "browserRequirements": "requires HTML5 support",
@@ -50,7 +52,7 @@ export default function SEO({
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={fullDescription} />
-      {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="keywords" content={fullKeywords} />
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       <link rel="canonical" href={url} />
 
