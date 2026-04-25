@@ -22,6 +22,16 @@ export default function Sitemap() {
         </div>
         <h1 className="text-5xl font-display italic tracking-tighter">Site Directory</h1>
         <p className="text-xl text-slate-500 font-medium">A complete map of Shoyakai's ecosystem.</p>
+        <div className="pt-4">
+          <a 
+            href="/sitemap.xml" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-brand transition-colors"
+          >
+            <BookOpen className="w-4 h-4" /> View XML Sitemap for Search Engines
+          </a>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
