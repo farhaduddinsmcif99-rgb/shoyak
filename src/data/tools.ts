@@ -128,5 +128,6 @@ export const aiTools: AITool[] = [
    { id: 'cv-gen', name_bn: 'প্রফেশনাল সিভি জেনারেটর', name_en: 'Professional CV Generator', category: 'utility', description_bn: 'চাকরির জন্য আধুনিক সিভি ডিজাইন', description_en: 'Modern CV design for jobs', icon: 'User' },
    { id: 'email-writer', name_bn: 'এআই ইমেইল রাইটার', name_en: 'AI Email Writer', category: 'content', description_bn: 'পেশাদার ইমেইল দ্রুত লিখুন', description_en: 'Write professional emails quickly', icon: 'Mail' },
    { id: 'ai-story-teller', name_bn: 'এআই স্টোরি টেলার (ভিডিও)', name_en: 'AI Story Teller (Video)', category: 'content', description_bn: 'আপনার গল্প থেকে এনিমেটেড ভিডিও তৈরি করুন', description_en: 'Create animated videos from your stories', icon: 'Film' },
-   { id: 'whiteboard-animator', name_bn: 'হোয়াইটবোর্ড এনিমেশন মেকার', name_en: 'Whiteboard Animation Maker', category: 'content', description_bn: 'শিক্ষামূলক হোয়াইটবোর্ড এনিমেশন ভিডিও', description_en: 'Educational whiteboard animation videos', icon: 'Edit' }
+   { id: 'whiteboard-animator', name_bn: 'হোয়াইটবোর্ড এনিমেশন মেকার', name_en: 'Whiteboard Animation Maker', category: 'content', description_bn: 'শিক্ষামূলক হোয়াইটবোর্ড এনিমেশন ভিডিও', description_en: 'Educational whiteboard animation videos', icon: 'Edit' },
+   { id: 'text-to-video', name_bn: 'টেক্সট টু ভিডিও এআই', name_en: 'Text to Video AI', category: 'content', description_bn: 'যেকোনো বর্ণনা থেকে এআই ভিডিও তৈরি করুন', description_en: 'Generate AI video segments from descriptions', icon: 'Video' }
 ];

@@ -3,6 +3,8 @@ import { useApp } from '../AppContext';
 import { Bell, Moon, Sun, Languages, MessageSquare, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import Logo from './Logo';
+
 export default function Header() {
   const { lang, setLang, darkMode, toggleDarkMode, t, isAdmin } = useApp();
 
@@ -10,23 +12,9 @@ export default function Header() {
     <header className="sticky top-0 z-40 w-full bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 py-4">
       <div className="flex justify-between items-center max-w-6xl mx-auto w-full">
         <div className="flex flex-col">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition-transform">
-              S
-            </div>
-            <div className="flex flex-col">
-               <h1 className="text-xl md:text-2xl font-black text-slate-800 dark:text-slate-100 italic tracking-tighter leading-none">
-                 Shoyakai
-               </h1>
-               <div className="flex items-center gap-1 mt-1">
-                  <div className="w-1 h-1 bg-brand rounded-full animate-pulse"></div>
-                  <span className="text-[7px] font-black uppercase text-brand tracking-[0.2em]">FAST ONLINE UTILITIES</span>
-               </div>
-            </div>
+          <Link to="/" className="group">
+            <Logo size="sm" />
           </Link>
-          <p className="hidden md:block text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] mt-1 ml-10">
-            {lang === 'bn' ? 'মুক্ত এবং সহজ অনলাইন টুলস' : 'Free & Simple Online Tools'}
-          </p>
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">

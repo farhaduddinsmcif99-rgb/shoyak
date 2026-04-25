@@ -16,9 +16,9 @@ export default function SEO({
   image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
   url = 'https://shoyakai.2com.workers.dev/' 
 }: SEOProps) {
-  const fullTitle = title ? `${title} | Shoyakai (Shoyaki AI)` : 'Shoyakai – Free Online Tools & Shoyaki AI Assistant';
-  const fullDescription = description || 'Shoyakai (Shoyaki AI) offers free online tools and simple web apps to help you work faster, smarter, and easier.';
-  const fullKeywords = keywords ? `${keywords}, shoyaki ai, shoyakai, ai tools` : 'shoyakai, shoyaki ai, shoyaikai ai, free online tools, simple web apps, ai assistant, productivity tools';
+  const fullTitle = title ? `${title} | Shoyakai (Shoyaki AI)` : 'Shoyakai – Premium Shoyaki AI Tools & Ecosystem';
+  const fullDescription = description || 'Shoyakai (Shoyaki AI) is an all-in-one productivity powerhouse. Access advanced AI companions, visual tools, and professional utilities for free.';
+  const fullKeywords = keywords ? `${keywords}, shoyaki ai, shoyakai, ai tools, shoyakai labs` : 'shoyakai, shoyaki ai, ai assistant, productivity ecosystem, professional web tools, ai workspace';
   
   const jsonLd = {
     "@context": "https://schema.org",
@@ -57,9 +57,9 @@ export default function SEO({
       <link rel="canonical" href={url} />
 
       {/* ItemProp for Google Discovery */}
-      <meta itemprop="name" content={fullTitle} />
-      <meta itemprop="description" content={fullDescription} />
-      <meta itemprop="image" content={image} />
+      <meta itemProp="name" content={fullTitle} />
+      <meta itemProp="description" content={fullDescription} />
+      <meta itemProp="image" content={image} />
 
       {/* Open Graph / Facebook */}
       <meta property="og:title" content={fullTitle} />

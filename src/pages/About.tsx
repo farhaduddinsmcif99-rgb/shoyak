@@ -19,22 +19,60 @@ export default function About() {
   return (
     <div className="space-y-20 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-700">
       <SEO 
-        title="About Shoyakai | Why We Build Free Online Tools" 
-        description="Learn about Shoyakai, our mission to democratize productivity through free, fast, and simple online tools and web apps for everyone."
-        keywords="about shoyakai, free tools mission, simple web apps story"
+        title="About Shoyakai | Mission, Values & Founder's Vision" 
+        description="Discover the mission of Shoyakai (Shoyaki AI), lead by MD Tofiqur Rahman. We democratize Artificial Intelligence for everyone in Bangladesh and globally through free, high-performance digital tools."
+        keywords="about shoyakai, MD Tofiqur Rahman, Shoyaki AI, free AI tools Bangladesh, digital productivity mission, tech innovation Dhaka, democratizing AI"
       />
 
       <section className="text-center space-y-8 pt-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/10 rounded-full border border-brand/20">
            <Fingerprint className="w-3.5 h-3.5 text-brand" />
-           <span className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">Our Story</span>
+           <span className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">Our Impact</span>
         </div>
-        <h1 className="text-5xl md:text-8xl font-display italic leading-none tracking-tighter max-w-4xl mx-auto">
-          Democratizing <br /> <span className="text-brand">Intelligence</span> for All.
+        <h1 className="text-5xl md:text-8xl font-display italic leading-none tracking-tighter max-w-5xl mx-auto">
+          Empowering the <br /> <span className="text-brand">Next Billion</span> Creators.
         </h1>
         <p className="text-xl md:text-2xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed">
-          Shoyakai was born out of a simple observation: the most powerful tools on the internet are often locked behind paywalls or buried in complexity. We are here to change that.
+          Shoyakai (Shoyaki AI) was born out of a simple observation: the most powerful tools on the internet are often locked behind paywalls. We are here to democratize Artificial Intelligence for every student, entrepreneur, and professional.
         </p>
+      </section>
+
+      <section className="max-w-7xl mx-auto py-10 space-y-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <h2 className="text-4xl md:text-5xl font-display italic tracking-tight">Our Core Mission.</h2>
+            <div className="space-y-6 text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+              <p>
+                Our mission is to eliminate the "Digital Divide" by providing high-performance, AI-driven tools at zero cost. We believe that geographic or financial barriers should never limit a person's ability to innovate, create, or solve problems.
+              </p>
+              <p>
+                In a world rapidly being reshaped by large language models and neural networks, Shoyakai serves as a localized bridge—tailoring global advancements in tech to meet the unique needs of users in Bangladesh and emerging markets.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             <div className="p-8 bg-slate-50 dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-white/5 space-y-4">
+                <Target className="w-8 h-8 text-brand" />
+                <h4 className="font-bold text-xl">Accessibility</h4>
+                <p className="text-xs text-slate-500 uppercase tracking-widest">Available to anyone, anywhere, 24/7.</p>
+             </div>
+             <div className="p-8 bg-slate-900 rounded-[32px] text-white space-y-4">
+                <Zap className="w-8 h-8 text-brand" />
+                <h4 className="font-bold text-xl">Innovation</h4>
+                <p className="text-xs text-slate-400 uppercase tracking-widest">Constant R&D to bring the latest AI to your fingertips.</p>
+             </div>
+             <div className="p-8 bg-slate-900 rounded-[32px] text-white space-y-4">
+                <Users className="w-8 h-8 text-brand" />
+                <h4 className="font-bold text-xl">Community</h4>
+                <p className="text-xs text-slate-400 uppercase tracking-widest">Built by the people, for the people.</p>
+             </div>
+             <div className="p-8 bg-slate-50 dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-white/5 space-y-4">
+                <Shield className="w-8 h-8 text-brand" />
+                <h4 className="font-bold text-xl">Ethics</h4>
+                <p className="text-xs text-slate-500 uppercase tracking-widest">Transparent, secure, and privacy-focused AI.</p>
+             </div>
+          </div>
+        </div>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -54,6 +92,68 @@ export default function About() {
            desc="Our core mission is accessibility. We maintain a robust set of tools that will always remain free for everyone."
          />
       </div>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center max-w-7xl mx-auto py-20 border-t border-slate-100 dark:border-white/5">
+         <div className="relative group">
+            <div className="absolute inset-0 bg-brand/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
+            <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+               <img 
+                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" 
+                 alt="MD Tofiqur Rahman" 
+                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+               <div className="absolute bottom-10 left-10 space-y-2">
+                  <p className="text-white font-black text-2xl tracking-tighter uppercase italic">MD Tofiqur Rahman</p>
+                  <p className="text-brand font-black text-[10px] tracking-[0.3em] uppercase">Founder & Architect</p>
+               </div>
+            </div>
+         </div>
+         <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/10 rounded-full border border-brand/20">
+               <Zap className="w-3.5 h-3.5 text-brand" />
+               <span className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">The Visionary</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-display italic tracking-tighter leading-none">
+               Meet MD <span className="text-brand">Tofiqur</span> Rahman.
+            </h2>
+            <div className="space-y-6 text-slate-500 dark:text-slate-400 font-medium text-lg leading-relaxed">
+               <p>
+                  MD Tofiqur Rahman is the visionary founder behind Shoyakai. With a deep passion for technology and its potential to solve real-world problems, he set out to build an ecosystem that makes advanced AI and productivity tools accessible to everyone in Bangladesh and beyond.
+               </p>
+               <p>
+                  His vision for Shoyakai (Shoyaki AI) is to create a "Neural Playground"—a space where complexity is stripped away, leaving only the power of intelligence. He believes that by providing these tools for free, we can unlock the latent potential of millions of talented individuals who are currently under-served by the global tech economy.
+               </p>
+               <p>
+                  "I believe that the next wave of innovation will come from those who have the tools to build. Shoyakai is my contribution to that future—providing the digital infrastructure for the next generation of thinkers, creators, and entrepreneurs in Dhaka, Chittagong, and globally."
+               </p>
+               <div className="pt-4 flex flex-wrap gap-3">
+                  {['AI Democratization', 'Future of Work', 'Tech Independence', 'Bangladesh 2.0'].map(tag => (
+                    <span key={tag} className="px-4 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {tag}
+                    </span>
+                  ))}
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto py-20 border-t border-slate-100 dark:border-white/5">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <div className="space-y-6">
+               <h3 className="text-3xl font-display italic">The Path Forward.</h3>
+               <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                  As we move deeper into the age of autonomous systems, Shoyakai will continue to evolve. Our roadmap includes the integration of more sophisticated multimodal AI models, localized LLMs for Bengali processing, and specialized toolsets for industrial and academic research.
+               </p>
+            </div>
+            <div className="space-y-6">
+               <h3 className="text-3xl font-display italic">A Global Ecosystem.</h3>
+               <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                  While our roots are in Bangladesh, our vision is global. We are building Shoyakai to be a first-class citizen of the global open-source and free-software movement, contributing back to the intelligence that powers our platform.
+               </p>
+            </div>
+         </div>
+      </section>
 
       <section className="bg-slate-900 rounded-[48px] p-20 text-white text-center space-y-10 relative overflow-hidden">
          <div className="absolute top-0 right-0 w-96 h-96 bg-brand/10 blur-[100px] rounded-full" />

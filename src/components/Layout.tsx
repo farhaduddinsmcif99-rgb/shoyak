@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import Header from './Header';
 import BottomNav from './BottomNav';
+import Logo from './Logo';
 import { motion, AnimatePresence } from 'motion/react';
 import { Home, Sprout, MessageSquare, LayoutGrid, Bell, Box, Briefcase, Gamepad2, Fingerprint, Mic } from 'lucide-react';
 import { useApp } from '../AppContext';
@@ -51,7 +52,9 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
     <div className="flex h-screen bg-surface dark:bg-surface-dark overflow-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-20 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col items-center py-6 gap-8">
-        <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center text-white font-bold text-xl">S</div>
+        <NavLink to="/" className="group">
+           <Logo iconOnly size="sm" />
+        </NavLink>
         <nav className="flex flex-col gap-6">
           {navItems.map((item) => (
             <NavLink

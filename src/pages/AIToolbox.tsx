@@ -41,6 +41,7 @@ export default function AIToolbox() {
   const [chartData, setChartData] = useState<any>(null);
   const [slidesData, setSlidesData] = useState<any[] | null>(null);
   const [videoData, setVideoData] = useState<any[] | null>(null);
+  const [paletteData, setPaletteData] = useState<any[] | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentScene, setCurrentScene] = useState(0);
   const [generating, setGenerating] = useState(false);
@@ -112,6 +113,20 @@ export default function AIToolbox() {
       setVideoData(null);
     }
 
+    // Check for palette
+    const paletteMatch = text.match(/```palette\n([\s\S]*?)\n```/);
+    if (paletteMatch) {
+      try {
+        const data = JSON.parse(paletteMatch[1]);
+        setPaletteData(data.palette || data);
+        text = text.replace(paletteMatch[0], '');
+      } catch (e) {
+        console.error('Failed to parse palette data', e);
+      }
+    } else {
+      setPaletteData(null);
+    }
+
     return text;
   };
 
@@ -122,6 +137,7 @@ export default function AIToolbox() {
     setChartData(null);
     setSlidesData(null);
     setVideoData(null);
+    setPaletteData(null);
 
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -142,7 +158,7 @@ export default function AIToolbox() {
         Create exactly 15 to 16 high-quality, content-rich slides covering the topic in depth. Mix and match slide types for variety.`;
       }
 
-      if (selectedTool.id === 'ai-story-teller' || selectedTool.id === 'whiteboard-animator') {
+      if (selectedTool.id === 'ai-story-teller' || selectedTool.id === 'whiteboard-animator' || selectedTool.id === 'text-to-video') {
         specialInstructions = `
         CRITICAL: Provide the video screenplay as a JSON block in the 'video' format.
         Format:
@@ -152,7 +168,33 @@ export default function AIToolbox() {
           { "scene": 2, "text": "Next scene description", "image": "https://picsum.photos/seed/scene2/800/600", "duration": 4000, "style": "story" }
         ]
         \`\`\`
-        The video should have 5-8 scenes. Be creative with the narration. Style should be '${selectedTool.id === 'whiteboard-animator' ? 'whiteboard' : 'cinematic'}'.`;
+        The video should have 5-8 scenes. Be creative with the narration. Style should be '${selectedTool.id === 'whiteboard-animator' ? 'whiteboard' : selectedTool.id === 'text-to-video' ? 'ai-motion' : 'cinematic'}'.`;
+      }
+
+      if (selectedTool.id === 'business-plan') {
+        specialInstructions = `
+        CRITICAL: You MUST include a detailed section titled 'Market Analysis'.
+        The 'Market Analysis' section MUST strictly contain the following subsections:
+        1. ### Target Audience: Define the primary and secondary customer segments in detail (demographics, psychographics, etc.).
+        2. ### Competitor Analysis: Identify at least 3 major competitors and their strengths/weaknesses compared to this business.
+        3. ### SWOT Analysis: Provide a complete SWOT (Strengths, Weaknesses, Opportunities, Threats) analysis for the business. Use a clean Markdown table format for the SWOT analysis.
+        
+        Also include other standard business plan elements like Executive Summary, Revenue Model, and Marketing Strategy.`;
+      }
+
+      if (selectedTool.id === 'color-palette') {
+        specialInstructions = `
+        CRITICAL: Provide the color palette as a JSON block in the 'palette' format.
+        Format:
+        \`\`\`palette
+        {
+          "palette": [
+            { "name": "Primary", "hex": "#HEXCODE", "usage": "Backgrounds" },
+            { "name": "Secondary", "hex": "#HEXCODE", "usage": "Buttons" }
+          ]
+        }
+        \`\`\`
+        Create a cohesive palette of 5-6 colors based on the user's theme. Include contrast ratios if possible.`;
       }
 
       const prompt = `You are a professional AI tool: ${selectedTool.name_en}. 
@@ -309,81 +351,141 @@ export default function AIToolbox() {
     }, [isPlaying, currentScene, scenes]);
 
     return (
-      <div className="relative w-full aspect-video bg-black rounded-[40px] overflow-hidden shadow-2xl flex flex-col group/video border-8 border-slate-900">
+      <div className="relative w-full aspect-video bg-black rounded-[48px] overflow-hidden shadow-2xl flex flex-col group/video border-8 border-slate-900/50 cinematic-grain">
+        {/* Dynamic Atmospheric Background */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`bg-${currentScene}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.3 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-0"
+          >
+            <img 
+              src={scene.image} 
+              className="w-full h-full object-cover blur-[100px] scale-150 transition-all duration-[2000ms]" 
+              alt=""
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+        </AnimatePresence>
+
         <AnimatePresence mode="wait">
           <motion.div
             key={currentScene}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative flex-1"
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="relative flex-1 z-10"
           >
             <motion.img 
-              initial={{ scale: 1.1 }}
+              initial={{ scale: 1.15 }}
               animate={{ scale: 1 }}
-              transition={{ duration: (scene.duration || 5000) / 1000 }}
+              transition={{ duration: (scene.duration || 5000) / 1000, ease: "linear" }}
               src={scene.image} 
-              className="w-full h-full object-cover opacity-60" 
+              className="w-full h-full object-cover" 
               alt={`Scene showing ${scene.text}`}
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
+            {/* Cinematic Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
             
-            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 space-y-4">
+            {/* Visual Accents */}
+            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+
+            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-20 space-y-4">
                <motion.div 
-                 initial={{ y: 20, opacity: 0 }}
+                 initial={{ y: 30, opacity: 0 }}
                  animate={{ y: 0, opacity: 1 }}
-                 transition={{ delay: 0.5 }}
-                 className="max-w-3xl"
+                 transition={{ delay: 0.4, duration: 0.8 }}
+                 className="max-w-4xl"
                >
-                  <p className="text-xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg italic">
+                  <p className="text-2xl md:text-5xl font-black text-white leading-tight drop-shadow-2xl italic text-glow tracking-tighter">
                     "{scene.text}"
                   </p>
                </motion.div>
             </div>
 
+            {/* Scene Badge */}
+            <div className="absolute top-12 left-12 flex items-center gap-6">
+               <div className="px-6 py-2 bg-black/40 backdrop-blur-2xl rounded-full border border-white/20 flex items-center gap-3">
+                  <div className="w-2 h-2 bg-brand rounded-full animate-pulse shadow-[0_0_10px_#00A651]" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-[0.4em] drop-shadow">
+                    Scene {currentScene + 1}
+                  </span>
+               </div>
+            </div>
+
             {scene.style === 'whiteboard' && (
-               <div className="absolute top-10 right-10 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
+               <div className="absolute top-12 right-12 flex items-center gap-3 px-6 py-2 bg-white/10 backdrop-blur-2xl rounded-full border border-white/20 shadow-xl">
                   <Edit className="w-4 h-4 text-white" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Whiteboard Rendering</span>
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Sketch Process</span>
+               </div>
+            )}
+            {scene.style === 'ai-motion' && (
+               <div className="absolute top-12 right-12 flex items-center gap-3 px-6 py-2 bg-brand/20 backdrop-blur-2xl rounded-full border border-brand/40 shadow-xl">
+                  <Sparkles className="w-4 h-4 text-brand animate-spin-slow" />
+                  <span className="text-[10px] font-black text-brand uppercase tracking-widest">Neural Interpolation</span>
                </div>
             )}
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute bottom-8 left-8 right-8 flex justify-between items-center z-20">
-           <div className="flex items-center gap-4">
+        {/* Cinematic Control Dock */}
+        <div className="absolute bottom-12 left-0 right-0 px-8 md:px-12 flex justify-between items-center z-30 transition-all duration-300 opacity-0 group-hover/video:opacity-100">
+           <div className="flex items-center gap-6 p-2 bg-black/40 backdrop-blur-3xl rounded-[32px] border border-white/10 shadow-2xl">
               <button 
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="w-12 h-12 bg-brand text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg shadow-brand/20"
+                className="w-16 h-16 bg-white text-black rounded-[24px] flex items-center justify-center hover:bg-brand hover:text-white active:scale-90 transition-all shadow-xl"
               >
-                 {isPlaying ? <div className="flex gap-1"><div className="w-1 h-4 bg-white rounded-full" /><div className="w-1 h-4 bg-white rounded-full" /></div> : <Play className="w-5 h-5 ml-1" />}
+                 {isPlaying ? <div className="flex gap-2"><div className="w-1.5 h-6 bg-current rounded-full" /><div className="w-1.5 h-6 bg-current rounded-full" /></div> : <Play className="w-7 h-7 ml-1 fill-current" />}
               </button>
-              <div className="px-4 py-2 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 text-white font-black text-[10px] uppercase tracking-widest">
-                 Scene {currentScene + 1} / {scenes.length}
-              </div>
-           </div>
-           {isPlaying && (
-              <div className="flex gap-1">
-                 {[1, 2, 3].map(i => (
-                    <motion.div 
-                      key={i}
-                      animate={{ height: [8, 20, 8] }}
-                      transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
-                      className="w-1 bg-brand rounded-full"
-                    />
+              
+              <div className="flex gap-2 pr-4 overflow-x-auto no-scrollbar max-w-[200px] md:max-w-md">
+                 {scenes.map((s, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setCurrentScene(idx); setIsPlaying(false); }}
+                      className={`relative min-w-[80px] h-12 rounded-xl overflow-hidden border-2 transition-all ${idx === currentScene ? 'border-brand scale-110 shadow-lg' : 'border-white/10 opacity-60 hover:opacity-100'}`}
+                    >
+                       <img src={s.image} className="w-full h-full object-cover" alt="" referrerPolicy="no-referrer" />
+                       <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          <span className="text-[10px] font-black text-white">{idx + 1}</span>
+                       </div>
+                    </button>
                  ))}
               </div>
-           )}
+           </div>
+
+           <div className="flex flex-col items-end gap-2 pr-4">
+              {isPlaying && (
+                <div className="flex gap-1.5 h-8 items-end">
+                   {[...Array(5)].map((_, i) => (
+                      <motion.div 
+                        key={i}
+                        animate={{ height: [8, 28, 12, 24, 8] }}
+                        transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
+                        className="w-1.5 bg-brand rounded-full"
+                      />
+                   ))}
+                </div>
+              )}
+              <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">AI STORYTELLER GEN-4</span>
+           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/10">
+        {/* High-Precision Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-2 bg-white/5 z-40">
            <motion.div 
              initial={{ width: 0 }}
              animate={{ width: `${((currentScene + 1) / scenes.length) * 100}%` }}
-             className="h-full bg-brand shadow-[0_0_10px_#00A651]"
-           />
+             className="h-full bg-brand relative"
+           >
+              <div className="absolute inset-0 bg-white/30 animate-pulse" />
+              <div className="absolute top-0 right-0 w-4 h-full bg-white shadow-[0_0_15px_#fff] blur-[4px]" />
+           </motion.div>
         </div>
       </div>
     );
@@ -463,33 +565,56 @@ export default function AIToolbox() {
       )}
 
       {!selectedTool && (
-        <section className="space-y-6">
+        <section className="space-y-8">
            <div className="flex items-center justify-between px-2">
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Personalized Suggestions</h3>
-              <div className="flex gap-1">
-                 {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 bg-brand/20 rounded-full" />)}
+              <div className="flex items-center gap-4">
+                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Neural Intelligence Engine</h3>
+                 <div className="h-[1px] w-12 bg-slate-200 dark:bg-slate-800" />
+              </div>
+              <div className="flex gap-1.5 h-4 items-end">
+                 {[...Array(4)].map((_, i) => (
+                    <motion.div 
+                      key={i}
+                      animate={{ height: [4, 16, 4] }}
+                      transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                      className="w-1 bg-brand/30 rounded-full"
+                    />
+                 ))}
               </div>
            </div>
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { title: 'Market Trends 2026', icon: TrendingUp, color: 'bg-emerald-500', desc: 'Predicting stock surges in BD' },
-                { title: 'Skill Roadmap', icon: Target, color: 'bg-indigo-500', desc: 'Next items for your career path' },
-                { title: 'Job Match', icon: Briefcase, color: 'bg-amber-500', desc: 'Found 3 roles matching your CV' }
+                { title: 'Predictive Trends 2026', icon: TrendingUp, color: 'bg-emerald-500', desc: 'Analyzing BD stock surges', accent: 'Neural_Node_4' },
+                { title: 'Cognitive Roadmap', icon: Target, color: 'bg-blue-600', desc: 'AI-curated career vectors', accent: 'Vector_Graph' },
+                { title: 'Semantic Matching', icon: Search, color: 'bg-indigo-500', desc: 'Found 3 parallel work nodes', accent: 'Job_Oracle_V2' }
               ].map((s, i) => (
-                <div key={i} className="relative group overflow-hidden bg-slate-900 rounded-[32px] p-6 text-white cursor-pointer hover:-translate-y-1 transition-all duration-500">
-                   <div className="relative z-10 flex flex-col h-full gap-4">
-                      <div className={`w-10 h-10 ${s.color} rounded-2xl flex items-center justify-center`}>
-                         <s.icon className="w-5 h-5 text-white" />
+                <div key={i} className="relative group overflow-hidden bg-slate-950 rounded-[40px] p-8 text-white cursor-pointer hover:-translate-y-2 transition-all duration-700 border border-white/5 shadow-2xl">
+                   <div className="relative z-20 flex flex-col h-full gap-8">
+                      <div className={`w-14 h-14 ${s.color} rounded-[20px] flex items-center justify-center shadow-lg shadow-black/40 group-hover:rotate-12 transition-transform duration-500`}>
+                         <s.icon className="w-7 h-7 text-white" />
                       </div>
-                      <div className="space-y-1">
-                         <h4 className="font-bold text-lg leading-tight">{s.title}</h4>
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.desc}</p>
+                      <div className="space-y-2">
+                         <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-pulse" />
+                            <span className="text-[9px] font-black text-brand uppercase tracking-widest leading-none">{s.accent}</span>
+                         </div>
+                         <h4 className="font-display font-bold text-2xl leading-none tracking-tighter">{s.title}</h4>
+                         <p className="text-sm font-medium text-slate-400 leading-relaxed">{s.desc}</p>
+                      </div>
+                      
+                      <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                         <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/30 group-hover:text-brand transition-colors">Access Intelligence</span>
+                         <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-brand group-hover:translate-x-1 transition-all" />
                       </div>
                    </div>
-                   <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 blur-[80px] group-hover:blur-[100px] transition-all" />
-                   <div className="absolute bottom-4 right-6 opacity-40 group-hover:opacity-100 group-hover:translate-x-2 transition-all">
-                      <ArrowRight className="w-5 h-5" />
-                   </div>
+                   
+                   {/* Background Glows */}
+                   <div className="absolute -top-16 -right-16 w-48 h-48 bg-brand/20 blur-[90px] group-hover:scale-150 transition-transform duration-700" />
+                   <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-blue-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                   
+                   {/* Grid Overlay */}
+                   <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity pointer-events-none" 
+                        style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
                 </div>
               ))}
            </div>
@@ -576,7 +701,7 @@ export default function AIToolbox() {
               </button>
 
               <AnimatePresence>
-                {(output || chartData || slidesData) && (
+                {(output || chartData || slidesData || paletteData || videoData) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -592,6 +717,30 @@ export default function AIToolbox() {
 
                     {slidesData && <SlideViewer slides={slidesData} />}
                     {videoData && <VideoViewer scenes={videoData} />}
+
+                    {paletteData && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 pb-12">
+                         {paletteData.map((color: any, idx: number) => (
+                            <motion.div 
+                              key={idx}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: idx * 0.1 }}
+                              className="group relative"
+                            >
+                               <div 
+                                 className="w-full aspect-square rounded-[32px] shadow-2xl transition-transform group-hover:scale-105 border-4 border-white dark:border-slate-800"
+                                 style={{ backgroundColor: color.hex }}
+                               />
+                               <div className="mt-3 text-center">
+                                  <p className="text-xs font-black uppercase tracking-tighter text-slate-900 dark:text-white">{color.name}</p>
+                                  <p className="text-[10px] font-mono font-medium text-slate-500 uppercase">{color.hex}</p>
+                                  <p className="text-[9px] font-bold text-brand uppercase hidden group-hover:block transition-all">{color.usage}</p>
+                               </div>
+                            </motion.div>
+                         ))}
+                      </div>
+                    )}
 
                     {chartData && (
                       <div className="h-64 w-full bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 p-4">

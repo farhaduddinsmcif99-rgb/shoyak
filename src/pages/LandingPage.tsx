@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import Logo from '../components/Logo';
 
 const MonicaBentoCard = ({ title, desc, icon: Icon, color, delay, span = "col-span-1", image }: any) => (
   <motion.div 
@@ -135,11 +136,8 @@ export default function LandingPage() {
       {/* Floating Header */}
       <nav className="fixed top-6 inset-x-0 z-[100] px-6">
         <div className="max-w-7xl mx-auto glass h-16 rounded-[24px] flex items-center justify-between px-8 border border-white/30 dark:border-white/10 shadow-xl shadow-black/5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl">
-           <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 grad-brand rounded-xl flex items-center justify-center rotate-12 group-hover:rotate-0 transition-all shadow-lg">
-                 <Fingerprint className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-display font-black text-xl tracking-tighter uppercase text-slate-900 dark:text-white">SHOYAKAI</span>
+           <Link to="/" className="group">
+              <Logo size="md" />
            </Link>
            
            <div className="hidden md:flex items-center gap-10">
@@ -355,16 +353,67 @@ export default function LandingPage() {
          </div>
       </section>
 
+      {/* Founder Section */}
+      <section className="py-40 px-6 max-w-7xl mx-auto">
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <motion.div 
+               initial={{ opacity: 0, x: -30 }}
+               whileInView={{ opacity: 1, x: 0 }}
+               transition={{ duration: 1 }}
+               className="space-y-8"
+            >
+               <div className="inline-flex items-center gap-3">
+                  <div className="h-[1px] w-12 bg-brand/30" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand">The Architect</span>
+               </div>
+               <h2 className="text-5xl md:text-7xl font-display font-medium tracking-tighter text-slate-900 dark:text-white leading-none">
+                  A Vision for <br />
+                  <span className="italic font-light text-brand">Universal Access.</span>
+               </h2>
+               <div className="space-y-6 text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                  <p>
+                     Shoyakai was founded by <span className="text-slate-900 dark:text-white font-bold group hover:text-brand cursor-pointer transition-colors">MD Tofiqur Rahman</span> with a mission to bridge the gap between complex technology and everyday productivity.
+                  </p>
+                  <p>
+                     "My goal is to ensure that no one is left behind in the AI revolution. Whether you're a student, an engineer, or an entrepreneur, Shoyakai (Shoyaki AI) provides the digital tools you need to compete on a global stage."
+                  </p>
+               </div>
+               <div className="pt-8">
+                  <Link to="/about" className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-slate-900 dark:text-white hover:text-brand transition-colors">
+                     Read the full story <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                  </Link>
+               </div>
+            </motion.div>
+
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.9 }}
+               whileInView={{ opacity: 1, scale: 1 }}
+               transition={{ duration: 1 }}
+               className="relative"
+            >
+               <div className="absolute inset-0 bg-brand/10 blur-[130px] rounded-full" />
+               <div className="relative aspect-[4/5] bg-slate-100 dark:bg-slate-900 rounded-[60px] overflow-hidden border border-slate-200 dark:border-white/5 shadow-2xl group">
+                  <img 
+                    src="https://images.unsplash.com/photo-1549416878-b9ca95e26903?auto=format&fit=crop&q=80&w=800" 
+                    alt="MD Tofiqur Rahman" 
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000" 
+                  />
+                  <div className="absolute inset-x-0 bottom-0 p-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                     <p className="text-white font-display font-bold text-3xl tracking-tight">MD Tofiqur Rahman</p>
+                     <p className="text-brand font-black text-[10px] uppercase tracking-[0.4em] mt-2">Founder of Shoyakai</p>
+                  </div>
+               </div>
+            </motion.div>
+         </div>
+      </section>
+
       {/* Premium Footer */}
       <footer className="bg-slate-50 dark:bg-slate-950 pt-40 pb-20 px-6 border-t border-slate-100 dark:border-white/5">
          <div className="max-w-7xl mx-auto space-y-40">
             <div className="flex flex-col lg:flex-row justify-between gap-32">
                <div className="space-y-12 max-w-md">
-                   <Link to="/" className="flex items-center gap-4 group">
-                    <div className="w-14 h-14 grad-brand rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
-                       <Fingerprint className="w-8 h-8 text-white" />
-                    </div>
-                    <span className="font-display font-black text-3xl tracking-tighter uppercase text-slate-900 dark:text-white">SHOYAKAI</span>
+                   <Link to="/" className="group">
+                      <Logo size="lg" />
                   </Link>
                   <p className="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                     Designed for creators, engineers, and digital explorers. We're building the future of the web, one tool at a time.

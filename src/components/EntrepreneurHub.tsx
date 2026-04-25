@@ -43,7 +43,39 @@ export default function EntrepreneurHub() {
   const [location, setLocation] = useState('all');
   const [loading, setLoading] = useState(false);
   const [ideas, setIdeas] = useState<BusinessIdea[]>([]);
+  const [savedIdeas, setSavedIdeas] = useState<BusinessIdea[]>([]);
   const [selectedIdea, setSelectedIdea] = useState<BusinessIdea | null>(null);
+
+  // Load saved ideas on mount
+  React.useEffect(() => {
+    const saved = localStorage.getItem('shoyakai_saved_ideas');
+    if (saved) {
+      try {
+        setSavedIdeas(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse saved ideas', e);
+      }
+    }
+  }, []);
+
+  // Save to localStorage whenever savedIdeas changes
+  React.useEffect(() => {
+    localStorage.setItem('shoyakai_saved_ideas', JSON.stringify(savedIdeas));
+  }, [savedIdeas]);
+
+  const toggleSave = (idea: BusinessIdea, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    const isSaved = savedIdeas.some(i => i.id === idea.id);
+    if (isSaved) {
+      setSavedIdeas(savedIdeas.filter(i => i.id !== idea.id));
+    } else {
+      setSavedIdeas([...savedIdeas, idea]);
+    }
+  };
+
+  const isIdeaSaved = (id: number) => savedIdeas.some(i => i.id === id);
 
   // Profit Calculator State
   const [calcInvestment, setCalcInvestment] = useState(100000);
@@ -209,6 +241,14 @@ export default function EntrepreneurHub() {
                      <div className="absolute top-0 right-0 p-8 text-slate-100 dark:text-slate-800 -z-10">
                         <TrendingUp className="w-24 h-24 rotate-12" />
                      </div>
+                     <button 
+                        onClick={(e) => toggleSave(idea, e)}
+                        className={`absolute top-4 right-4 p-3 rounded-xl transition-all z-20 ${
+                           isIdeaSaved(idea.id) ? 'bg-brand text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                        }`}
+                     >
+                        <BookmarkPlus className={`w-5 h-5 ${isIdeaSaved(idea.id) ? 'fill-current' : ''}`} />
+                     </button>
                      <div className="space-y-6">
                         <div className="space-y-2">
                            <span className="px-3 py-1 bg-brand/10 text-brand text-[8px] font-black uppercase tracking-widest rounded-full">{idea.risk_detail}</span>
@@ -299,6 +339,83 @@ export default function EntrepreneurHub() {
               </div>
            </motion.div>
         )}
+
+        {activeTab === 'saved' && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: -10 }} 
+            className="space-y-8"
+          >
+             <div className="bg-white dark:bg-slate-900 p-8 rounded-[48px] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="space-y-1 text-center md:text-left">
+                   <h2 className="text-2xl font-black italic tracking-tighter uppercase">{lang === 'bn' ? 'সংরক্ষিত আইডিয়া' : 'Saved Blueprints'}</h2>
+                   <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">{savedIdeas.length} {lang === 'bn' ? 'টি আইডিয়া সংরক্ষিত' : 'ideas saved'}</p>
+                </div>
+                <div className="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center text-brand">
+                   <BookmarkPlus className="w-7 h-7" />
+                </div>
+             </div>
+
+             {savedIdeas.length === 0 ? (
+                <div className="p-20 flex flex-col items-center justify-center gap-6 glass rounded-[56px] border-dashed border-2 border-slate-200 dark:border-slate-800">
+                   <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-[32px] flex items-center justify-center text-slate-300">
+                      <Lightbulb className="w-10 h-10" />
+                   </div>
+                   <div className="text-center space-y-2">
+                      <p className="text-xl font-bold text-slate-400">{lang === 'bn' ? 'কোন সংরক্ষিত আইডিয়া নেই' : 'No saved blueprints yet'}</p>
+                      <button 
+                         onClick={() => setActiveTab('generate')}
+                         className="text-brand text-xs font-black uppercase tracking-widest hover:underline"
+                      >
+                         {lang === 'bn' ? 'আইডিয়া তৈরি করুন' : 'Generate some ideas'}
+                      </button>
+                   </div>
+                </div>
+             ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {savedIdeas.map((idea) => (
+                      <motion.div 
+                         key={`saved-${idea.id}`}
+                         layoutId={`idea-${idea.id}`}
+                         onClick={() => setSelectedIdea(idea)}
+                         className="group bento-card p-8 cursor-pointer relative overflow-hidden"
+                      >
+                         <div className="absolute top-0 right-0 p-8 text-slate-100 dark:text-slate-800 -z-10">
+                            <TrendingUp className="w-24 h-24 rotate-12" />
+                         </div>
+                         <button 
+                            onClick={(e) => toggleSave(idea, e)}
+                            className="absolute top-4 right-4 p-3 rounded-xl bg-brand text-white z-20"
+                         >
+                            <BookmarkPlus className="w-5 h-5 fill-current" />
+                         </button>
+                         <div className="space-y-6">
+                            <div className="space-y-2">
+                               <span className="px-3 py-1 bg-brand/10 text-brand text-[8px] font-black uppercase tracking-widest rounded-full">{idea.risk_detail}</span>
+                               <h3 className="text-3xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? idea.name_bn : idea.name_en}</h3>
+                               <p className="text-slate-400 text-sm font-bold">{idea.income_en}</p>
+                            </div>
+                            <div className="flex gap-4">
+                               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
+                                  <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Investment</p>
+                                  <p className="text-sm font-black">{idea.investment}</p>
+                               </div>
+                               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
+                                  <p className="text-[8px] font-black uppercase text-slate-400 mb-1">ROI Starts</p>
+                                  <p className="text-sm font-black">{idea.profit_timeline}</p>
+                               </div>
+                            </div>
+                            <button className="flex items-center gap-2 text-brand text-[10px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-all">
+                               Explore Blueprint <ArrowRight className="w-4 h-4" />
+                            </button>
+                         </div>
+                      </motion.div>
+                   ))}
+                </div>
+             )}
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Idea Blueprint Modal */}
@@ -321,9 +438,19 @@ export default function EntrepreneurHub() {
 
                 <div className="space-y-12">
                    <header className="space-y-4">
-                      <div className="flex items-center gap-3">
-                         <span className="px-4 py-1.5 bg-brand/10 text-brand text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.sector}</span>
-                         <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.location}</span>
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-3">
+                            <span className="px-4 py-1.5 bg-brand/10 text-brand text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.sector}</span>
+                            <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.location}</span>
+                         </div>
+                         <button 
+                            onClick={() => toggleSave(selectedIdea)}
+                            className={`p-4 rounded-2xl transition-all ${
+                               isIdeaSaved(selectedIdea.id) ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
+                            }`}
+                         >
+                            <BookmarkPlus className={`w-6 h-6 ${isIdeaSaved(selectedIdea.id) ? 'fill-current' : ''}`} />
+                         </button>
                       </div>
                       <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? selectedIdea.name_bn : selectedIdea.name_en}</h2>
                    </header>
