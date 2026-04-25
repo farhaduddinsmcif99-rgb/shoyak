@@ -20,8 +20,18 @@ export default function About() {
     <div className="space-y-20 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-700">
       <SEO 
         title="About Shoyakai | Mission, Values & Founder's Vision" 
-        description="Discover the mission of Shoyakai (Shoyaki AI), lead by MD Tofiqur Rahaman. We democratize Artificial Intelligence for everyone in Bangladesh and globally through free, high-performance digital tools."
-        keywords="about shoyakai, MD Tofiqur Rahaman, Shoyaki AI, free AI tools Bangladesh, digital productivity mission, tech innovation Dhaka, democratizing AI"
+        description="Discover the mission of Shoyakai (Shoyaki AI), led by MD Tofiqur Rahaman. We are democratizing Artificial Intelligence through free, high-performance digital tools for creators and professionals globally."
+        keywords="about shoyakai, MD Tofiqur Rahaman, Shoyaki AI mission, free AI tools, technology democratization, Shoyakai Labs Dhaka"
+        type="WebPage"
+        schemaData={{
+          "@type": "AboutPage",
+          "mainEntity": {
+            "@type": "Person",
+            "name": "MD Tofiqur Rahaman",
+            "jobTitle": "Founder & Lead Architect",
+            "description": "Visionary leader behind Shoyakai (Shoyaki AI), dedicated to democratizing technology access."
+          }
+        }}
       />
 
       <section className="text-center space-y-8 pt-10">
@@ -99,8 +109,8 @@ export default function About() {
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
                  src="/founder.png" 
-                 alt="MD Tofiqur Rahaman" 
-                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+                 alt="MD Tofiqur Rahaman - Founder of Shoyakai (Shoyaki AI)" 
+                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 bg-slate-800" 
                  referrerPolicy="no-referrer"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
@@ -131,7 +141,7 @@ export default function About() {
                <div className="pt-6 relative aspect-video rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl group">
                   <img 
                     src="/lead-architect.png" 
-                    alt="MD Tofiqur Rahaman - Lead Architect" 
+                    alt="MD Tofiqur Rahaman working as Lead Architect at Shoyakai Labs" 
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" 
                     referrerPolicy="no-referrer"
                   />
@@ -173,7 +183,7 @@ export default function About() {
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-video rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
                  src="/team-collaboration.png" 
-                 alt="Shoyakai Collaborative Session" 
+                 alt="Shoyakai Team Collaboration Session in Dhaka - Building AI Tools" 
                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
                  referrerPolicy="no-referrer"
                />

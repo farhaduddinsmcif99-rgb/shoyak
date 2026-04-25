@@ -27,7 +27,20 @@ export default function ToolDetail() {
       <SEO 
         title={`${name} – Free Online AI Tool | Shoyakai`}
         description={description}
-        keywords={`${name}, free online tool, ai productivity, shoyakai tools`}
+        keywords={`${name}, free online tool, ai productivity, shoyakai tools, shoyaki ai ${tool.category}`}
+        type="SoftwareApplication"
+        schemaData={{
+          "@type": "SoftwareApplication",
+          "name": name,
+          "description": description,
+          "applicationCategory": tool.category,
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }}
       />
 
       <Link to="/tools-list" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand transition-colors">

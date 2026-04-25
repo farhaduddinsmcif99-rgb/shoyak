@@ -36,9 +36,19 @@ export default function Blog() {
   return (
     <div className="space-y-16 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-700 pt-10">
       <SEO 
-        title="Shoyakai Blog | Tips for Productivity & Online Tools" 
-        description="Stay updated with the latest in the world of productivity, online tool guides, and simple web app tutorials from the Shoyakai team."
-        keywords="productivity blog, online tools guide, web app tutorials, shoyakai blog"
+        title="Shoyakai Blog | Advanced AI Insights & Productivity Guides" 
+        description="Stay ahead with Shoyakai's guide to AI productivity. Discover how Shoyaki AI is transforming workflows in Bangladesh and globally through expert insights and tutorials."
+        keywords="productivity blog, AI guides, Shoyakai news, Shoyaki AI tutorial, digital productivity Bangladesh, future of AI tools"
+        type="WebPage"
+        schemaData={{
+          "@type": "Blog",
+          "name": "Shoyakai AI Productivity Blog",
+          "description": "Expert insights into AI, digital tools, and personal productivity.",
+          "author": {
+            "@type": "Organization",
+            "name": "Shoyakai Labs"
+          }
+        }}
       />
 
       <header className="space-y-6 text-center max-w-3xl mx-auto">

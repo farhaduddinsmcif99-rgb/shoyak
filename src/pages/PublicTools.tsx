@@ -25,9 +25,17 @@ export default function PublicTools() {
   return (
     <div className="space-y-12 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-700 pt-10">
       <SEO 
-        title="Free Online Tools Directory | Shoyakai" 
-        description="Browse our complete list of free online tools, from content generators to business utilities. Fast, simple, and no login required for browsing."
-        keywords="free tool directory, online utility list, web app collection"
+        title="AI Tools Directory | 100+ Free Online Utility Apps | Shoyakai" 
+        description="Explore Shoyakai's comprehensive directory of 100+ free AI-powered tools. From SEO analyzers to content generators and business utilities, find everything you need in one ecosystem."
+        keywords="free AI tools, shoyakai tool list, online productivity apps, shoyaki ai directory, free web utilities Bangladesh"
+        type="WebApplication"
+        schemaData={{
+          "@type": "WebApplication",
+          "name": "Shoyakai AI Tool Directory",
+          "description": "A comprehensive collection of 100+ specialized AI tools for productivity.",
+          "applicationCategory": "Utilities",
+          "operatingSystem": "Web"
+        }}
       />
 
       <header className="space-y-8 max-w-4xl">

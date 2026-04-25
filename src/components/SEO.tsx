@@ -7,6 +7,8 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   url?: string;
+  type?: 'WebApplication' | 'Article' | 'SoftwareApplication' | 'WebPage';
+  schemaData?: any;
 }
 
 export default function SEO({ 
@@ -14,16 +16,18 @@ export default function SEO({
   description, 
   keywords, 
   image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
-  url = 'https://shoyakai.farhaduddinsmcif99.workers.dev/' 
+  url = 'https://shoyakai.farhaduddinsmcif99.workers.dev/',
+  type = 'WebApplication',
+  schemaData
 }: SEOProps) {
   const fullTitle = title ? `${title} | Shoyakai (Shoyaki AI)` : 'Shoyakai – Premium Shoyaki AI Tools & Ecosystem';
   const fullDescription = description || 'Shoyakai (Shoyaki AI) is an all-in-one productivity powerhouse. Access advanced AI companions, visual tools, and professional utilities for free.';
   const fullKeywords = keywords ? `${keywords}, shoyaki ai, shoyakai, ai tools, shoyakai labs` : 'shoyakai, shoyaki ai, ai assistant, productivity ecosystem, professional web tools, ai workspace';
   
-  const jsonLd = {
+  const defaultSchema = {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Shoyakai AI",
+    "@type": type,
+    "name": title || "Shoyakai AI",
     "alternateName": "Shoyaki AI",
     "operatingSystem": "All",
     "applicationCategory": "ProductivityApplication",
@@ -38,7 +42,8 @@ export default function SEO({
     "image": image,
     "author": {
       "@type": "Organization",
-      "name": "Shoyakai Labs"
+      "name": "Shoyakai Labs",
+      "url": "https://shoyakai.farhaduddinsmcif99.workers.dev/"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -46,6 +51,8 @@ export default function SEO({
       "ratingCount": "2480"
     }
   };
+
+  const finalSchema = schemaData ? { "@context": "https://schema.org", ...schemaData } : defaultSchema;
 
   return (
     <Helmet>
@@ -75,7 +82,7 @@ export default function SEO({
 
       {/* JSON-LD Structured Data */}
       <script type="application/ld+json">
-        {JSON.stringify(jsonLd)}
+        {JSON.stringify(finalSchema)}
       </script>
     </Helmet>
   );

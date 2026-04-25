@@ -8,9 +8,16 @@ export default function KrishiLanding() {
   return (
     <div className="space-y-12 pb-20">
       <SEO 
-        title="Krishi AI for Farmers in Bangladesh" 
-        description="Empowering Bangladeshi farmers with AI-driven crop diagnostics, futuristic market price predictions, and weather-smart irrigation tips."
-        keywords="Krishi AI, Bangladesh Farming AI, Crop Doctor BD, Farmer Market Price, Smart Agriculture Bangladesh"
+        title="Krishi AI: Advanced Agricultural Intelligence for Bangladesh" 
+        description="Empowering Bangladeshi farmers with Krishi AI. Get real-time crop disease diagnostics, market price predictions for rice and jute, and localized weather alerts to increase your harvest."
+        keywords="Krishi AI, Bangladesh agriculture AI, smart farming BD, crop disease detector, market price prediction Bangladesh, Shoyakai Krishi"
+        type="WebPage"
+        schemaData={{
+          "@type": "WebPage",
+          "name": "Krishi AI - Smart Agriculture Bangladesh",
+          "description": "AI-driven agricultural intelligence platform for Bangladeshi farmers.",
+          "relatedLink": "https://shoyakai.farhaduddinsmcif99.workers.dev/"
+        }}
       />
       
       {/* Hero Section */}

@@ -129,8 +129,27 @@ export default function LandingPage() {
     <main ref={containerRef} className="bg-surface dark:bg-surface-dark overflow-hidden selection:bg-brand/30">
       <SEO 
         title="Shoyakai – Premium All-in-One AI Productivity Platform" 
-        description="Experience the future of productivity with Shoyakai. A unified suite of AI assistants, text utilities, and visual tools designed for professional workflows."
-        keywords="AI assistant, productivity tools, online tools, Shoyakai, GPT-4 productivity, free web apps"
+        description="Experience the future of productivity with Shoyakai. A unified ecosystem of AI companions, advanced text analysis, and professional visual tools powered by Gemini 1.5 & Claude 3.5."
+        keywords="AI assistant, Shoyakai, Shoyaki AI, productivity ecosystem, GPT-4 tools, free web utilities, AI tools for creators"
+        type="WebApplication"
+        schemaData={{
+          "@type": "WebApplication",
+          "name": "Shoyakai AI Ecosystem",
+          "description": "Premium All-in-One AI Productivity Platform for professional workflows.",
+          "applicationCategory": "Productivity",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "AI Writing Assistants",
+            "Advanced Image Processing",
+            "SEO & Content Optimization",
+            "100+ Professional Utilities"
+          ]
+        }}
       />
 
       {/* Floating Header */}
@@ -395,8 +414,8 @@ export default function LandingPage() {
                <div className="relative aspect-[4/5] bg-slate-100 dark:bg-slate-900 rounded-[60px] overflow-hidden border border-slate-200 dark:border-white/5 shadow-2xl group">
                   <img 
                     src="/founder.png" 
-                    alt="MD Tofiqur Rahaman" 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000" 
+                    alt="MD Tofiqur Rahaman - Founder and Visionary of Shoyakai AI Ecosystem" 
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 bg-slate-800" 
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-x-0 bottom-0 p-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
