@@ -5,7 +5,7 @@ import { Network, ArrowRight, Zap, BookOpen, User, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
 
-const domain = "shoyakai.2com.workers.dev";
+const domain = "shoyakai.farhaduddinsmcif99.workers.dev";
 
 export default function Sitemap() {
   return (
@@ -76,7 +76,7 @@ export default function Sitemap() {
 
       <footer className="pt-12 border-t border-slate-100">
          <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">
-            Last Updated: April 24, 2026
+            Last Updated: April 25, 2026
          </p>
       </footer>
     </div>

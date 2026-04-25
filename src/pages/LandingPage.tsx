@@ -372,7 +372,7 @@ export default function LandingPage() {
                </h2>
                <div className="space-y-6 text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                   <p>
-                     Shoyakai was founded by <span className="text-slate-900 dark:text-white font-bold group hover:text-brand cursor-pointer transition-colors">MD Tofiqur Rahman</span> with a mission to bridge the gap between complex technology and everyday productivity.
+                     Shoyakai was founded by <span className="text-slate-900 dark:text-white font-bold group hover:text-brand cursor-pointer transition-colors">MD Tofiqur Rahaman</span> with a mission to bridge the gap between complex technology and everyday productivity.
                   </p>
                   <p>
                      "My goal is to ensure that no one is left behind in the AI revolution. Whether you're a student, an engineer, or an entrepreneur, Shoyakai (Shoyaki AI) provides the digital tools you need to compete on a global stage."
@@ -394,13 +394,13 @@ export default function LandingPage() {
                <div className="absolute inset-0 bg-brand/10 blur-[130px] rounded-full" />
                <div className="relative aspect-[4/5] bg-slate-100 dark:bg-slate-900 rounded-[60px] overflow-hidden border border-slate-200 dark:border-white/5 shadow-2xl group">
                   <img 
-                    src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/a9c1d-1745574046.png" 
-                    alt="MD Tofiqur Rahman" 
+                    src="/founder.png" 
+                    alt="MD Tofiqur Rahaman" 
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000" 
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-x-0 bottom-0 p-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                     <p className="text-white font-display font-bold text-3xl tracking-tight">MD Tofiqur Rahman</p>
+                     <p className="text-white font-display font-bold text-3xl tracking-tight">MD Tofiqur Rahaman</p>
                      <p className="text-brand font-black text-[10px] uppercase tracking-[0.4em] mt-2">Founder of Shoyakai</p>
                   </div>
                </div>

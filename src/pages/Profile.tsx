@@ -163,7 +163,7 @@ export default function Profile() {
       <div className="text-center pb-8 flex flex-col items-center gap-2">
         <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.4em]">Shayok.AI • Version 2.4.0</p>
         <p className="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-           © ALL COPYRIGHT GOES TO MD TOFIQUR RAHMAN
+           © ALL COPYRIGHT GOES TO MD TOFIQUR RAHAMAN
         </p>
       </div>
     </div>

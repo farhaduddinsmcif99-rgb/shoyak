@@ -14,7 +14,7 @@ export default function SEO({
   description, 
   keywords, 
   image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
-  url = 'https://shoyakai.2com.workers.dev/' 
+  url = 'https://shoyakai.farhaduddinsmcif99.workers.dev/' 
 }: SEOProps) {
   const fullTitle = title ? `${title} | Shoyakai (Shoyaki AI)` : 'Shoyakai – Premium Shoyaki AI Tools & Ecosystem';
   const fullDescription = description || 'Shoyakai (Shoyaki AI) is an all-in-one productivity powerhouse. Access advanced AI companions, visual tools, and professional utilities for free.';

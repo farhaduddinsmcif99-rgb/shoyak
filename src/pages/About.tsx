@@ -20,8 +20,8 @@ export default function About() {
     <div className="space-y-20 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-700">
       <SEO 
         title="About Shoyakai | Mission, Values & Founder's Vision" 
-        description="Discover the mission of Shoyakai (Shoyaki AI), lead by MD Tofiqur Rahman. We democratize Artificial Intelligence for everyone in Bangladesh and globally through free, high-performance digital tools."
-        keywords="about shoyakai, MD Tofiqur Rahman, Shoyaki AI, free AI tools Bangladesh, digital productivity mission, tech innovation Dhaka, democratizing AI"
+        description="Discover the mission of Shoyakai (Shoyaki AI), lead by MD Tofiqur Rahaman. We democratize Artificial Intelligence for everyone in Bangladesh and globally through free, high-performance digital tools."
+        keywords="about shoyakai, MD Tofiqur Rahaman, Shoyaki AI, free AI tools Bangladesh, digital productivity mission, tech innovation Dhaka, democratizing AI"
       />
 
       <section className="text-center space-y-8 pt-10">
@@ -98,14 +98,14 @@ export default function About() {
             <div className="absolute inset-0 bg-brand/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
-                 src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/b4e2f-1745574046.png" 
-                 alt="MD Tofiqur Rahman" 
+                 src="/founder.png" 
+                 alt="MD Tofiqur Rahaman" 
                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
                  referrerPolicy="no-referrer"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                <div className="absolute bottom-10 left-10 space-y-2">
-                  <p className="text-white font-black text-2xl tracking-tighter uppercase italic">MD Tofiqur Rahman</p>
+                  <p className="text-white font-black text-2xl tracking-tighter uppercase italic">MD Tofiqur Rahaman</p>
                   <p className="text-brand font-black text-[10px] tracking-[0.3em] uppercase">Founder & Architect</p>
                </div>
             </div>
@@ -116,11 +116,11 @@ export default function About() {
                <span className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">The Visionary</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-display italic tracking-tighter leading-none">
-               Meet MD <span className="text-brand">Tofiqur</span> Rahman.
+               Meet <span className="text-brand">Tofiqur</span> Rahaman.
             </h2>
             <div className="space-y-6 text-slate-500 dark:text-slate-400 font-medium text-lg leading-relaxed">
                <p>
-                  MD Tofiqur Rahman is the visionary founder behind Shoyakai. With a deep passion for technology and its potential to solve real-world problems, he set out to build an ecosystem that makes advanced AI and productivity tools accessible to everyone in Bangladesh and beyond.
+                  MD Tofiqur Rahaman is the visionary founder behind Shoyakai. With a deep passion for technology and its potential to solve real-world problems, he set out to build an ecosystem that makes advanced AI and productivity tools accessible to everyone in Bangladesh and beyond.
                </p>
                <p>
                   His vision for Shoyakai (Shoyaki AI) is to create a "Neural Playground"—a space where complexity is stripped away, leaving only the power of intelligence. He believes that by providing these tools for free, we can unlock the latent potential of millions of talented individuals who are currently under-served by the global tech economy.
@@ -130,8 +130,8 @@ export default function About() {
                </p>
                <div className="pt-6 relative aspect-video rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl group">
                   <img 
-                    src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/c8a3d-1745574046.png" 
-                    alt="MD Tofiqur Rahman - Lead Architect" 
+                    src="/lead-architect.png" 
+                    alt="MD Tofiqur Rahaman - Lead Architect" 
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" 
                     referrerPolicy="no-referrer"
                   />
@@ -172,7 +172,7 @@ export default function About() {
             <div className="absolute inset-0 bg-blue-500/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-video rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
-                 src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/d1f9b-1745574046.png" 
+                 src="/team-collaboration.png" 
                  alt="Shoyakai Collaborative Session" 
                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
                  referrerPolicy="no-referrer"
