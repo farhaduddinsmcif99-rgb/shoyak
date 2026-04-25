@@ -38,8 +38,12 @@ export default function KrishiAI() {
       />
       {/* Agriculture Header */}
       <section className="bg-green-600 rounded-[40px] p-8 text-white relative overflow-hidden">
-        <div className="absolute right-0 bottom-0 opacity-10 scale-150">
-            <Sprout className="w-64 h-64" />
+        <div className="absolute right-0 top-0 w-full h-full opacity-20">
+            <img 
+               src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800" 
+               className="w-full h-full object-cover"
+               referrerPolicy="no-referrer"
+            />
         </div>
         <div className="relative z-10 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest leading-none border border-white/10">

@@ -310,9 +310,13 @@ export default function AIToolbox() {
                       <h2 className="text-3xl md:text-5xl font-bold">{slide.title}</h2>
                       <p className="text-lg md:text-xl text-slate-400 leading-relaxed">{slide.content}</p>
                     </div>
-                    <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl flex items-center justify-center bg-slate-800">
-                      <Layout className="w-16 h-16 text-slate-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                    <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl">
+                       <img 
+                         src={slide.imageUrl || "https://picsum.photos/seed/slide/800/600"} 
+                         className="w-full h-full object-cover" 
+                         referrerPolicy="no-referrer"
+                       />
+                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
                     </div>
                   </div>
                 )}
@@ -436,8 +440,12 @@ export default function AIToolbox() {
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 className="relative flex-1 z-10"
               >
-                <div className="w-full h-full bg-slate-900 flex items-center justify-center">
-                   <Film className="w-32 h-32 text-slate-800" />
+                <div className="w-full h-full">
+                   <img 
+                     src={scene.image || "https://picsum.photos/seed/scene/800/600"} 
+                     className="w-full h-full object-cover" 
+                     referrerPolicy="no-referrer"
+                   />
                 </div>
                 {/* Cinematic Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
@@ -501,9 +509,13 @@ export default function AIToolbox() {
                           onClick={() => { setCurrentScene(idx); setIsPlaying(false); }}
                           className={`relative min-w-[80px] h-12 rounded-xl overflow-hidden border-2 transition-all ${idx === currentScene ? 'border-brand scale-110 shadow-lg' : 'border-white/10 opacity-60 hover:opacity-100'}`}
                         >
-                           <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                         <Film className="w-12 h-12 text-slate-700" />
-                      </div>
+                           <div className="w-full h-full">
+                           <img 
+                             src={s.image || "https://picsum.photos/seed/scene/200/150"} 
+                             className="w-full h-full object-cover" 
+                             referrerPolicy="no-referrer"
+                           />
+                        </div>
                            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                               <span className="text-[10px] font-black text-white">{idx + 1}</span>
                            </div>

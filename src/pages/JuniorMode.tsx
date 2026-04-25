@@ -346,13 +346,17 @@ const VideoCreator = ({ onComplete }: { onComplete: (p: number) => void }) => {
                      initial={{ opacity: 0 }}
                      animate={{ opacity: 1 }}
                      exit={{ opacity: 0 }}
-                     className="relative h-full bg-slate-800 flex items-center justify-center text-indigo-400"
-                   >
-                       <Video className="w-16 h-16 opacity-20" />
-                       <div className="absolute inset-x-0 bottom-0 p-8 bg-black/60 backdrop-blur-md text-white text-center">
-                          <p className="text-xl font-black italic">"{scenes[currentScene].text}"</p>
-                       </div>
-                   </motion.div>
+                     className="relative h-full"
+                    >
+                        <img 
+                          src={scenes[currentScene].image} 
+                          className="w-full h-full object-cover" 
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 p-8 bg-black/60 backdrop-blur-md text-white text-center">
+                           <p className="text-xl font-black italic">"{scenes[currentScene].text}"</p>
+                        </div>
+                    </motion.div>
                 </AnimatePresence>
                 <div className="absolute top-4 right-4 px-4 py-2 bg-indigo-500 text-white text-[10px] font-black uppercase rounded-full">
                    Scene {currentScene + 1}/4
@@ -894,8 +898,12 @@ export default function JuniorMode() {
                  <p className="text-xl font-medium text-slate-500 leading-loose text-center">
                     While everyone else was afraid of the storm, Nilu decided to help the other birds find a safe shelter. Nilu knew that being brave wasn't about not being afraid, but about helping others even when you are.
                  </p>
-                 <div className="h-64 bg-slate-50 rounded-[64px] border-4 border-dashed border-slate-200 flex items-center justify-center text-slate-300 italic font-black uppercase tracking-widest">
-                    [ Interactive Story Illustration ]
+                 <div className="aspect-video bg-slate-200 rounded-[40px] overflow-hidden">
+                    <img 
+                      src={`https://picsum.photos/seed/story${currentScene}/800/400`} 
+                      className="w-full h-full object-cover" 
+                      referrerPolicy="no-referrer"
+                    />
                  </div>
                  <button className="w-full py-8 bg-blue-600 text-white rounded-[48px] text-2xl font-black uppercase tracking-widest shadow-2xl shadow-blue-500/40">
                     NEXT CHAPTER

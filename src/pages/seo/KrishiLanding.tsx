@@ -123,11 +123,13 @@ export default function KrishiLanding() {
             ))}
           </div>
         </div>
-        <div className="flex-1 w-full aspect-square rounded-[40px] overflow-hidden border-8 border-slate-800 shadow-2xl relative bg-slate-800 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4 text-emerald-500/20">
-             <Sprout className="w-32 h-32" />
-             <span className="text-[10px] font-black uppercase tracking-[0.4em]">Krishi Intelligence Base</span>
-          </div>
+        <div className="flex-1 w-full aspect-square rounded-[40px] overflow-hidden border-8 border-slate-800 shadow-2xl relative">
+          <img 
+            src="/krishi-intelligence.png" 
+            alt="Krishi Intelligence Base Map" 
+            className="w-full h-full object-cover grayscale opacity-60" 
+            referrerPolicy="no-referrer"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
         </div>
       </section>

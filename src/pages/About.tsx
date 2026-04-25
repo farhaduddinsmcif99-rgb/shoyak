@@ -106,11 +106,13 @@ export default function About() {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center max-w-7xl mx-auto py-20 border-t border-slate-100 dark:border-white/5">
          <div className="relative group">
             <div className="absolute inset-0 bg-brand/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
-            <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4 text-slate-300 dark:text-slate-700">
-                   <User className="w-24 h-24" />
-                   <p className="text-[10px] font-black uppercase tracking-widest opacity-50">Visual Placeholder</p>
-                </div>
+            <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+               <img 
+                 src="/founder.png" 
+                 alt="MD Tofiqur Rahaman - Founder of Shoyakai (Shoyaki AI)" 
+                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 bg-slate-800" 
+                 referrerPolicy="no-referrer"
+               />
                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                <div className="absolute bottom-10 left-10 space-y-2">
                   <p className="text-white font-black text-2xl tracking-tighter uppercase italic">MD Tofiqur Rahaman</p>
@@ -136,11 +138,13 @@ export default function About() {
                <p>
                   "I believe that the next wave of innovation will come from those who have the tools to build. Shoyakai is my contribution to that future—providing the digital infrastructure for the next generation of thinkers, creators, and entrepreneurs in Dhaka, Chittagong, and globally."
                </p>
-               <div className="pt-6 relative aspect-video rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl group bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-                  <div className="flex flex-col items-center gap-3 text-slate-300 dark:text-slate-700">
-                     <Target className="w-12 h-12" />
-                     <p className="text-[8px] font-black uppercase tracking-[0.3em] opacity-40">Architectural Diagram Placeholder</p>
-                  </div>
+               <div className="pt-6 relative aspect-video rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl group">
+                  <img 
+                    src="/lead-architect.png" 
+                    alt="MD Tofiqur Rahaman working as Lead Architect at Shoyakai Labs" 
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" 
+                    referrerPolicy="no-referrer"
+                  />
                   <div className="absolute top-4 right-4 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
                      <span className="text-[9px] font-black text-white uppercase tracking-widest">Architectural Focus</span>
                   </div>
@@ -176,11 +180,13 @@ export default function About() {
          </div>
          <div className="order-1 lg:order-2 relative group">
             <div className="absolute inset-0 bg-blue-500/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
-            <div className="relative bg-slate-100 dark:bg-slate-800 aspect-video rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4 text-blue-300 dark:text-blue-900/50">
-                   <Users className="w-16 h-16" />
-                   <p className="text-[10px] font-black uppercase tracking-widest opacity-50">Team Collaboration Placeholder</p>
-                </div>
+            <div className="relative bg-slate-100 dark:bg-slate-800 aspect-video rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+               <img 
+                 src="/team-collaboration.png" 
+                 alt="Shoyakai Team Collaboration Session in Dhaka - Building AI Tools" 
+                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+                 referrerPolicy="no-referrer"
+               />
             </div>
          </div>
       </section>

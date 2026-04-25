@@ -238,17 +238,14 @@ export default function Agriculture() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-6"
                >
-                 <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 rounded-[32px] overflow-hidden relative flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-2 text-slate-300 dark:text-slate-600">
-                       <Sprout className="w-12 h-12" />
-                       <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Plant Scan Analysis</span>
-                    </div>
-                    <div className="absolute inset-0 bg-red-900/10 text-white flex flex-col justify-end p-6">
+                 <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 rounded-[32px] overflow-hidden relative">
+                    <img src="/agriculture-hero.png" className="w-full h-full object-cover grayscale-[0.5]" />
+                    <div className="absolute inset-0 bg-red-900/40 text-white flex flex-col justify-end p-6">
                        <div className="flex items-center gap-2 mb-1">
-                          <AlertCircle className="w-4 h-4 text-red-500" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Detected Match: {diseaseResult.confidence}%</span>
+                          <AlertCircle className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Detected Match: {diseaseResult.confidence}%</span>
                        </div>
-                       <h4 className="text-2xl font-black text-slate-900 dark:text-white">{diseaseResult.name}</h4>
+                       <h4 className="text-2xl font-black">{diseaseResult.name}</h4>
                     </div>
                  </div>
 

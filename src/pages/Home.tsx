@@ -46,9 +46,13 @@ export default function Home() {
               <motion.div 
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="w-12 h-12 rounded-full overflow-hidden border-2 border-brand ring-4 ring-brand/10 shadow-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-brand"
+                className="w-12 h-12 rounded-full overflow-hidden border-2 border-brand ring-4 ring-brand/10 shadow-xl"
               >
-                <User className="w-6 h-6" />
+                <img 
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Rahim'}`} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover"
+                />
               </motion.div>
               <div className="space-y-0.5">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{greeting}</p>
