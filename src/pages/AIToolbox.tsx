@@ -310,13 +310,8 @@ export default function AIToolbox() {
                       <h2 className="text-3xl md:text-5xl font-bold">{slide.title}</h2>
                       <p className="text-lg md:text-xl text-slate-400 leading-relaxed">{slide.content}</p>
                     </div>
-                    <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl">
-                      <img 
-                        src={slide.imageUrl} 
-                        className="w-full h-full object-cover" 
-                        alt="Slide Visual"
-                        referrerPolicy="no-referrer"
-                      />
+                    <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl flex items-center justify-center bg-slate-800">
+                      <Layout className="w-16 h-16 text-slate-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
                     </div>
                   </div>
@@ -427,14 +422,8 @@ export default function AIToolbox() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.3 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 z-0"
+                className="absolute inset-0 z-0 bg-brand/5"
               >
-                <img 
-                  src={scene.image} 
-                  className="w-full h-full object-cover blur-[100px] scale-150 transition-all duration-[2000ms]" 
-                  alt=""
-                  referrerPolicy="no-referrer"
-                />
               </motion.div>
             </AnimatePresence>
 
@@ -447,15 +436,9 @@ export default function AIToolbox() {
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 className="relative flex-1 z-10"
               >
-                <motion.img 
-                  initial={{ scale: 1.15 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: (scene.duration || 5000) / 1000, ease: "linear" }}
-                  src={scene.image} 
-                  className="w-full h-full object-cover" 
-                  alt={`Scene showing ${scene.text}`}
-                  referrerPolicy="no-referrer"
-                />
+                <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                   <Film className="w-32 h-32 text-slate-800" />
+                </div>
                 {/* Cinematic Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
@@ -518,7 +501,9 @@ export default function AIToolbox() {
                           onClick={() => { setCurrentScene(idx); setIsPlaying(false); }}
                           className={`relative min-w-[80px] h-12 rounded-xl overflow-hidden border-2 transition-all ${idx === currentScene ? 'border-brand scale-110 shadow-lg' : 'border-white/10 opacity-60 hover:opacity-100'}`}
                         >
-                           <img src={s.image} className="w-full h-full object-cover" alt="" referrerPolicy="no-referrer" />
+                           <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                         <Film className="w-12 h-12 text-slate-700" />
+                      </div>
                            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                               <span className="text-[10px] font-black text-white">{idx + 1}</span>
                            </div>
@@ -564,20 +549,20 @@ export default function AIToolbox() {
                   whileHover={{ y: -5 }}
                   className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl group"
                 >
-                   <div className="relative aspect-video">
-                      <img src={s.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="" referrerPolicy="no-referrer" />
-                      <div className="absolute top-4 left-4 w-8 h-8 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
-                         <span className="text-[10px] font-black text-white">{idx + 1}</span>
-                      </div>
-                      <button 
-                        onClick={() => { setCurrentScene(idx); setViewMode('cinema'); setIsPlaying(true); }}
-                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity"
-                      >
-                         <div className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform">
-                            <Play className="w-5 h-5 ml-0.5 fill-current" />
-                         </div>
-                      </button>
-                   </div>
+                    <div className="relative aspect-video bg-slate-800 flex items-center justify-center">
+                       <Film className="w-12 h-12 text-slate-700" />
+                       <div className="absolute top-4 left-4 w-8 h-8 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
+                          <span className="text-[10px] font-black text-white">{idx + 1}</span>
+                       </div>
+                       <button 
+                         onClick={() => { setCurrentScene(idx); setViewMode('cinema'); setIsPlaying(true); }}
+                         className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity"
+                       >
+                          <div className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform">
+                             <Play className="w-5 h-5 ml-0.5 fill-current" />
+                          </div>
+                       </button>
+                    </div>
                    <div className="p-6 space-y-3">
                       <p className="text-xs font-bold text-slate-500 leading-relaxed italic line-clamp-3">"{s.text}"</p>
                       <div className="flex items-center justify-between pt-2 border-t border-slate-50 dark:border-slate-800">
@@ -925,7 +910,12 @@ export default function AIToolbox() {
                           className="flex items-center gap-2 text-[10px] font-black text-brand uppercase hover:underline"
                           onClick={() => {
                             navigator.clipboard.writeText(output);
-                            alert('Markdown copied!');
+                            addNotification({
+                               title: lang === 'bn' ? 'কপি করা হয়েছে' : 'Copied!',
+                               message: lang === 'bn' ? 'আউটপুট আপনার ক্লিপবোর্ডে কপি করা হয়েছে।' : 'The output has been copied to your clipboard.',
+                               type: 'success',
+                               icon: 'CheckCircle'
+                            });
                           }}
                          >
                            <FileText className="w-3 h-3" /> Copy Markdown

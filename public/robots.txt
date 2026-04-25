@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
+Allow: /tools/
 Disallow: /profile/
 Disallow: /alerts/
 Disallow: /assistant/
-Disallow: /tools/
 
 Sitemap: https://shoyakai.farhaduddinsmcif99.workers.dev/sitemap.xml

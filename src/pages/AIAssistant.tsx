@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../AppContext';
 import AIChat from '../components/AIChat';
+import SEO from '../components/SEO';
 import { Sparkles, Bot, Info } from 'lucide-react';
 
 export default function AIAssistant() {
@@ -8,6 +9,12 @@ export default function AIAssistant() {
 
   return (
     <div className="space-y-6 pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <SEO 
+        title="Shayok AI Chat – Your Personal AI Assistant" 
+        description="Interact with Shayok AI, your smart Bangla-English companion for farming tips, business ideas, education, and daily productivity."
+        keywords="AI chat Bangladesh, Shayok AI, Bangla AI assistant, chat GPT Bangladesh, smart assistant"
+        type="WebApplication"
+      />
       <section className="flex flex-col items-center text-center gap-4 py-4">
         <div className="w-20 h-20 bg-brand rounded-3xl flex items-center justify-center text-white shadow-xl shadow-brand/20 rotate-3">
           <Bot className="w-12 h-12" />

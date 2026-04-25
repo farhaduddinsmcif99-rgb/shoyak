@@ -93,8 +93,8 @@ export default function LifeCompanion() {
              <div className="lg:col-span-1 space-y-8">
                 <div className="p-10 bg-white dark:bg-slate-900 rounded-[56px] border border-slate-100 dark:border-slate-800 space-y-8 shadow-sm">
                    <div className="flex justify-between items-start">
-                      <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-[32px] flex items-center justify-center overflow-hidden">
-                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'sh'}`} alt="AI Twin" />
+                      <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-[32px] flex items-center justify-center overflow-hidden text-brand">
+                         <UserPlus className="w-10 h-10" />
                       </div>
                       <div className="text-right">
                          <p className="text-[10px] font-black uppercase text-slate-400">Trust Score</p>

@@ -6,6 +6,7 @@ import {
   Globe, Laptop, Users, Building, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import SEO from '../components/SEO';
 
 interface Job {
   id: string;
@@ -97,6 +98,12 @@ export default function Jobs() {
 
   return (
     <div className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <SEO 
+        title="Jobs & Income – Find Work and Freelance Gigs" 
+        description="Browse local jobs, remote data entry tasks, and freelance opportunities in Bangladesh. Start earning with Shayok.AI job board."
+        keywords="jobs in Bangladesh, freelance work BD, data entry jobs, earn money online Bangladesh"
+        type="WebPage"
+      />
       <header className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">

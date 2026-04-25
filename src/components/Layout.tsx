@@ -74,12 +74,8 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
         </nav>
         <div className="mt-auto mb-4 relative">
           {user && (
-            <div className="w-10 h-10 rounded-full border-2 border-brand overflow-hidden">
-              <img 
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
-                alt="Avatar" 
-                className="w-full h-full object-cover"
-              />
+            <div className="w-10 h-10 rounded-full border-2 border-brand overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-brand">
+              <User className="w-5 h-5" />
             </div>
           )}
           {isAdmin && (

@@ -346,17 +346,12 @@ const VideoCreator = ({ onComplete }: { onComplete: (p: number) => void }) => {
                      initial={{ opacity: 0 }}
                      animate={{ opacity: 1 }}
                      exit={{ opacity: 0 }}
-                     className="relative h-full"
+                     className="relative h-full bg-slate-800 flex items-center justify-center text-indigo-400"
                    >
-                      <img 
-                        src={scenes[currentScene].image} 
-                        className="w-full h-full object-cover" 
-                        alt={`Story scene: ${scenes[currentScene].text}`}
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-x-0 bottom-0 p-8 bg-black/60 backdrop-blur-md text-white text-center">
-                         <p className="text-xl font-black italic">"{scenes[currentScene].text}"</p>
-                      </div>
+                       <Video className="w-16 h-16 opacity-20" />
+                       <div className="absolute inset-x-0 bottom-0 p-8 bg-black/60 backdrop-blur-md text-white text-center">
+                          <p className="text-xl font-black italic">"{scenes[currentScene].text}"</p>
+                       </div>
                    </motion.div>
                 </AnimatePresence>
                 <div className="absolute top-4 right-4 px-4 py-2 bg-indigo-500 text-white text-[10px] font-black uppercase rounded-full">

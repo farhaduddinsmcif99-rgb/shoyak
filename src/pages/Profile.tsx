@@ -24,12 +24,8 @@ export default function Profile() {
       <section className="bg-brand rounded-[40px] p-8 text-white relative overflow-hidden">
         <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full"></div>
         <div className="relative z-10 flex flex-col items-center gap-4">
-          <div className="w-24 h-24 rounded-full border-4 border-white/20 p-1">
-            <img 
-               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
-               className="w-full h-full rounded-full bg-white object-cover" 
-               alt="Profile" 
-            />
+          <div className="w-24 h-24 rounded-full border-4 border-white/20 p-1 flex items-center justify-center bg-white/10 overflow-hidden">
+            <User className="w-12 h-12 text-white" />
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold">{user.name}</h2>

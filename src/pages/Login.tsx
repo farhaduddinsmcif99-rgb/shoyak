@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../AppContext';
 import { motion, AnimatePresence } from 'motion/react';
+import SEO from '../components/SEO';
 import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,6 +45,12 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <SEO 
+        title="Login & Join | Shoyakai AI Ecosystem" 
+        description="Securely login or create an account on Shoyakai. Access your AI tools, personalized dashboard, and smart farming assistant."
+        keywords="shoyakai login, sign up shoyakai, ai tools account"
+        type="WebPage"
+      />
       {/* Abstract Background Decor */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-brand/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
