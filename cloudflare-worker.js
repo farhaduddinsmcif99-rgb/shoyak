@@ -7,7 +7,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
-    const domain = "shoyakai.farhaduddinsmcif99.workers.dev";
+    const domain = "shoyakai.2com.workers.dev";
 
     // 1. Handle robots.txt
     if (path === "/robots.txt") {
