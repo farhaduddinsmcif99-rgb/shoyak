@@ -230,115 +230,161 @@ export default function AIToolbox() {
   const COLORS = ['#00A651', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
 
   const SlideViewer = ({ slides }: { slides: any[] }) => {
+    const [viewMode, setViewMode] = useState<'single' | 'board'>('single');
     const slide = slides[currentSlide];
 
     const nextSlide = () => setCurrentSlide(prev => (prev + 1) % slides.length);
     const prevSlide = () => setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
 
     return (
-      <div className="relative w-full aspect-video bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl flex flex-col group/slides">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            className="flex-1 p-12 flex flex-col justify-center text-white"
-          >
-            {slide.type === 'title' && (
-              <div className="text-center space-y-4">
-                <motion.h1 
-                  initial={{ y: 20 }} animate={{ y: 0 }}
-                  className="text-5xl md:text-7xl font-black italic tracking-tighter text-brand"
-                >
-                  {slide.title}
-                </motion.h1>
-                <p className="text-xl md:text-2xl text-slate-400 font-medium">{slide.subtitle}</p>
-                <div className="w-24 h-1.5 bg-brand mx-auto rounded-full mt-8"></div>
-              </div>
-            )}
-
-            {slide.type === 'bullets' && (
-              <div className="space-y-8">
-                <h2 className="text-3xl md:text-5xl font-bold flex items-center gap-4">
-                  <span className="w-12 h-1 bg-brand rounded-full"></span>
-                  {slide.title}
-                </h2>
-                <ul className="space-y-4 ml-16">
-                  {slide.items.map((item: string, i: number) => (
-                    <motion.li 
-                      key={i} 
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="text-xl md:text-2xl text-slate-300 flex items-center gap-4"
-                    >
-                      <div className="w-2 h-2 bg-brand rounded-full"></div>
-                      {item}
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {slide.type === 'image' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
-                <div className="space-y-6">
-                  <h2 className="text-3xl md:text-5xl font-bold">{slide.title}</h2>
-                  <p className="text-lg md:text-xl text-slate-400 leading-relaxed">{slide.content}</p>
-                </div>
-                <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl">
-                  <img 
-                    src={slide.imageUrl} 
-                    className="w-full h-full object-cover" 
-                    alt="Slide Visual"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
-                </div>
-              </div>
-            )}
-
-            {slide.type === 'quote' && (
-              <div className="max-w-3xl mx-auto text-center space-y-8">
-                <div className="text-6xl text-brand font-serif italic">"</div>
-                <blockquote className="text-3xl md:text-4xl font-medium leading-tight italic text-slate-100">
-                  {slide.text}
-                </blockquote>
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-1 bg-brand rounded-full mb-4"></div>
-                  <cite className="not-italic text-brand font-black uppercase tracking-[0.3em] text-sm">
-                    {slide.author}
-                  </cite>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="absolute bottom-8 left-0 right-0 px-12 flex justify-between items-center opacity-0 group-hover/slides:opacity-100 transition-opacity">
-           <div className="flex gap-2">
-             <button onClick={prevSlide} className="p-3 bg-white/10 hover:bg-brand text-white rounded-2xl transition-all backdrop-blur-md">
-                <ChevronRight className="w-5 h-5 rotate-180" />
-             </button>
-             <button onClick={nextSlide} className="p-3 bg-white/10 hover:bg-brand text-white rounded-2xl transition-all backdrop-blur-md">
-                <ChevronRight className="w-5 h-5" />
-             </button>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center px-4">
+           <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+              <button 
+                onClick={() => setViewMode('single')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'single' ? 'bg-white dark:bg-slate-600 shadow-sm text-brand' : 'text-slate-400'}`}
+              >
+                Presenter
+              </button>
+              <button 
+                onClick={() => setViewMode('board')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'board' ? 'bg-white dark:bg-slate-600 shadow-sm text-brand' : 'text-slate-400'}`}
+              >
+                Slide Board
+              </button>
            </div>
-           <div className="text-xs font-black text-white/40 tracking-widest">
-              SLIDE {currentSlide + 1} / {slides.length}
+           <div className="px-4 py-1.5 bg-brand/10 rounded-lg border border-brand/20 text-[10px] font-black text-brand uppercase tracking-widest leading-none">
+              {slides.length} Deep Intelligence Slides
            </div>
         </div>
+
+        {viewMode === 'single' ? (
+          <div className="relative w-full aspect-video bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl flex flex-col group/slides">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                className="flex-1 p-12 flex flex-col justify-center text-white"
+              >
+                {slide.type === 'title' && (
+                  <div className="text-center space-y-4">
+                    <motion.h1 
+                      initial={{ y: 20 }} animate={{ y: 0 }}
+                      className="text-5xl md:text-7xl font-black italic tracking-tighter text-brand"
+                    >
+                      {slide.title}
+                    </motion.h1>
+                    <p className="text-xl md:text-2xl text-slate-400 font-medium">{slide.subtitle}</p>
+                    <div className="w-24 h-1.5 bg-brand mx-auto rounded-full mt-8"></div>
+                  </div>
+                )}
+
+                {slide.type === 'bullets' && (
+                  <div className="space-y-8">
+                    <h2 className="text-3xl md:text-5xl font-bold flex items-center gap-4">
+                      <span className="w-12 h-1 bg-brand rounded-full"></span>
+                      {slide.title}
+                    </h2>
+                    <ul className="space-y-4 ml-16">
+                      {slide.items.map((item: string, i: number) => (
+                        <motion.li 
+                          key={i} 
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                          className="text-xl md:text-2xl text-slate-300 flex items-center gap-4"
+                        >
+                          <div className="w-2 h-2 bg-brand rounded-full"></div>
+                          {item}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {slide.type === 'image' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
+                    <div className="space-y-6">
+                      <h2 className="text-3xl md:text-5xl font-bold">{slide.title}</h2>
+                      <p className="text-lg md:text-xl text-slate-400 leading-relaxed">{slide.content}</p>
+                    </div>
+                    <div className="relative aspect-video rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl">
+                      <img 
+                        src={slide.imageUrl} 
+                        className="w-full h-full object-cover" 
+                        alt="Slide Visual"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                    </div>
+                  </div>
+                )}
+
+                {slide.type === 'quote' && (
+                  <div className="max-w-3xl mx-auto text-center space-y-8">
+                    <div className="text-6xl text-brand font-serif italic">"</div>
+                    <blockquote className="text-3xl md:text-4xl font-medium leading-tight italic text-slate-100">
+                      {slide.text}
+                    </blockquote>
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-1 bg-brand rounded-full mb-4"></div>
+                      <cite className="not-italic text-brand font-black uppercase tracking-[0.3em] text-sm">
+                        {slide.author}
+                      </cite>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="absolute bottom-8 left-0 right-0 px-12 flex justify-between items-center opacity-0 group-hover/slides:opacity-100 transition-opacity">
+               <div className="flex gap-2">
+                 <button onClick={prevSlide} className="p-3 bg-white/10 hover:bg-brand text-white rounded-2xl transition-all backdrop-blur-md">
+                    <ChevronRight className="w-5 h-5 rotate-180" />
+                 </button>
+                 <button onClick={nextSlide} className="p-3 bg-white/10 hover:bg-brand text-white rounded-2xl transition-all backdrop-blur-md">
+                    <ChevronRight className="w-5 h-5" />
+                 </button>
+               </div>
+               <div className="text-xs font-black text-white/40 tracking-widest">
+                  SLIDE {currentSlide + 1} / {slides.length}
+               </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in zoom-in-95 duration-500">
+             {slides.map((s, idx) => (
+                <motion.div 
+                  key={idx}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => { setViewMode('single'); setCurrentSlide(idx); }}
+                  className={`aspect-video rounded-2xl border-2 cursor-pointer relative overflow-hidden group/board ${idx === currentSlide ? 'border-brand shadow-xl' : 'border-slate-100 dark:border-slate-800 opacity-60 hover:opacity-100'}`}
+                >
+                   <div className="absolute inset-0 bg-slate-900 group-hover/board:bg-slate-800 transition-colors p-4 flex flex-col justify-center gap-2">
+                      <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">#{idx + 1} {s.type}</span>
+                      <h4 className="text-white font-bold text-xs line-clamp-2 leading-tight uppercase italic">{s.title || (s.text ? "QUOTE" : "VISUAL")}</h4>
+                      <div className="w-6 h-0.5 bg-brand/40 group-hover/board:w-full transition-all duration-500" />
+                   </div>
+                   <div className="absolute bottom-2 right-2 p-1.5 bg-brand text-white rounded-lg scale-0 group-hover/board:scale-100 transition-transform">
+                      <Presentation className="w-3 h-3" />
+                   </div>
+                </motion.div>
+             ))}
+          </div>
+        )}
       </div>
     );
   };
 
   const VideoViewer = ({ scenes }: { scenes: any[] }) => {
+    const [viewMode, setViewMode] = useState<'cinema' | 'storyboard'>('cinema');
     const scene = scenes[currentScene];
 
     useEffect(() => {
       let timer: NodeJS.Timeout;
-      if (isPlaying) {
+      if (isPlaying && viewMode === 'cinema') {
         timer = setTimeout(() => {
           if (currentScene < scenes.length - 1) {
             setCurrentScene(prev => prev + 1);
@@ -348,145 +394,201 @@ export default function AIToolbox() {
         }, scene.duration || 5000);
       }
       return () => clearTimeout(timer);
-    }, [isPlaying, currentScene, scenes]);
+    }, [isPlaying, currentScene, scenes, viewMode]);
 
     return (
-      <div className="relative w-full aspect-video bg-black rounded-[48px] overflow-hidden shadow-2xl flex flex-col group/video border-8 border-slate-900/50 cinematic-grain">
-        {/* Dynamic Atmospheric Background */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`bg-${currentScene}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-0"
-          >
-            <img 
-              src={scene.image} 
-              className="w-full h-full object-cover blur-[100px] scale-150 transition-all duration-[2000ms]" 
-              alt=""
-              referrerPolicy="no-referrer"
-            />
-          </motion.div>
-        </AnimatePresence>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center px-4">
+           <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+              <button 
+                onClick={() => setViewMode('cinema')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'cinema' ? 'bg-white dark:bg-slate-600 shadow-sm text-brand' : 'text-slate-400'}`}
+              >
+                Cinema Mode
+              </button>
+              <button 
+                onClick={() => setViewMode('storyboard')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'storyboard' ? 'bg-white dark:bg-slate-600 shadow-sm text-brand' : 'text-slate-400'}`}
+              >
+                Storyboard
+              </button>
+           </div>
+           <div className="px-4 py-1.5 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+              Render Engine: Gen-4 Liquid Architecture
+           </div>
+        </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentScene}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="relative flex-1 z-10"
-          >
-            <motion.img 
-              initial={{ scale: 1.15 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: (scene.duration || 5000) / 1000, ease: "linear" }}
-              src={scene.image} 
-              className="w-full h-full object-cover" 
-              alt={`Scene showing ${scene.text}`}
-              referrerPolicy="no-referrer"
-            />
-            {/* Cinematic Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
-            
-            {/* Visual Accents */}
-            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+        {viewMode === 'cinema' ? (
+          <div className="relative w-full aspect-video bg-black rounded-[48px] overflow-hidden shadow-2xl flex flex-col group/video border-8 border-slate-900/50 cinematic-grain">
+            {/* Dynamic Atmospheric Background */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`bg-${currentScene}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.3 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-0"
+              >
+                <img 
+                  src={scene.image} 
+                  className="w-full h-full object-cover blur-[100px] scale-150 transition-all duration-[2000ms]" 
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
+              </motion.div>
+            </AnimatePresence>
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-20 space-y-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentScene}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="relative flex-1 z-10"
+              >
+                <motion.img 
+                  initial={{ scale: 1.15 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: (scene.duration || 5000) / 1000, ease: "linear" }}
+                  src={scene.image} 
+                  className="w-full h-full object-cover" 
+                  alt={`Scene showing ${scene.text}`}
+                  referrerPolicy="no-referrer"
+                />
+                {/* Cinematic Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
+                
+                {/* Visual Accents */}
+                <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+
+                <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-20 space-y-4">
+                   <motion.div 
+                     initial={{ y: 30, opacity: 0 }}
+                     animate={{ y: 0, opacity: 1 }}
+                     transition={{ delay: 0.4, duration: 0.8 }}
+                     className="max-w-4xl"
+                   >
+                      <p className="text-2xl md:text-5xl font-black text-white leading-tight drop-shadow-2xl italic text-glow tracking-tighter">
+                        "{scene.text}"
+                      </p>
+                   </motion.div>
+                </div>
+
+                {/* Scene Badge */}
+                <div className="absolute top-12 left-12 flex items-center gap-6">
+                   <div className="px-6 py-2 bg-black/40 backdrop-blur-2xl rounded-full border border-white/20 flex items-center gap-3">
+                      <div className="w-2 h-2 bg-brand rounded-full animate-pulse shadow-[0_0_10px_#00A651]" />
+                      <span className="text-[10px] font-black text-white uppercase tracking-[0.4em] drop-shadow">
+                        Scene {currentScene + 1}
+                      </span>
+                   </div>
+                </div>
+
+                {scene.style === 'whiteboard' && (
+                   <div className="absolute top-12 right-12 flex items-center gap-3 px-6 py-2 bg-white/10 backdrop-blur-2xl rounded-full border border-white/20 shadow-xl">
+                      <Edit className="w-4 h-4 text-white" />
+                      <span className="text-[10px] font-black text-white uppercase tracking-widest">Sketch Process</span>
+                   </div>
+                )}
+                {scene.style === 'ai-motion' && (
+                   <div className="absolute top-12 right-12 flex items-center gap-3 px-6 py-2 bg-brand/20 backdrop-blur-2xl rounded-full border border-brand/40 shadow-xl">
+                      <Sparkles className="w-4 h-4 text-brand animate-spin-slow" />
+                      <span className="text-[10px] font-black text-brand uppercase tracking-widest">Neural Interpolation</span>
+                   </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Cinematic Control Dock */}
+            <div className="absolute bottom-12 left-0 right-0 px-8 md:px-12 flex justify-between items-center z-30 transition-all duration-300 opacity-0 group-hover/video:opacity-100">
+               <div className="flex items-center gap-6 p-2 bg-black/40 backdrop-blur-3xl rounded-[32px] border border-white/10 shadow-2xl">
+                  <button 
+                    onClick={() => setIsPlaying(!isPlaying)}
+                    className="w-16 h-16 bg-white text-black rounded-[24px] flex items-center justify-center hover:bg-brand hover:text-white active:scale-90 transition-all shadow-xl"
+                  >
+                     {isPlaying ? <div className="flex gap-2"><div className="w-1.5 h-6 bg-current rounded-full" /><div className="w-1.5 h-6 bg-current rounded-full" /></div> : <Play className="w-7 h-7 ml-1 fill-current" />}
+                  </button>
+                  
+                  <div className="flex gap-2 pr-4 overflow-x-auto no-scrollbar max-w-[200px] md:max-w-md">
+                     {scenes.map((s, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => { setCurrentScene(idx); setIsPlaying(false); }}
+                          className={`relative min-w-[80px] h-12 rounded-xl overflow-hidden border-2 transition-all ${idx === currentScene ? 'border-brand scale-110 shadow-lg' : 'border-white/10 opacity-60 hover:opacity-100'}`}
+                        >
+                           <img src={s.image} className="w-full h-full object-cover" alt="" referrerPolicy="no-referrer" />
+                           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                              <span className="text-[10px] font-black text-white">{idx + 1}</span>
+                           </div>
+                        </button>
+                     ))}
+                  </div>
+               </div>
+
+               <div className="flex flex-col items-end gap-2 pr-4">
+                  {isPlaying && (
+                    <div className="flex gap-1.5 h-8 items-end">
+                       {[...Array(5)].map((_, i) => (
+                          <motion.div 
+                            key={i}
+                            animate={{ height: [8, 28, 12, 24, 8] }}
+                            transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
+                            className="w-1.5 bg-brand rounded-full"
+                          />
+                       ))}
+                    </div>
+                  )}
+                  <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">AI STORYTELLER GEN-4</span>
+               </div>
+            </div>
+
+            {/* High-Precision Progress Bar */}
+            <div className="absolute bottom-0 left-0 right-0 h-2 bg-white/5 z-40">
                <motion.div 
-                 initial={{ y: 30, opacity: 0 }}
-                 animate={{ y: 0, opacity: 1 }}
-                 transition={{ delay: 0.4, duration: 0.8 }}
-                 className="max-w-4xl"
+                 initial={{ width: 0 }}
+                 animate={{ width: `${((currentScene + 1) / scenes.length) * 100}%` }}
+                 className="h-full bg-brand relative"
                >
-                  <p className="text-2xl md:text-5xl font-black text-white leading-tight drop-shadow-2xl italic text-glow tracking-tighter">
-                    "{scene.text}"
-                  </p>
+                  <div className="absolute inset-0 bg-white/30 animate-pulse" />
+                  <div className="absolute top-0 right-0 w-4 h-full bg-white shadow-[0_0_15px_#fff] blur-[4px]" />
                </motion.div>
             </div>
-
-            {/* Scene Badge */}
-            <div className="absolute top-12 left-12 flex items-center gap-6">
-               <div className="px-6 py-2 bg-black/40 backdrop-blur-2xl rounded-full border border-white/20 flex items-center gap-3">
-                  <div className="w-2 h-2 bg-brand rounded-full animate-pulse shadow-[0_0_10px_#00A651]" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-[0.4em] drop-shadow">
-                    Scene {currentScene + 1}
-                  </span>
-               </div>
-            </div>
-
-            {scene.style === 'whiteboard' && (
-               <div className="absolute top-12 right-12 flex items-center gap-3 px-6 py-2 bg-white/10 backdrop-blur-2xl rounded-full border border-white/20 shadow-xl">
-                  <Edit className="w-4 h-4 text-white" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Sketch Process</span>
-               </div>
-            )}
-            {scene.style === 'ai-motion' && (
-               <div className="absolute top-12 right-12 flex items-center gap-3 px-6 py-2 bg-brand/20 backdrop-blur-2xl rounded-full border border-brand/40 shadow-xl">
-                  <Sparkles className="w-4 h-4 text-brand animate-spin-slow" />
-                  <span className="text-[10px] font-black text-brand uppercase tracking-widest">Neural Interpolation</span>
-               </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Cinematic Control Dock */}
-        <div className="absolute bottom-12 left-0 right-0 px-8 md:px-12 flex justify-between items-center z-30 transition-all duration-300 opacity-0 group-hover/video:opacity-100">
-           <div className="flex items-center gap-6 p-2 bg-black/40 backdrop-blur-3xl rounded-[32px] border border-white/10 shadow-2xl">
-              <button 
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="w-16 h-16 bg-white text-black rounded-[24px] flex items-center justify-center hover:bg-brand hover:text-white active:scale-90 transition-all shadow-xl"
-              >
-                 {isPlaying ? <div className="flex gap-2"><div className="w-1.5 h-6 bg-current rounded-full" /><div className="w-1.5 h-6 bg-current rounded-full" /></div> : <Play className="w-7 h-7 ml-1 fill-current" />}
-              </button>
-              
-              <div className="flex gap-2 pr-4 overflow-x-auto no-scrollbar max-w-[200px] md:max-w-md">
-                 {scenes.map((s, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => { setCurrentScene(idx); setIsPlaying(false); }}
-                      className={`relative min-w-[80px] h-12 rounded-xl overflow-hidden border-2 transition-all ${idx === currentScene ? 'border-brand scale-110 shadow-lg' : 'border-white/10 opacity-60 hover:opacity-100'}`}
-                    >
-                       <img src={s.image} className="w-full h-full object-cover" alt="" referrerPolicy="no-referrer" />
-                       <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                          <span className="text-[10px] font-black text-white">{idx + 1}</span>
-                       </div>
-                    </button>
-                 ))}
-              </div>
-           </div>
-
-           <div className="flex flex-col items-end gap-2 pr-4">
-              {isPlaying && (
-                <div className="flex gap-1.5 h-8 items-end">
-                   {[...Array(5)].map((_, i) => (
-                      <motion.div 
-                        key={i}
-                        animate={{ height: [8, 28, 12, 24, 8] }}
-                        transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
-                        className="w-1.5 bg-brand rounded-full"
-                      />
-                   ))}
-                </div>
-              )}
-              <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">AI STORYTELLER GEN-4</span>
-           </div>
-        </div>
-
-        {/* High-Precision Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-2 bg-white/5 z-40">
-           <motion.div 
-             initial={{ width: 0 }}
-             animate={{ width: `${((currentScene + 1) / scenes.length) * 100}%` }}
-             className="h-full bg-brand relative"
-           >
-              <div className="absolute inset-0 bg-white/30 animate-pulse" />
-              <div className="absolute top-0 right-0 w-4 h-full bg-white shadow-[0_0_15px_#fff] blur-[4px]" />
-           </motion.div>
-        </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-5 duration-700">
+             {scenes.map((s, idx) => (
+                <motion.div 
+                  key={idx}
+                  whileHover={{ y: -5 }}
+                  className="bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl group"
+                >
+                   <div className="relative aspect-video">
+                      <img src={s.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="" referrerPolicy="no-referrer" />
+                      <div className="absolute top-4 left-4 w-8 h-8 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20">
+                         <span className="text-[10px] font-black text-white">{idx + 1}</span>
+                      </div>
+                      <button 
+                        onClick={() => { setCurrentScene(idx); setViewMode('cinema'); setIsPlaying(true); }}
+                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity"
+                      >
+                         <div className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform">
+                            <Play className="w-5 h-5 ml-0.5 fill-current" />
+                         </div>
+                      </button>
+                   </div>
+                   <div className="p-6 space-y-3">
+                      <p className="text-xs font-bold text-slate-500 leading-relaxed italic line-clamp-3">"{s.text}"</p>
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-50 dark:border-slate-800">
+                         <span className="text-[9px] font-medium text-slate-400 font-mono tracking-widest">{s.duration / 1000}S DURATION</span>
+                         <span className="text-[9px] font-black text-brand uppercase tracking-widest leading-none">{s.style}</span>
+                      </div>
+                   </div>
+                </motion.div>
+             ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -719,69 +821,119 @@ export default function AIToolbox() {
                     {videoData && <VideoViewer scenes={videoData} />}
 
                     {paletteData && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 pb-12">
-                         {paletteData.map((color: any, idx: number) => (
-                            <motion.div 
-                              key={idx}
-                              initial={{ opacity: 0, scale: 0.8 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: idx * 0.1 }}
-                              className="group relative"
-                            >
-                               <div 
-                                 className="w-full aspect-square rounded-[32px] shadow-2xl transition-transform group-hover:scale-105 border-4 border-white dark:border-slate-800"
-                                 style={{ backgroundColor: color.hex }}
-                               />
-                               <div className="mt-3 text-center">
-                                  <p className="text-xs font-black uppercase tracking-tighter text-slate-900 dark:text-white">{color.name}</p>
-                                  <p className="text-[10px] font-mono font-medium text-slate-500 uppercase">{color.hex}</p>
-                                  <p className="text-[9px] font-bold text-brand uppercase hidden group-hover:block transition-all">{color.usage}</p>
-                               </div>
-                            </motion.div>
-                         ))}
-                      </div>
-                    )}
-
-                    {chartData && (
-                      <div className="h-64 w-full bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 p-4">
-                        <ResponsiveContainer width="100%" height="100%">
-                          {chartData.type === 'pie' ? (
-                            <PieChart>
-                              <Pie
-                                data={chartData.data}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
-                                paddingAngle={5}
-                                dataKey="value"
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center px-4">
+                           <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Spectrum generated</h4>
+                           <button 
+                            className="text-[10px] font-black text-brand uppercase hover:underline"
+                            onClick={() => {
+                              navigator.clipboard.writeText(JSON.stringify(paletteData, null, 2));
+                              alert('Palette JSON copied!');
+                            }}
+                           >
+                            Export JSON
+                           </button>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 pb-12">
+                           {paletteData.map((color: any, idx: number) => (
+                              <motion.div 
+                                key={idx}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="group relative"
                               >
-                                {chartData.data.map((entry: any, index: number) => (
-                                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                              </Pie>
-                              <Tooltip />
-                            </PieChart>
-                          ) : (
-                            <BarChart data={chartData.data}>
-                              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                              <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} />
-                              <YAxis fontSize={10} axisLine={false} tickLine={false} />
-                              <Tooltip />
-                              <Bar dataKey="value" fill="#00A651" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                          )}
-                        </ResponsiveContainer>
-                        <div className="text-center mt-2">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic flex items-center justify-center gap-1">
-                              <BarChartIcon className="w-3 h-3" /> Data Visualization generated by Shayok.AI
-                           </p>
+                                 <div 
+                                   className="w-full aspect-square rounded-[32px] shadow-2xl transition-transform group-hover:scale-105 border-4 border-white dark:border-slate-800 cursor-pointer active:scale-95"
+                                   style={{ backgroundColor: color.hex }}
+                                   onClick={() => {
+                                      navigator.clipboard.writeText(color.hex);
+                                      // Simple notification logic would go here
+                                   }}
+                                 />
+                                 <div className="mt-3 text-center">
+                                    <p className="text-xs font-black uppercase tracking-tighter text-slate-900 dark:text-white">{color.name}</p>
+                                    <p className="text-[10px] font-mono font-medium text-slate-500 uppercase">{color.hex}</p>
+                                    <p className="text-[9px] font-bold text-brand uppercase hidden group-hover:block transition-all">{color.usage}</p>
+                                 </div>
+                              </motion.div>
+                           ))}
                         </div>
                       </div>
                     )}
 
-                    <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 text-sm leading-relaxed font-medium prose dark:prose-invert max-w-none">
-                       <ReactMarkdown>{output}</ReactMarkdown>
+                    {chartData && (
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center px-4">
+                           <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-brand rounded-full" />
+                              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Intelligence Analytics</h4>
+                           </div>
+                        </div>
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[40px] border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+                           <div className="h-64 w-full p-6">
+                            <ResponsiveContainer width="100%" height="100%">
+                              {chartData.type === 'pie' ? (
+                                <PieChart>
+                                  <Pie
+                                    data={chartData.data}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                  >
+                                    {chartData.data.map((entry: any, index: number) => (
+                                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip 
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
+                                  />
+                                </PieChart>
+                              ) : (
+                                <BarChart data={chartData.data}>
+                                  <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.1} />
+                                  <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} />
+                                  <YAxis fontSize={10} axisLine={false} tickLine={false} />
+                                  <Tooltip 
+                                    cursor={{ fill: 'rgba(0, 166, 81, 0.05)' }}
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
+                                  />
+                                  <Bar dataKey="value" fill="#00A651" radius={[8, 8, 0, 0]} barSize={40} />
+                                </BarChart>
+                              )}
+                            </ResponsiveContainer>
+                          </div>
+                          <div className="bg-white/50 dark:bg-black/20 p-4 border-t border-slate-100 dark:border-slate-800">
+                             <div className="flex justify-between items-center">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic flex items-center gap-1">
+                                   <BarChartIcon className="w-3 h-3" /> Visualized by Shayok.AI
+                                </p>
+                                <button className="text-[10px] font-black text-brand uppercase tracking-widest hover:underline">Download CSV</button>
+                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center px-4">
+                         <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Narrative output</h4>
+                         <button 
+                          className="flex items-center gap-2 text-[10px] font-black text-brand uppercase hover:underline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(output);
+                            alert('Markdown copied!');
+                          }}
+                         >
+                           <FileText className="w-3 h-3" /> Copy Markdown
+                         </button>
+                      </div>
+                      <div className="p-10 bg-slate-50 dark:bg-slate-800 rounded-[48px] border border-slate-100 dark:border-slate-700 text-sm leading-relaxed font-medium prose dark:prose-invert max-w-none shadow-inner">
+                         <ReactMarkdown>{output}</ReactMarkdown>
+                      </div>
                     </div>
                   </motion.div>
                 )}

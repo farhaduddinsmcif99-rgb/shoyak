@@ -98,9 +98,10 @@ export default function About() {
             <div className="absolute inset-0 bg-brand/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
-                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" 
+                 src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/b4e2f-1745574046.png" 
                  alt="MD Tofiqur Rahman" 
                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+                 referrerPolicy="no-referrer"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                <div className="absolute bottom-10 left-10 space-y-2">
@@ -127,6 +128,17 @@ export default function About() {
                <p>
                   "I believe that the next wave of innovation will come from those who have the tools to build. Shoyakai is my contribution to that future—providing the digital infrastructure for the next generation of thinkers, creators, and entrepreneurs in Dhaka, Chittagong, and globally."
                </p>
+               <div className="pt-6 relative aspect-video rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl group">
+                  <img 
+                    src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/c8a3d-1745574046.png" 
+                    alt="MD Tofiqur Rahman - Lead Architect" 
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" 
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-4 right-4 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
+                     <span className="text-[9px] font-black text-white uppercase tracking-widest">Architectural Focus</span>
+                  </div>
+               </div>
                <div className="pt-4 flex flex-wrap gap-3">
                   {['AI Democratization', 'Future of Work', 'Tech Independence', 'Bangladesh 2.0'].map(tag => (
                     <span key={tag} className="px-4 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -134,6 +146,37 @@ export default function About() {
                     </span>
                   ))}
                </div>
+            </div>
+         </div>
+      </section>
+
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto py-20 border-t border-slate-100 dark:border-white/5">
+         <div className="order-2 lg:order-1 space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20">
+               <Shield className="w-3.5 h-3.5 text-blue-500" />
+               <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">Our Culture</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-display italic tracking-tighter leading-none">
+               Built on <span className="text-blue-500">Collaboration</span>.
+            </h2>
+            <div className="space-y-6 text-slate-500 dark:text-slate-400 font-medium text-lg leading-relaxed">
+               <p>
+                  Technology is only as strong as the community that uses it. At Shoyakai, we foster an environment of open dialogue and shared discovery. These photos capture the essence of our journey—diverse minds coming together to solve complex problems in real-time.
+               </p>
+               <p>
+                  From the heart of Dhaka's tech scene, we are scaling a platform that speaks the language of tomorrow. Every line of code and every design choice is a reflection of our commitment to excellence and collective growth.
+               </p>
+            </div>
+         </div>
+         <div className="order-1 lg:order-2 relative group">
+            <div className="absolute inset-0 bg-blue-500/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
+            <div className="relative bg-slate-100 dark:bg-slate-800 aspect-video rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+               <img 
+                 src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/d1f9b-1745574046.png" 
+                 alt="Shoyakai Collaborative Session" 
+                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+                 referrerPolicy="no-referrer"
+               />
             </div>
          </div>
       </section>

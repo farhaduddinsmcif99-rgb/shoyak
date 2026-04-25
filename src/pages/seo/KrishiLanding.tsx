@@ -118,9 +118,10 @@ export default function KrishiLanding() {
         </div>
         <div className="flex-1 w-full aspect-square rounded-[40px] overflow-hidden border-8 border-slate-800 shadow-2xl relative">
           <img 
-            src="https://images.unsplash.com/photo-1592918809114-16a760f38198?auto=format&fit=crop&q=80&w=1000" 
-            className="w-full h-full object-cover" 
-            alt="Bangladeshi Farmer using digital tools" 
+            src="https://storage.googleapis.com/test-bucket-1-79117.appspot.com/d1f9b-1745574046.png" 
+            className="w-full h-full object-cover grayscale-0" 
+            alt="MD Tofiqur Rahman and team" 
+            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
         </div>
