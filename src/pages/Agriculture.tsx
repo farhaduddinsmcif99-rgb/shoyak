@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import SEO from '../components/SEO';
 
 const priceData = [
   { month: 'Jan', rice: 52, potato: 24, onion: 45 },
@@ -239,7 +240,7 @@ export default function Agriculture() {
                 className="space-y-6"
                >
                  <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 rounded-[32px] overflow-hidden relative">
-                    <img src="/agriculture-hero.png" className="w-full h-full object-cover grayscale-[0.5]" />
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover grayscale-[0.5]" />
                     <div className="absolute inset-0 bg-red-900/40 text-white flex flex-col justify-end p-6">
                        <div className="flex items-center gap-2 mb-1">
                           <AlertCircle className="w-4 h-4" />

@@ -900,7 +900,7 @@ export default function JuniorMode() {
                  </p>
                  <div className="aspect-video bg-slate-200 rounded-[40px] overflow-hidden">
                     <img 
-                      src={`https://picsum.photos/seed/story${currentScene}/800/400`} 
+                      src={`https://picsum.photos/seed/story${currentFact}/800/400`} 
                       className="w-full h-full object-cover" 
                       referrerPolicy="no-referrer"
                     />

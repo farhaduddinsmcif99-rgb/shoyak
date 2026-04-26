@@ -16,7 +16,7 @@ export default function SEO({
   description, 
   keywords, 
   image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
-  url = 'https://shoyakai.farhaduddinsmcif99.workers.dev/',
+  url = 'https://shoyakai.2com.workers.dev/',
   type = 'WebApplication',
   schemaData
 }: SEOProps) {
@@ -43,7 +43,7 @@ export default function SEO({
     "author": {
       "@type": "Organization",
       "name": "Shoyakai Labs",
-      "url": "https://shoyakai.farhaduddinsmcif99.workers.dev/"
+      "url": "https://shoyakai.2com.workers.dev/"
     },
     "aggregateRating": {
       "@type": "AggregateRating",

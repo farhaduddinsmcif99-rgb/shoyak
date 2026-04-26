@@ -125,7 +125,7 @@ export default function KrishiLanding() {
         </div>
         <div className="flex-1 w-full aspect-square rounded-[40px] overflow-hidden border-8 border-slate-800 shadow-2xl relative">
           <img 
-            src="/krishi-intelligence.png" 
+            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800" 
             alt="Krishi Intelligence Base Map" 
             className="w-full h-full object-cover grayscale opacity-60" 
             referrerPolicy="no-referrer"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Zap } from 'lucide-react';
 import { cn } from '../utils/helpers';
+import { motion } from 'motion/react';
 
 interface LogoProps {
   className?: string;
@@ -19,35 +20,41 @@ export default function Logo({ className, iconOnly = false, size = 'md' }: LogoP
   const currentSize = sizes[size];
 
   return (
-    <div className={cn("flex items-center group", currentSize.container, className)}>
+    <div className={cn("flex items-center group cursor-pointer", currentSize.container, className)}>
       <div className={cn(
-        "relative flex items-center justify-center rounded-[1.25rem] bg-slate-900 dark:bg-white transition-all duration-500 group-hover:-rotate-12 group-hover:scale-105 overflow-hidden",
+        "relative flex items-center justify-center rounded-[1.5rem] bg-slate-950 dark:bg-white transition-all duration-700 group-hover:rounded-[1rem] group-hover:rotate-[15deg] group-hover:scale-110 overflow-hidden shadow-2xl",
         currentSize.icon
       )}>
-        {/* Animated Background Pulse */}
-        <div className="absolute inset-0 bg-brand/20 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
+        {/* Particle Effect Overlay */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
+           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--brand-color)_0%,_transparent_70%)] animate-pulse" style={{ '--brand-color': '#10b981' } as any} />
+        </div>
         
-        <Zap className="w-1/2 h-1/2 text-brand fill-brand" />
+        <Zap className="w-1/2 h-1/2 text-brand fill-brand z-10 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
         
-        {/* Gloss Effect */}
-        <div className="absolute top-0 left-0 w-full h-1/2 bg-white/10 skew-y-[-20deg] -translate-y-4" />
+        {/* Dynamic Border */}
+        <div className="absolute inset-0 border-2 border-brand/20 group-hover:border-brand/50 rounded-inherit transition-all duration-700" />
       </div>
       
       {!iconOnly && (
-        <div className="flex flex-col">
-          <div className="flex items-baseline">
+        <div className="flex flex-col -space-y-1">
+          <div className="flex items-baseline gap-1">
             <span className={cn(
-              "font-display font-black tracking-[-0.05em] uppercase text-slate-900 dark:text-white transition-all",
+              "font-display font-black tracking-[-0.07em] uppercase text-slate-950 dark:text-white transition-all group-hover:tracking-[-0.02em]",
               currentSize.text
             )}>
-              Shoya<span className="text-brand">kai</span>
+              SHOYAKAI
             </span>
+            <div className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" />
           </div>
-          <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-1 group-hover:translate-y-0">
-            <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand">
-              Shoyaki AI
-            </span>
-            <div className="flex-1 h-[1px] bg-brand/30" />
+          <div className="flex items-center gap-2 overflow-hidden">
+             <motion.span 
+               initial={{ x: -20, opacity: 0 }}
+               whileInView={{ x: 0, opacity: 1 }}
+               className="text-[9px] font-black uppercase tracking-[0.5em] text-slate-400 group-hover:text-brand transition-colors whitespace-nowrap"
+             >
+               INTELLIGENCE
+             </motion.span>
           </div>
         </div>
       )}

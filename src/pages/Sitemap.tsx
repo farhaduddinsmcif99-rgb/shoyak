@@ -5,7 +5,7 @@ import { Network, ArrowRight, Zap, BookOpen, User, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
 
-const domain = "shoyakai.farhaduddinsmcif99.workers.dev";
+const domain = "shoyakai.2com.workers.dev";
 
 export default function Sitemap() {
   return (

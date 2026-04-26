@@ -10,7 +10,7 @@ import {
   AlertTriangle, Map, Home, List, Gift, Film, Utensils, RefreshCcw, Wind, Bug,
   Database, Terminal, Code2, Palette, FileJson, Repeat, Type, Figma,
   Megaphone, Mail, Star, ShoppingBag, Link, ShieldCheck as ShieldPlayIcon, Smartphone, Calendar,
-  Award, Video, Linkedin, Twitter, Lock, AlertCircle, CornerUpLeft, Briefcase, GraduationCap,
+  Award, Video, Linkedin, Twitter, Facebook, Share2, Lock, AlertCircle, CornerUpLeft, Briefcase, GraduationCap,
   Play, Mic, ArrowRight
 } from 'lucide-react';
 
@@ -22,7 +22,7 @@ const Icons: any = {
   AlertTriangle, Map, Home, List, Gift, Film, Utensils, RefreshCcw, Wind, Bug,
   Database, Terminal, Code2, Palette, FileJson, Repeat, Type, Figma,
   Megaphone, Mail, Send, Star, ShoppingBag, Link, ShieldPlay: ShieldPlayIcon, Smartphone, Calendar,
-  Award, Video, Linkedin, Twitter, Lock, AlertCircle, CornerUpLeft, Briefcase, GraduationCap
+  Award, Video, Linkedin, Twitter, Facebook, Share2, Lock, AlertCircle, CornerUpLeft, Briefcase, GraduationCap
 };
 import { aiTools, AITool } from '../data/tools';
 import { motion, AnimatePresence } from 'motion/react';
@@ -32,7 +32,7 @@ import SEO from '../components/SEO';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function AIToolbox() {
-  const { t, lang, favorites, toggleFavorite, recentlyUsed, addRecentlyUsed } = useApp();
+  const { t, lang, favorites, toggleFavorite, recentlyUsed, addRecentlyUsed, addNotification } = useApp();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<'all' | 'content' | 'seo' | 'business' | 'utility' | 'social' | 'favorites'>('all');
   const [selectedTool, setSelectedTool] = useState<AITool | null>(null);
@@ -197,19 +197,22 @@ export default function AIToolbox() {
         Create a cohesive palette of 5-6 colors based on the user's theme. Include contrast ratios if possible.`;
       }
 
-      const prompt = `You are a professional AI tool: ${selectedTool.name_en}. 
-      Task: ${selectedTool.description_en}.
-      User Input: "${input}"
-      Output in: ${lang === 'bn' ? 'Bangla' : 'English'}.
+      const prompt = `You are an elite, highly specialized AI agent performing the role of: ${selectedTool.name_en}.
+      Expert Persona: ${selectedTool.description_en}.
       
-      CRITICAL INSTRUCTIONS:
-      1. Provide high-quality, professional Markdown output (using tables, headings, lists).
-      2. If appropriate for the tool (like reports, analysis, data viz), include a data block in this exact format at the end of your response:
+      CORE OBJECTIVE: Deliver a production-grade, authoritative, and profoundly detailed output based on the user input.
+      User Input: "${input}"
+      Output Language: ${lang === 'bn' ? 'Bangla (High-standard scholarly/professional tone)' : 'English (Executive/Technical tone)'}.
+      
+      STRUCTURAL REQUIREMENTS:
+      1. Use complex Markdown structures including nested tables, differentiated headings (H#), and structured lists.
+      2. Ensure a strong hierarchy: Starts with a Summary/Abstract, followed by technical Analysis/Deep-dive, and ends with actionable Recommendations.
+      3. If data visualization is possible, MUST include a data block:
       \`\`\`chart
-      { "type": "bar", "data": [{"name": "Label1", "value": 100}, {"name": "Label2", "value": 200}] }
+      { "type": "bar", "data": [{"name": "Analysis Node", "value": 100}, {"name": "Optimization Point", "value": 200}] }
       \`\`\`
       ${specialInstructions}
-      3. No conversational filler. Just the professional result.`;
+      4. ZERO conversational filler. No "Here is...", no "I hope this helps". Only the professional payload.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
@@ -933,6 +936,30 @@ export default function AIToolbox() {
                            <FileText className="w-3 h-3" /> Copy Markdown
                          </button>
                       </div>
+                          <div className="flex flex-wrap gap-3 pt-4 justify-center">
+                            <p className="w-full text-center text-[10px] font-black uppercase text-slate-400 mb-2">Share this tool</p>
+                            {[
+                              { icon: Twitter, label: 'Twitter', color: 'bg-[#1DA1F2]', url: `https://twitter.com/intent/tweet?text=Check out this AI tool on Shoyakai!&url=${encodeURIComponent(window.location.href)}` },
+                              { icon: Facebook, label: 'Facebook', color: 'bg-[#1877F2]', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}` },
+                              { icon: Linkedin, label: 'LinkedIn', color: 'bg-[#0A66C2]', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}` },
+                              { icon: Share2, label: 'Copy Link', color: 'bg-brand' }
+                            ].map((s, i) => (
+                              <button 
+                                key={i}
+                                onClick={() => {
+                                  if (s.label === 'Copy Link') {
+                                    navigator.clipboard.writeText(window.location.href);
+                                    addNotification({ title: 'Link Copied', message: 'Tool link copied to clipboard.', type: 'info' });
+                                  } else {
+                                    window.open(s.url, '_blank');
+                                  }
+                                }}
+                                className={`flex items-center gap-2 px-4 py-2 ${s.color} text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg`}
+                              >
+                                <s.icon className="w-3 h-3" /> {s.label}
+                              </button>
+                            ))}
+                          </div>
                       <div className="p-10 bg-slate-50 dark:bg-slate-800 rounded-[48px] border border-slate-100 dark:border-slate-700 text-sm leading-relaxed font-medium prose dark:prose-invert max-w-none shadow-inner">
                          <ReactMarkdown>{output}</ReactMarkdown>
                       </div>

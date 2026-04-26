@@ -108,7 +108,7 @@ export default function About() {
             <div className="absolute inset-0 bg-brand/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
-                 src="/founder.png" 
+                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" 
                  alt="MD Tofiqur Rahaman - Founder of Shoyakai (Shoyaki AI)" 
                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 bg-slate-800" 
                  referrerPolicy="no-referrer"
@@ -140,7 +140,7 @@ export default function About() {
                </p>
                <div className="pt-6 relative aspect-video rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-xl group">
                   <img 
-                    src="/lead-architect.png" 
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800" 
                     alt="MD Tofiqur Rahaman working as Lead Architect at Shoyakai Labs" 
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105" 
                     referrerPolicy="no-referrer"
@@ -157,6 +157,58 @@ export default function About() {
                   ))}
                </div>
             </div>
+         </div>
+      </section>
+
+      <section className="py-20 border-t border-slate-100 dark:border-white/5 overflow-hidden">
+         <div className="max-w-7xl mx-auto px-6 mb-12 space-y-4">
+            <h2 className="text-4xl md:text-5xl font-display italic tracking-tighter">Visual Journey.</h2>
+            <p className="text-slate-500 font-medium">Inside the labs and the vision powering Shoyakai Intelligence.</p>
+         </div>
+         
+         <div className="relative group overflow-hidden">
+            <motion.div 
+              animate={{ x: [0, -1000] }}
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              className="flex gap-8 px-6 whitespace-nowrap"
+            >
+              {[
+                 { url: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", title: "Robotics Research" },
+                 { url: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800", title: "Neural Processing" },
+                 { url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800", title: "Cybersecurity" },
+                 { url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800", title: "Global Network" },
+                 { url: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=800", title: "Data Centers" },
+                 { url: "https://images.unsplash.com/photo-1522071823991-b9671e303020?auto=format&fit=crop&q=80&w=800", title: "Collaboration" },
+                 { url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800", title: "Design Language" },
+                 { url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800", title: "Lead Architect" }
+              ].map((img, i) => (
+                 <div 
+                   key={i}
+                   className="min-w-[400px] h-[300px] bg-slate-100 dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-200 dark:border-white/10 relative shadow-2xl transition-all hover:scale-105"
+                 >
+                    <img src={img.url} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" referrerPolicy="no-referrer" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-6 left-8">
+                       <p className="text-white font-black text-xs uppercase tracking-widest">{img.title}</p>
+                    </div>
+                 </div>
+              ))}
+              {/* Duplicate for seamless loop */}
+              {[
+                 { url: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800", title: "Robotics Research" },
+                 { url: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800", title: "Neural Processing" },
+                 { url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800", title: "Cybersecurity" },
+                 { url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800", title: "Global Network" }
+              ].map((img, i) => (
+                 <div 
+                   key={`dup-${i}`}
+                   className="min-w-[400px] h-[300px] bg-slate-100 dark:bg-slate-800 rounded-[40px] overflow-hidden border border-slate-200 dark:border-white/10 relative shadow-2xl"
+                 >
+                    <img src={img.url} className="w-full h-full object-cover grayscale" referrerPolicy="no-referrer" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                 </div>
+              ))}
+            </motion.div>
          </div>
       </section>
 
@@ -182,7 +234,7 @@ export default function About() {
             <div className="absolute inset-0 bg-blue-500/20 blur-[120px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
             <div className="relative bg-slate-100 dark:bg-slate-800 aspect-video rounded-[48px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
                <img 
-                 src="/team-collaboration.png" 
+                 src="https://images.unsplash.com/photo-1522071823991-b9671e303020?auto=format&fit=crop&q=80&w=800" 
                  alt="Shoyakai Team Collaboration Session in Dhaka - Building AI Tools" 
                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
                  referrerPolicy="no-referrer"

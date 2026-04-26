@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll } from 'motion/react';
+import { motion, useScroll, useSpring, useTransform } from 'motion/react';
 import { 
   ArrowRight, Zap, Globe, 
   Sparkles, ChevronRight, 
@@ -124,9 +124,13 @@ const LogoTicker = () => (
 
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
   return (
-    <main ref={containerRef} className="bg-surface dark:bg-surface-dark overflow-hidden selection:bg-brand/30">
+    <main ref={containerRef} className="bg-surface dark:bg-surface-dark overflow-hidden selection:bg-brand/30 perspective-[2000px]">
       <SEO 
         title="Shoyakai – Premium All-in-One AI Productivity Platform" 
         description="Experience the future of productivity with Shoyakai. A unified ecosystem of AI companions, advanced text analysis, and professional visual tools powered by Gemini 1.5 & Claude 3.5."
@@ -180,36 +184,44 @@ export default function LandingPage() {
               </Link>
            </div>
         </div>
-      </nav>
-
-      {/* Hero Section - Split Layout */}
+      </nav>      {/* Hero Section - Split Layout */}
       <header className="relative min-h-screen pt-32 lg:pt-0 flex items-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand/5 via-transparent to-transparent">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center py-20 lg:py-0">
+        {/* Background Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center py-20 lg:py-0 relative z-10">
            <motion.div 
-             initial={{ opacity: 0, x: -30 }}
+             initial={{ opacity: 0, x: -50 }}
              animate={{ opacity: 1, x: 0 }}
-             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
              className="space-y-10"
            >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 glass rounded-full border border-brand/20 text-brand text-[9px] font-black uppercase tracking-widest bg-brand/5">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 glass rounded-full border border-brand/20 text-brand text-[9px] font-black uppercase tracking-widest bg-brand/5"
+              >
                  <Sparkles className="w-3.5 h-3.5" /> 
                  Powered by Gemini 1.5 Pro & Claude 3.5 Sonnet
-              </div>
+              </motion.div>
 
-              <h1 className="text-[clamp(3.5rem,8vw,6rem)] font-display font-bold leading-[0.9] tracking-tighter text-slate-950 dark:text-white">
-                 Your AI <br />
-                 <span className="italic text-brand font-light">Powerhouse.</span>
+              <h1 className="text-[clamp(3.5rem,8vw,6.5rem)] font-display font-bold leading-[0.85] tracking-tighter text-slate-950 dark:text-white">
+                 The AI <br />
+                 <span className="italic text-brand font-light">Singularity.</span>
               </h1>
 
               <p className="text-xl md:text-2xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
-                 Unite advanced AI models with powerful utility tools. Experience <span className="text-brand font-bold">Shoyaki AI</span>, a versatile dashboard built for maximum efficiency.
+                 Unite advanced AI models with 100+ professional tools. Experience <span className="text-brand font-bold">Shoyakai Intelligence</span>, the terminal for your next big thing.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-5 pt-4">
-                 <Link to="/login" className="w-full sm:w-auto px-10 py-5 bg-slate-950 dark:bg-white text-white dark:text-slate-950 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center gap-3 group">
-                   Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                 <Link to="/login" className="w-full sm:w-auto px-10 py-5 bg-slate-950 dark:bg-white text-white dark:text-slate-950 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center gap-3 group overflow-hidden relative">
+                    <span className="relative z-10 transition-transform group-hover:-translate-y-20">Get Started</span>
+                    <span className="absolute inset-0 flex items-center justify-center transition-transform translate-y-20 group-hover:translate-y-0 z-10">Launch AI</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
                  </Link>
-                 <Link to="/tools-list" className="w-full sm:w-auto px-10 py-5 glass rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-slate-900 dark:text-white flex items-center justify-center gap-3 border border-white/30 hover:bg-white/90">
+                 <Link to="/tools-list" className="w-full sm:w-auto px-10 py-5 glass rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-slate-900 dark:text-white flex items-center justify-center gap-3 border border-white/30 hover:bg-white/90 group">
                     Explore Tools
                  </Link>
               </div>
@@ -233,12 +245,21 @@ export default function LandingPage() {
              initial={{ opacity: 0, y: 50, scale: 0.95 }}
              animate={{ opacity: 1, y: 0, scale: 1 }}
              transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+             style={{ 
+               perspective: 1000,
+             }}
              className="relative aspect-auto lg:aspect-square group"
            >
-              <div className="absolute inset-0 grad-brand blur-[120px] opacity-10 group-hover:opacity-20 transition-opacity animate-pulse" />
-              <div className="h-[600px] lg:h-full">
+              <motion.div 
+                style={{
+                  rotateX: useSpring(useTransform(scrollYProgress, [0, 0.3], [0, 20])),
+                  rotateY: useSpring(useTransform(scrollYProgress, [0, 0.3], [0, -10])),
+                  scale: useSpring(useTransform(scrollYProgress, [0, 0.3], [1, 0.9])),
+                }}
+                className="h-[600px] lg:h-full"
+              >
                  <AISidebarMockup />
-              </div>
+              </motion.div>
               
               <motion.div 
                 animate={{ y: [0, -12, 0] }} 
