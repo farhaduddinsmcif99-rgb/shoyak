@@ -60,6 +60,16 @@ export default function Blog() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+         <Link to="/blog/smart-farming" className="md:col-span-2">
+           <BlogPost 
+             category="Agriculture"
+             date="April 26, 2026"
+             author="কৃষি বিশেষজ্ঞ টিম"
+             title="আধুনিক উপায়ে লাভজনক কৃষি: বাংলাদেশে স্মার্ট ফার্মিং ও কৃষিতে AI এর বিপ্লব"
+             desc="জানুন বাংলাদেশে স্মার্ট ফার্মিং (Smart Farming) ও AI প্রযুক্তির মাধ্যমে কীভাবে কৃষি উৎপাদন বাড়ানো এবং খরচ কমানো সম্ভব।"
+             delay={0.05}
+           />
+         </Link>
          <BlogPost 
            category="Productivity"
            date="April 24, 2026"

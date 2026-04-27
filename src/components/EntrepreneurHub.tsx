@@ -1,525 +1,422 @@
 import React, { useState } from 'react';
 import { useApp } from '../AppContext';
 import { 
-  Lightbulb, Info, Wallet, MapPin, Star, BookmarkPlus, 
+  Lightbulb, Wallet, MapPin, BookmarkPlus, 
   ChevronRight, Loader2, Sparkles, TrendingUp, Calculator,
-  Truck, Building2, Package, Percent, DollarSign, ArrowRight
+  Truck, Building2, Package, ArrowRight, ShieldCheck,
+  Search, Info, Database, Briefcase, Users, FileText,
+  BarChart3, Globe, Zap, Heart, CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { storage } from '../utils/storage';
+import { cn } from '../utils/helpers';
 
-interface CostItem {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-}
-
-interface BusinessIdea {
-  id: number;
-  name_bn: string;
-  name_en: string;
-  income_bn: string;
-  income_en: string;
-  steps_bn: string[];
-  steps_en: string[];
-  risk: 'low' | 'medium' | 'high';
-  risk_detail: string;
-  investment: string;
-  profit_timeline: string;
-  sector: string;
-  location: string;
-  costs: CostItem[];
-  suppliers: { name: string; contact: string; location: string }[];
-}
+type HubView = 'main' | 'funding' | 'regulatory' | 'credit' | 'network' | 'blueprint';
 
 export default function EntrepreneurHub() {
-  const { t, lang } = useApp();
-  const [activeTab, setActiveTab] = useState<'generate' | 'calculator' | 'saved'>('generate');
-  const [skills, setSkills] = useState('');
-  const [budget, setBudget] = useState('50000');
-  const [riskFilter, setRiskFilter] = useState('all');
-  const [sector, setSector] = useState('all');
-  const [location, setLocation] = useState('all');
+  const { lang } = useApp();
+  const [activeView, setActiveView] = useState<HubView>('main');
   const [loading, setLoading] = useState(false);
-  const [ideas, setIdeas] = useState<BusinessIdea[]>([]);
-  const [savedIdeas, setSavedIdeas] = useState<BusinessIdea[]>([]);
-  const [selectedIdea, setSelectedIdea] = useState<BusinessIdea | null>(null);
+  const [skillGap, setSkillGap] = useState(0);
 
-  // Load saved ideas on mount
-  React.useEffect(() => {
-    const saved = localStorage.getItem('shoyakai_saved_ideas');
-    if (saved) {
-      try {
-        setSavedIdeas(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse saved ideas', e);
-      }
-    }
-  }, []);
-
-  // Save to localStorage whenever savedIdeas changes
-  React.useEffect(() => {
-    localStorage.setItem('shoyakai_saved_ideas', JSON.stringify(savedIdeas));
-  }, [savedIdeas]);
-
-  const toggleSave = (idea: BusinessIdea, e?: React.MouseEvent) => {
-    if (e) {
-      e.stopPropagation();
-    }
-    const isSaved = savedIdeas.some(i => i.id === idea.id);
-    if (isSaved) {
-      setSavedIdeas(savedIdeas.filter(i => i.id !== idea.id));
-    } else {
-      setSavedIdeas([...savedIdeas, idea]);
-    }
-  };
-
-  const isIdeaSaved = (id: number) => savedIdeas.some(i => i.id === id);
-
-  // Profit Calculator State
-  const [calcInvestment, setCalcInvestment] = useState(100000);
-  const [calcMonthlyExp, setCalcMonthlyExp] = useState(15000);
-  const [calcMonthlyRev, setCalcMonthlyRev] = useState(45000);
-
-  const sectors = ['all', 'agriculture', 'tech', 'retail', 'services', 'food'];
-  const locations = ['all', 'Dhaka', 'Chittagong', 'Khulna', 'Sylhet', 'Rajshahi', 'Rural'];
-
-  const MOCK_IDEAS: BusinessIdea[] = [
-    {
-      id: 1,
-      name_bn: 'দেশি হস্তশিল্প ই-কমার্স',
-      name_en: 'Native Handicrafts E-commerce',
-      income_bn: '৩০,০০০ - ৫০,০০০ টাকা/মাস',
-      income_en: '30,000 - 50,000 BDT/month',
-      steps_bn: ['দক্ষ কারিগর খুঁজুন', 'অনলাইন শপ খুলুন', 'সোশ্যাল মিডিয়া মার্কেটিং'],
-      steps_en: ['Find skilled artisans', 'Open online shop', 'Social media marketing'],
-      risk: 'medium',
-      risk_detail: lang === 'bn' ? 'মাঝারি ঝুঁকি' : 'Medium Risk',
-      investment: '৳৫০,০০০ - ৳৮০,০০০',
-      profit_timeline: '৩-৫ মাস',
-      sector: 'retail',
-      location: 'Dhaka',
-      costs: [
-        { id: '1', name: 'Website Setup', price: 15000, category: 'Tech' },
-        { id: '2', name: 'Initial Stock', price: 30000, category: 'Inventory' },
-        { id: '3', name: 'Marketing Ads', price: 10000, category: 'Marketing' }
-      ],
-      suppliers: [
-        { name: 'Khatib Artisans', contact: '01712-XXXXXX', location: 'Jamalpur' },
-        { name: 'Saree Wholesale Hub', contact: '01822-XXXXXX', location: 'Islampur' }
-      ]
-    },
-    {
-       id: 2,
-       name_bn: 'অরগানিক সবজি সরবরাহ',
-       name_en: 'Organic Vegetable Supply',
-       income_bn: '২০,০০০ - ৪০,০০০ টাকা/মাস',
-       income_en: '20,000 - 40,000 BDT/month',
-       steps_bn: ['স্থানীয় কৃষকদের সাথে যোগাযোগ', 'ডেলিভারি নেটওয়ার্ক', 'সাবস্ক্রিপশন মডেল'],
-       steps_en: ['Contact local farmers', 'Delivery network', 'Subscription model'],
-       risk: 'low',
-       risk_detail: lang === 'bn' ? 'কম ঝুঁকি' : 'Low Risk',
-       investment: '৳২০,০০০ - ৳৩০,০০০',
-       profit_timeline: '২ মাস',
-       sector: 'agriculture',
-       location: 'Rural',
-       costs: [
-         { id: '1', name: 'Delivery Van Hire', price: 5000, category: 'Logistics' },
-         { id: '2', name: 'Packaging Bags', price: 2000, category: 'Supplies' },
-         { id: '3', name: 'Farm Contracts', price: 15000, category: 'Inventory' }
-       ],
-       suppliers: [
-         { name: 'Savar Agri-Coop', contact: '01911-XXXXXX', location: 'Savar' },
-         { name: 'Packaging BD', contact: '01300-XXXXXX', location: 'Dhaka' }
-       ]
-    }
+  const stats = [
+    { label: 'Active Startups', value: '1,240', color: 'text-brand' },
+    { label: 'Gov Schemes', value: '42', color: 'text-emerald-500' },
+    { label: 'Avg Funding', value: '৳5.4L', color: 'text-blue-500' }
   ];
 
-  const generateIdeas = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setIdeas(MOCK_IDEAS.filter(i => {
-        const matchesRisk = riskFilter === 'all' || i.risk === riskFilter;
-        const matchesSector = sector === 'all' || i.sector === sector;
-        return matchesRisk && matchesSector;
-      }));
-      setLoading(false);
-    }, 800);
-  };
-
-  const calculateROI = () => {
-    const profit = calcMonthlyRev - calcMonthlyExp;
-    const months = Math.ceil(calcInvestment / profit);
-    return { profit, months };
-  };
-
-  const { profit, months } = calculateROI();
-
   return (
-    <div className="space-y-8">
-      {/* Ecosystem Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm">
-         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
-            {['generate', 'calculator', 'saved'].map((t) => (
-               <button
-                  key={t}
-                  onClick={() => setActiveTab(t as any)}
-                  className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                    activeTab === t ? 'bg-white dark:bg-slate-700 text-brand shadow-sm' : 'text-slate-400'
-                  }`}
-               >
-                  {t}
-               </button>
-            ))}
-         </div>
-         <div className="flex items-center gap-2 px-4 py-2 bg-brand/10 rounded-full border border-brand/20">
-            <Sparkles className="w-4 h-4 text-brand" />
-            <span className="text-[10px] font-black text-brand uppercase tracking-widest">Ecosystem 2.0 Beta</span>
-         </div>
-      </div>
+    <div className="space-y-10">
+       {/* Breadcrumbs / Back button if not in main */}
+       {activeView !== 'main' && (
+         <button 
+           onClick={() => setActiveView('main')}
+           className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand transition-colors"
+         >
+           <ArrowRight className="w-4 h-4 rotate-180" /> Back to Intelligence Hub
+         </button>
+       )}
 
-      <AnimatePresence mode="wait">
-        {activeTab === 'generate' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
-            <div className="bg-white dark:bg-slate-900 p-8 rounded-[48px] border border-slate-100 dark:border-slate-800 space-y-6">
-               <h2 className="text-2xl font-black italic tracking-tighter uppercase">{lang === 'bn' ? 'ব্যবসায়িক আইডিয়া জেনারেটর' : 'Idea Generator'}</h2>
+       <AnimatePresence mode="wait">
+          {activeView === 'main' && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
+               <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                  <div className="space-y-4">
+                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/5 border border-brand/10 rounded-full">
+                        <Sparkles className="w-3 h-3 text-brand" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-brand">2026 Resilience Ecosystem</span>
+                     </div>
+                     <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase leading-none">
+                        Entrepreneur <span className="text-brand">Hub</span>
+                     </h2>
+                  </div>
+                  <div className="flex gap-8">
+                     {stats.map((s, i) => (
+                       <div key={i} className="text-right">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{s.label}</p>
+                          <p className={cn("text-2xl font-black italic tracking-tighter leading-none", s.color)}>{s.value}</p>
+                       </div>
+                     ))}
+                  </div>
+               </header>
+
                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Target Sector</label>
-                     <select 
-                        value={sector}
-                        onChange={(e) => setSector(e.target.value)}
-                        className="w-full h-14 px-5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-brand outline-none font-bold appearance-none"
-                     >
-                        {sectors.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-                     </select>
+                  {/* High Impact Actions */}
+                  <div 
+                    onClick={() => setActiveView('funding')}
+                    className="group bg-slate-900 rounded-[48px] p-8 text-white space-y-6 cursor-pointer hover:scale-[1.02] transition-all relative overflow-hidden"
+                  >
+                     <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+                        <Wallet className="w-32 h-32" />
+                     </div>
+                     <div className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center shadow-xl shadow-brand/20">
+                        <Database className="w-6 h-6" />
+                     </div>
+                     <div className="space-y-2">
+                        <h4 className="text-2xl font-black italic tracking-tighter uppercase">Funding & Schemes</h4>
+                        <p className="text-xs text-slate-400 font-medium leading-relaxed">Access ৳2B in collateral-free loans & 2026 SME grants.</p>
+                     </div>
+                     <Loader2 className="w-4 h-4 text-brand opacity-0 group-hover:opacity-100 group-hover:animate-spin transition-opacity" />
                   </div>
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Available Budget</label>
-                     <input 
-                        type="number"
-                        value={budget}
-                        onChange={(e) => setBudget(e.target.value)}
-                        className="w-full h-14 px-5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-brand outline-none font-bold"
-                     />
+
+                  <div 
+                    onClick={() => setActiveView('regulatory')}
+                    className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[48px] p-8 space-y-6 cursor-pointer hover:-translate-y-2 transition-all"
+                  >
+                     <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                        <ShieldCheck className="w-6 h-6" />
+                     </div>
+                     <div className="space-y-2">
+                        <h4 className="text-2xl font-black italic tracking-tighter uppercase">Regu-Simplifier</h4>
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed">Trade license, TIN & VAT automated paperwork generator.</p>
+                     </div>
+                     <div className="flex -space-x-2">
+                        {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full bg-slate-100 border-2 border-white dark:border-slate-900 group-hover:translate-x-1 transition-transform" />)}
+                     </div>
                   </div>
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Risk Profile</label>
-                     <div className="flex gap-2">
-                        {['low', 'medium', 'high'].map(r => (
-                           <button 
-                              key={r}
-                              onClick={() => setRiskFilter(r as any)}
-                              className={`flex-1 h-14 rounded-2xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
-                                 riskFilter === r ? 'bg-brand border-brand text-white shadow-lg shadow-brand/20' : 'bg-slate-50 border-slate-100 text-slate-400'
-                              }`}
-                           >
-                              {r}
-                           </button>
+
+                  <div 
+                    onClick={() => setActiveView('credit')}
+                    className="group bg-brand rounded-[48px] p-8 text-white space-y-6 cursor-pointer hover:shadow-2xl hover:shadow-brand/20 transition-all relative overflow-hidden"
+                  >
+                     <div className="absolute -bottom-10 -right-10 p-8 opacity-20">
+                        <BarChart3 className="w-48 h-48" />
+                     </div>
+                     <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center">
+                        <TrendingUp className="w-6 h-6 text-brand" />
+                     </div>
+                     <div className="space-y-2">
+                        <h4 className="text-2xl font-black italic tracking-tighter uppercase">Credit Simulator</h4>
+                        <p className="text-xs opacity-80 font-medium leading-relaxed">Project your eligibility for the Central Bank "Smart Start" fund.</p>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Skill Gap Section */}
+               <div className="bg-slate-50 dark:bg-slate-800 rounded-[56px] p-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                  <div className="space-y-6">
+                     <div className="inline-flex items-center gap-2 text-emerald-500">
+                        <Zap className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Growth Engine</span>
+                     </div>
+                     <h3 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">Identify Your <span className="text-emerald-500">Skill Gaps.</span></h3>
+                     <p className="text-slate-500 font-medium leading-relaxed">Our AI analyzes local market demand vs your profile to suggest high-ROI missing skills for 2026.</p>
+                     <div className="space-y-2">
+                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
+                           <span>Current Readiness</span>
+                           <span className="text-emerald-500">64%</span>
+                        </div>
+                        <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden p-0.5">
+                           <motion.div 
+                             initial={{ width: 0 }}
+                             animate={{ width: '64%' }}
+                             className="h-full bg-emerald-500 rounded-full" 
+                           />
+                        </div>
+                     </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                     {[
+                       { t: 'Strategic Finance', d: 'Master BDT cash-flow management for volatility.' },
+                       { t: 'Export Logistics', d: 'Navigate the 2026 port-clearance automation.' },
+                       { t: 'AI Management', d: 'Automating internal reports using LLMs.' }
+                     ].map((s, i) => (
+                       <div key={i} className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-white/5 flex items-start gap-4">
+                          <div className="w-10 h-10 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0"><CheckCircle2 className="w-5 h-5 text-emerald-500" /></div>
+                          <div className="space-y-1">
+                             <h4 className="text-sm font-black uppercase italic tracking-tighter">{s.t}</h4>
+                             <p className="text-[10px] text-slate-400 font-medium leading-relaxed">{s.d}</p>
+                          </div>
+                       </div>
+                     ))}
+                  </div>
+               </div>
+            </motion.div>
+           )}
+
+           {activeView === 'funding' && (
+             <motion.div 
+               key="funding"
+               initial={{ opacity: 0, x: 20 }} 
+               animate={{ opacity: 1, x: 0 }} 
+               exit={{ opacity: 0, x: -20 }}
+               className="space-y-10"
+             >
+               <div className="bg-slate-900 rounded-[56px] p-12 text-white relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-brand/10 blur-[100px] rounded-full" />
+                  <header className="space-y-6 relative z-10 mb-12">
+                     <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-tight">Funding & <span className="text-brand">Scheme Finder</span></h2>
+                     <p className="text-slate-400 font-medium max-w-xl">Deep integration with Startup Bangladesh, SME Foundation, and Micro-Finance providers for 2026 mandates.</p>
+                  </header>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start relative z-10">
+                     <div className="space-y-8">
+                        <div className="space-y-4">
+                           <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest pl-2">Filter by Profile</label>
+                           <div className="grid grid-cols-2 gap-3">
+                              {['Agri-Tech', 'Logistics', 'Retail', 'Export'].map(s => (
+                                <button key={s} className="py-3 px-4 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand/20 transition-all">{s}</button>
+                              ))}
+                           </div>
+                        </div>
+                        <div className="p-8 bg-brand/10 border border-brand/20 rounded-[32px] space-y-6">
+                           <div className="flex items-center gap-2">
+                              <Sparkles className="w-5 h-5 text-brand" />
+                              <span className="text-[10px] font-black uppercase tracking-widest italic">AI Match of the day</span>
+                           </div>
+                           <div className="space-y-2">
+                              <h4 className="text-xl font-black uppercase italic tracking-tighter">Export Resilience Fund</h4>
+                              <p className="text-xs text-slate-300">Grant for smallholders entering the European sustainable potato market.</p>
+                           </div>
+                           <div className="flex justify-between items-center text-sm font-black">
+                              <span>৳1,500,000</span>
+                              <span className="text-brand">94% MATCH</span>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="space-y-4">
+                        <h4 className="text-[10px] font-black uppercase text-slate-500 tracking-widest pl-2">Current Active Tenders</h4>
+                        {[
+                          { t: 'Gov Wheat Storage Silo', v: '৳12M', d: 'Private-Public Partnership' },
+                          { t: 'Solar Irrigation Subsidy', v: '৳800K', d: 'Agri-Solar Grant 2026' },
+                          { t: 'Women in Tech SME Loan', v: '৳2.5M', d: '1% Special Interest Rate' }
+                        ].map((scheme, i) => (
+                           <div key={i} className="p-6 bg-white/5 border border-white/10 rounded-3xl group hover:bg-white/10 transition-all cursor-pointer">
+                              <div className="flex justify-between items-start mb-2">
+                                 <h5 className="font-black italic text-lg uppercase tracking-tight group-hover:text-brand transition-colors">{scheme.t}</h5>
+                                 <p className="text-brand font-black italic">{scheme.v}</p>
+                              </div>
+                              <p className="text-[10px] text-slate-500 font-medium">{scheme.d}</p>
+                           </div>
                         ))}
                      </div>
                   </div>
                </div>
-               <button 
-                  onClick={generateIdeas}
-                  disabled={loading}
-                  className="w-full h-14 bg-slate-900 text-white rounded-[24px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
-               >
-                  {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Sparkles className="w-5 h-5 text-brand" /> Generate Blueprints</>}
-               </button>
-            </div>
+            </motion.div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               {ideas.map((idea) => (
-                  <motion.div 
-                    key={idea.id}
-                    layoutId={`idea-${idea.id}`}
-                    onClick={() => setSelectedIdea(idea)}
-                    className="group bento-card p-8 cursor-pointer relative overflow-hidden"
-                  >
-                     <div className="absolute top-0 right-0 p-8 text-slate-100 dark:text-slate-800 -z-10">
-                        <TrendingUp className="w-24 h-24 rotate-12" />
+          {activeView === 'regulatory' && (
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
+               <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[56px] p-12 flex flex-col md:flex-row items-start justify-between gap-12 shadow-sm">
+                  <div className="space-y-8 flex-1">
+                     <header className="space-y-4">
+                        <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-tight">Regulatory <span className="text-emerald-500">Simplifier</span></h2>
+                        <p className="text-slate-500 font-medium">Automatic generation of compliance documents for the 2026 "Smart Bangladesh" business framework.</p>
+                     </header>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                          { t: 'Trade License', d: 'Step-by-step assistant for City Corp / Paurashava' },
+                          { t: 'Digital TIN', d: 'Link your NID and verify e-TIN in 30 seconds' },
+                          { t: 'VAT Exemption', d: 'Check eligibility for turnover tax exemption' },
+                          { t: 'RJSC Prep', d: 'Pre-filing checklist for Private Ltd. Co.' }
+                        ].map((r, i) => (
+                           <button key={i} className="flex flex-col items-start gap-4 p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl group border-2 border-transparent hover:border-emerald-500/20 transition-all text-left">
+                              <div className="p-3 bg-white dark:bg-slate-900 rounded-2xl group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                                 <FileText className="w-5 h-5" />
+                              </div>
+                              <div>
+                                 <h4 className="text-sm font-black uppercase italic tracking-tighter text-slate-800 dark:text-white">{r.t}</h4>
+                                 <p className="text-[10px] text-slate-500 leading-relaxed font-medium mt-1">{r.d}</p>
+                              </div>
+                           </button>
+                        ))}
+                      </div>
+                  </div>
+                  <div className="w-full md:w-[450px] bg-slate-950 rounded-[48px] p-10 text-white space-y-10 relative overflow-hidden shrink-0">
+                     <div className="absolute -top-10 -right-10 opacity-10"><ShieldCheck className="w-64 h-64" /></div>
+                     <div className="space-y-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 italic">2026 Compliance Shield</span>
+                        <h4 className="text-3xl font-black italic uppercase leading-none">Your Business Readiness</h4>
                      </div>
-                     <button 
-                        onClick={(e) => toggleSave(idea, e)}
-                        className={`absolute top-4 right-4 p-3 rounded-xl transition-all z-20 ${
-                           isIdeaSaved(idea.id) ? 'bg-brand text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
-                        }`}
-                     >
-                        <BookmarkPlus className={`w-5 h-5 ${isIdeaSaved(idea.id) ? 'fill-current' : ''}`} />
-                     </button>
                      <div className="space-y-6">
-                        <div className="space-y-2">
-                           <span className="px-3 py-1 bg-brand/10 text-brand text-[8px] font-black uppercase tracking-widest rounded-full">{idea.risk_detail}</span>
-                           <h3 className="text-3xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? idea.name_bn : idea.name_en}</h3>
-                           <p className="text-slate-400 text-sm font-bold">{idea.income_en}</p>
-                        </div>
-                        <div className="flex gap-4">
-                           <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
-                              <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Investment</p>
-                              <p className="text-sm font-black">{idea.investment}</p>
+                        {[
+                          { l: 'Identity (NID/Passport)', v: 100, s: 'Verified' },
+                          { l: 'Establishment Proof', v: 45, s: 'Pending Rent' },
+                          { l: 'Tax History', v: 20, s: 'Action Required' }
+                        ].map((item, i) => (
+                           <div key={i} className="space-y-2">
+                              <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                 <span>{item.l}</span>
+                                 <span className={cn(item.v === 100 ? "text-emerald-500" : "text-amber-500")}>{item.v}% - {item.s}</span>
+                              </div>
+                              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                 <motion.div initial={{ width: 0 }} animate={{ width: `${item.v}%` }} className={cn("h-full rounded-full", item.v === 100 ? "bg-emerald-500" : "bg-amber-500")} />
+                              </div>
                            </div>
-                           <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
-                              <p className="text-[8px] font-black uppercase text-slate-400 mb-1">ROI Starts</p>
-                              <p className="text-sm font-black">{idea.profit_timeline}</p>
-                           </div>
-                        </div>
-                        <button className="flex items-center gap-2 text-brand text-[10px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-all">
-                           Explore Blueprint <ArrowRight className="w-4 h-4" />
-                        </button>
+                        ))}
                      </div>
-                  </motion.div>
-               ))}
-            </div>
-          </motion.div>
-        )}
+                     <p className="text-[10px] text-slate-400 font-medium italic opacity-60 leading-relaxed">
+                        * Documents generated are compatible with the latest G2B portal updates.
+                     </p>
+                     <button className="w-full py-5 bg-emerald-500 text-white rounded-3xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-emerald-500/20">Generate Filing Package</button>
+                  </div>
+               </div>
+            </motion.div>
+          )}
 
-        {activeTab === 'calculator' && (
-           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white dark:bg-slate-900 p-10 rounded-[56px] border border-slate-100 dark:border-slate-800 space-y-8">
-                 <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-brand rounded-[32px] flex items-center justify-center text-white shadow-xl shadow-brand/20">
-                       <Calculator className="w-8 h-8" />
-                    </div>
-                    <h2 className="text-3xl font-black italic uppercase tracking-tighter">Profit<br/>Calculator</h2>
-                 </div>
-                 
-                 <div className="space-y-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase text-slate-400">Initial Setup Cost (৳)</label>
-                       <input 
-                          type="number"
-                          value={calcInvestment}
-                          onChange={(e) => setCalcInvestment(Number(e.target.value))}
-                          className="w-full h-16 px-6 bg-slate-50 dark:bg-slate-800 rounded-2xl font-black text-2xl border-0 focus:ring-4 ring-brand/5 outline-none"
-                       />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase text-slate-400">Monthly Expenses (৳)</label>
-                       <input 
-                          type="number"
-                          value={calcMonthlyExp}
-                          onChange={(e) => setCalcMonthlyExp(Number(e.target.value))}
-                          className="w-full h-16 px-6 bg-slate-50 dark:bg-slate-800 rounded-2xl font-black text-xl border-0 outline-none"
-                       />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase text-slate-400">Monthly Revenue (৳)</label>
-                       <input 
-                          type="number"
-                          value={calcMonthlyRev}
-                          onChange={(e) => setCalcMonthlyRev(Number(e.target.value))}
-                          className="w-full h-16 px-6 bg-slate-50 dark:bg-slate-800 rounded-2xl font-black text-xl border-0 outline-none"
-                       />
-                    </div>
-                 </div>
-              </div>
-
-              <div className="space-y-8">
-                 <div className="p-10 bg-slate-900 rounded-[56px] text-white flex flex-col justify-between aspect-square relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-brand/20 blur-[120px] rounded-full group-hover:scale-125 transition-all duration-1000" />
-                    <div className="relative z-10 space-y-2">
-                       <h3 className="text-lg font-black uppercase tracking-widest text-slate-400">ROI Forecast</h3>
-                       <p className="text-6xl font-black italic tracking-tighter">
-                          {months} <span className="text-2xl text-brand uppercase not-italic">Months</span>
-                       </p>
-                       <p className="text-slate-400 text-sm font-bold">Estimated time to recover your initial investment based on current projections.</p>
-                    </div>
-                    <div className="relative z-10 p-8 bg-white/5 rounded-[40px] border border-white/10 space-y-4">
-                        <div className="flex justify-between items-end">
-                           <span className="text-[10px] font-black uppercase text-slate-500">Monthly Net Profit</span>
-                           <span className="text-3xl font-black text-brand tracking-tighter">৳{profit.toLocaleString()}</span>
+          {activeView === 'credit' && (
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-12">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="bg-slate-900 rounded-[56px] p-12 text-white space-y-10 border border-white/5 relative overflow-hidden group">
+                     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-brand/5 to-transparent pointer-events-none" />
+                     <div className="space-y-4 relative z-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/20 border border-brand/30 rounded-full text-brand text-[9px] font-black uppercase">Alpha Simulator</div>
+                        <h2 className="text-4xl font-black italic tracking-tighter uppercase leading-none">Credit <span className="text-brand">Score</span> Intelligence</h2>
+                        <p className="text-slate-400 font-medium leading-relaxed max-w-sm">Project your borrowing bandwidth based on 2026 inflation and interest rate cycles.</p>
+                     </div>
+                     
+                     <div className="space-y-8 relative z-10">
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Revenue Stability (Monthly Avg)</label>
+                           <div className="flex gap-4">
+                              <input type="number" defaultValue={250000} className="flex-1 h-20 px-8 bg-white/5 border border-white/10 rounded-3xl font-black text-4xl italic tracking-tighter outline-none focus:border-brand transition-all text-white" />
+                              <div className="w-20 h-20 bg-brand/10 border border-brand/20 rounded-3xl flex flex-col items-center justify-center">
+                                 <p className="text-[8px] font-black uppercase text-brand">Confidence</p>
+                                 <p className="text-xl font-black text-brand">H</p>
+                              </div>
+                           </div>
                         </div>
-                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                           <div className="h-full bg-brand w-[60%]" />
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Sector Risk (2026 Outlook)</label>
+                           <select className="w-full h-16 px-6 bg-white/5 border border-white/10 rounded-2xl font-black text-xs uppercase tracking-widest outline-none focus:border-brand appearance-none">
+                              <option>Agriculture (Favorable)</option>
+                              <option>Garments (Moderate)</option>
+                              <option>Tech Services (High Growth)</option>
+                              <option>Real Estate (Cooling)</option>
+                           </select>
                         </div>
+                        <div className="p-8 bg-white/5 rounded-[32px] border border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
+                           <div className="text-center md:text-left space-y-1">
+                              <p className="text-[10px] font-black uppercase text-slate-500 italic">Est. Borrowing Power</p>
+                              <p className="text-5xl font-black italic text-brand tracking-tighter leading-none">৳2.84M</p>
+                           </div>
+                           <button className="w-full md:w-auto px-10 py-5 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 transition-all shrink-0">Get PDF Report</button>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div className="space-y-8">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[56px] p-12 space-y-10 shadow-sm relative overflow-hidden h-full">
+                       <div className="flex items-center justify-between">
+                          <div className="space-y-2">
+                             <h3 className="text-2xl font-black italic tracking-tighter leading-none uppercase shrink-0">Credit Eligibility Map</h3>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bankability metrics</p>
+                          </div>
+                          <div className="p-4 bg-brand/10 text-brand rounded-2xl flex items-center justify-center shrink-0">
+                             <TrendingUp className="w-6 h-6" />
+                          </div>
+                       </div>
+
+                       <div className="grid grid-cols-1 gap-6">
+                          {[
+                            { l: 'Repayment History', v: 92, d: 'Flawless Bkash/Salary record' },
+                            { l: 'Business Age', v: 30, d: 'Early stage multiplier applied' },
+                            { l: 'Collateral Index', v: 14, d: 'Zero-asset loan options prioritized' }
+                          ].map((m, i) => (
+                             <div key={i} className="p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl space-y-4 border border-transparent hover:border-brand/10 transition-all">
+                                <div className="flex justify-between items-center">
+                                   <p className="text-xs font-black uppercase italic tracking-tighter">{m.l}</p>
+                                   <span className="text-brand font-black text-xs">{m.v}%</span>
+                                </div>
+                                <div className="h-1 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden">
+                                   <div className="h-full bg-brand rounded-full" style={{ width: `${m.v}%` }} />
+                                </div>
+                                <p className="text-[10px] font-medium text-slate-500 leading-none">{m.d}</p>
+                             </div>
+                          ))}
+                       </div>
                     </div>
-                 </div>
-              </div>
-           </motion.div>
-        )}
+                  </div>
+               </div>
+            </motion.div>
+           )}
 
-        {activeTab === 'saved' && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: -10 }} 
-            className="space-y-8"
-          >
-             <div className="bg-white dark:bg-slate-900 p-8 rounded-[48px] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="space-y-1 text-center md:text-left">
-                   <h2 className="text-2xl font-black italic tracking-tighter uppercase">{lang === 'bn' ? 'সংরক্ষিত আইডিয়া' : 'Saved Blueprints'}</h2>
-                   <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">{savedIdeas.length} {lang === 'bn' ? 'টি আইডিয়া সংরক্ষিত' : 'ideas saved'}</p>
-                </div>
-                <div className="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center text-brand">
-                   <BookmarkPlus className="w-7 h-7" />
-                </div>
-             </div>
-
-             {savedIdeas.length === 0 ? (
-                <div className="p-20 flex flex-col items-center justify-center gap-6 glass rounded-[56px] border-dashed border-2 border-slate-200 dark:border-slate-800">
-                   <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-[32px] flex items-center justify-center text-slate-300">
-                      <Lightbulb className="w-10 h-10" />
+           {activeView === 'network' && (
+             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                   <div className="space-y-1">
+                      <h3 className="text-3xl font-black italic tracking-tighter uppercase leading-none">Entrepreneur <span className="text-brand">Network</span></h3>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Synergy engine v1.4</p>
                    </div>
-                   <div className="text-center space-y-2">
-                      <p className="text-xl font-bold text-slate-400">{lang === 'bn' ? 'কোন সংরক্ষিত আইডিয়া নেই' : 'No saved blueprints yet'}</p>
-                      <button 
-                         onClick={() => setActiveTab('generate')}
-                         className="text-brand text-xs font-black uppercase tracking-widest hover:underline"
-                      >
-                         {lang === 'bn' ? 'আইডিয়া তৈরি করুন' : 'Generate some ideas'}
-                      </button>
+                   <div className="flex gap-2">
+                       <button className="px-6 py-3 bg-slate-900 border border-slate-800 rounded-full text-white text-[10px] font-black uppercase tracking-widest">Connect Nearby</button>
+                       <button className="px-6 py-3 bg-brand rounded-full text-white text-[10px] font-black uppercase tracking-widest">Post Request</button>
                    </div>
                 </div>
-             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   {savedIdeas.map((idea) => (
-                      <motion.div 
-                         key={`saved-${idea.id}`}
-                         layoutId={`idea-${idea.id}`}
-                         onClick={() => setSelectedIdea(idea)}
-                         className="group bento-card p-8 cursor-pointer relative overflow-hidden"
-                      >
-                         <div className="absolute top-0 right-0 p-8 text-slate-100 dark:text-slate-800 -z-10">
-                            <TrendingUp className="w-24 h-24 rotate-12" />
-                         </div>
-                         <button 
-                            onClick={(e) => toggleSave(idea, e)}
-                            className="absolute top-4 right-4 p-3 rounded-xl bg-brand text-white z-20"
-                         >
-                            <BookmarkPlus className="w-5 h-5 fill-current" />
-                         </button>
-                         <div className="space-y-6">
-                            <div className="space-y-2">
-                               <span className="px-3 py-1 bg-brand/10 text-brand text-[8px] font-black uppercase tracking-widest rounded-full">{idea.risk_detail}</span>
-                               <h3 className="text-3xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? idea.name_bn : idea.name_en}</h3>
-                               <p className="text-slate-400 text-sm font-bold">{idea.income_en}</p>
-                            </div>
-                            <div className="flex gap-4">
-                               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Investment</p>
-                                  <p className="text-sm font-black">{idea.investment}</p>
-                               </div>
-                               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 mb-1">ROI Starts</p>
-                                  <p className="text-sm font-black">{idea.profit_timeline}</p>
-                               </div>
-                            </div>
-                            <button className="flex items-center gap-2 text-brand text-[10px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-all">
-                               Explore Blueprint <ArrowRight className="w-4 h-4" />
-                            </button>
-                         </div>
-                      </motion.div>
+                {/* Network Feed Simulation */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+                   {[
+                     { n: 'Sakib H.', l: 'Bashundhara', act: 'Seeking Logistics Partner', tags: ['Retail', 'Transport'], heart: 12 },
+                     { n: 'Nadia A.', l: 'Chittagong', act: 'Supplying Raw Cotton', tags: ['Textile', 'B2B'], heart: 45 },
+                     { n: 'Karimul I.', l: 'Sylhet', act: 'Tea-leaf drying tech share', tags: ['Agri', 'Tech'], heart: 8 }
+                   ].map((p, i) => (
+                     <div key={i} className="p-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[40px] space-y-6 hover:shadow-xl transition-all group">
+                        <div className="flex justify-between items-start">
+                           <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center shrink-0">
+                                 <Users className="w-6 h-6 text-slate-400" />
+                              </div>
+                              <div>
+                                 <h4 className="font-black italic text-lg leading-none">{p.n}</h4>
+                                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{p.l}</p>
+                              </div>
+                           </div>
+                           <div className="flex items-center gap-1 text-slate-300">
+                              <Heart className="w-4 h-4 cursor-pointer hover:text-red-500 hover:fill-red-500 transition-colors" />
+                              <span className="text-[10px] font-black">{p.heart}</span>
+                           </div>
+                        </div>
+                        <p className="text-sm font-black italic tracking-tight italic opacity-80 underline underline-offset-4 decoration-brand/30">"{p.act}"</p>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                           {p.tags.map(t => <span key={t} className="px-3 py-1 bg-slate-50 dark:bg-slate-800 text-slate-400 text-[8px] font-black uppercase tracking-widest rounded-lg">{t}</span>)}
+                        </div>
+                        <button className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Request Intro</button>
+                     </div>
                    ))}
                 </div>
-             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Idea Blueprint Modal */}
-      <AnimatePresence>
-        {selectedIdea && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[100] flex items-center justify-center p-6 overflow-y-auto"
-          >
-             <motion.div 
-               initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
-               className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-[64px] border-8 border-slate-100 dark:border-slate-800 p-8 md:p-12 relative my-12"
-             >
-                <button 
-                  onClick={() => setSelectedIdea(null)}
-                  className="absolute top-8 right-8 w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-brand transition-all"
-                >
-                   <ArrowRight className="w-5 h-5 rotate-180" />
-                </button>
-
-                <div className="space-y-12">
-                   <header className="space-y-4">
-                      <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                            <span className="px-4 py-1.5 bg-brand/10 text-brand text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.sector}</span>
-                            <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full">{selectedIdea.location}</span>
-                         </div>
-                         <button 
-                            onClick={() => toggleSave(selectedIdea)}
-                            className={`p-4 rounded-2xl transition-all ${
-                               isIdeaSaved(selectedIdea.id) ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'bg-slate-50 dark:bg-slate-800 text-slate-400'
-                            }`}
-                         >
-                            <BookmarkPlus className={`w-6 h-6 ${isIdeaSaved(selectedIdea.id) ? 'fill-current' : ''}`} />
-                         </button>
-                      </div>
-                      <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">{lang === 'bn' ? selectedIdea.name_bn : selectedIdea.name_en}</h2>
-                   </header>
-
-                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                      <div className="lg:col-span-1 space-y-6">
-                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
-                            <Truck className="w-4 h-4" /> Startup Guide
-                         </h3>
-                         <div className="space-y-4">
-                            {(lang === 'bn' ? selectedIdea.steps_bn : selectedIdea.steps_en).map((step, i) => (
-                               <div key={i} className="flex gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-[32px] border-2 border-transparent hover:border-brand/20 transition-all">
-                                  <div className="w-8 h-8 bg-brand text-white rounded-xl flex items-center justify-center text-xs font-black shrink-0">{i+1}</div>
-                                  <p className="text-sm font-bold leading-tight">{step}</p>
-                               </div>
-                            ))}
-                         </div>
-                      </div>
-
-                      <div className="lg:col-span-1 space-y-6">
-                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
-                            <Package className="w-4 h-4" /> Cost Breakdown
-                         </h3>
-                         <div className="space-y-4">
-                            {selectedIdea.costs.map((cost) => (
-                               <div key={cost.id} className="flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800 rounded-[32px]">
-                                  <div>
-                                     <p className="text-sm font-black italic">{cost.name}</p>
-                                     <p className="text-[10px] font-bold text-slate-400 uppercase">{cost.category}</p>
-                                  </div>
-                                  <span className="text-sm font-black text-brand">৳{cost.price.toLocaleString()}</span>
-                               </div>
-                            ))}
-                            <div className="p-5 bg-brand text-white rounded-[32px] flex justify-between items-center">
-                               <span className="text-xs font-black uppercase tracking-widest">Total Seed Capital</span>
-                               <span className="text-xl font-black italic">৳{selectedIdea.costs.reduce((acc, curr) => acc + curr.price, 0).toLocaleString()}</span>
-                            </div>
-                         </div>
-                      </div>
-
-                      <div className="lg:col-span-1 space-y-6">
-                         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
-                            <Building2 className="w-4 h-4" /> Verified Suppliers
-                         </h3>
-                         <div className="space-y-4">
-                            {selectedIdea.suppliers.map((sup, i) => (
-                               <div key={i} className="p-6 border-2 border-slate-100 dark:border-slate-800 rounded-[40px] space-y-3 group hover:border-brand transition-all">
-                                  <div className="flex justify-between items-start">
-                                     <h4 className="font-black italic">{sup.name}</h4>
-                                     <MapPin className="w-4 h-4 text-slate-300 group-hover:text-brand transition-colors" />
-                                  </div>
-                                  <div className="space-y-1">
-                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Contact</p>
-                                     <p className="text-xs font-bold text-brand">{sup.contact}</p>
-                                  </div>
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{sup.location}, Bangladesh</p>
-                               </div>
-                            ))}
-                            <button className="w-full py-6 bg-slate-900 text-white rounded-[40px] font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all">
-                               Connect via Shayok
-                            </button>
-                         </div>
-                      </div>
-                   </div>
-                </div>
              </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+       </AnimatePresence>
+
+       {/* Persistent Ecosystem CTA if in main */}
+       {activeView === 'main' && (
+         <section 
+           onClick={() => setActiveView('network')}
+           className="p-12 bg-emerald-500 rounded-[56px] text-white flex flex-col md:flex-row items-center justify-between gap-12 cursor-pointer relative overflow-hidden"
+         >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
+            <div className="space-y-4 relative z-10 text-center md:text-left">
+               <h3 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">The <span className="text-slate-900">Collaboration</span><br/>Network.</h3>
+               <p className="max-w-md text-emerald-100 font-medium leading-relaxed">Don't build alone. Connect with 4,000+ verified entrepreneurs, suppliers, and distributors across Bangladesh.</p>
+            </div>
+            <div className="relative z-10 flex flex-col gap-4 w-full md:w-auto">
+               <div className="flex -space-x-4 justify-center md:justify-start">
+                  {[1,2,3,4,5].map(i => <div key={i} className="w-14 h-14 rounded-3xl bg-slate-900 border-4 border-emerald-500 flex items-center justify-center text-[10px] font-black">{i}k</div>)}
+               </div>
+               <button className="px-12 py-5 bg-white text-emerald-600 rounded-[32px] font-black text-sm uppercase tracking-widest hover:scale-110 active:scale-95 transition-all shadow-2xl">Enter Synergy Map</button>
+            </div>
+         </section>
+       )}
     </div>
   );
 }

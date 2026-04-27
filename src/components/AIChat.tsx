@@ -13,7 +13,7 @@ interface Message {
 export default function AIChat() {
   const { t, lang } = useApp();
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', content: lang === 'bn' ? 'নমস্কার! আমি শয়াকাই এআই। আমি আপনাকে কীভাবে সাহায্য করতে পারি?' : 'Hello! I am Shoyakai AI. How can I help you today?' }
+    { id: '1', role: 'assistant', content: lang === 'bn' ? 'নমস্কার! আমি শায়ক এআই। আমি আপনাকে কীভাবে সাহায্য করতে পারি?' : 'Hello! I am Shayok.AI. How can I help you today?' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -117,11 +117,11 @@ export default function AIChat() {
         neutral: "Be helpful and direct."
       };
 
-      const systemPrompt = `You are Shoyakai AI, a professional productivity assistant. 
+      const systemPrompt = `You are Shayok.AI, a specialized AI assistant for Bangladesh. 
       Emotion Mode: ${emotionalContext[detectedMood]}.
       Respond strictly in ${banglaMode ? 'Bangla' : 'English'}.
-      Context: You help users with online tools, productivity hacks, and simple web app tutorials.
-      Keep it professional, helpful, and concise.`;
+      Context: You help farmers with Krishi AI, entrepreneurs with business ideas, and students with productivity.
+      Keep it professional, helpful, and always prioritize the user's growth.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",

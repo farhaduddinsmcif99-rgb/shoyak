@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../AppContext';
-import { Sprout, BarChart3, CloudRain, Bug, Scissors, Calculator, Droplets, Info, ChevronRight, Sparkles } from 'lucide-react';
+import { Sprout, BarChart3, CloudRain, Bug, Scissors, Calculator, Droplets, Info, ChevronRight, Sparkles, BookOpen } from 'lucide-react';
 import KrishiAIModal from '../components/KrishiAIModal';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
@@ -32,9 +32,9 @@ export default function KrishiAI() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-500 pb-8">
       <SEO 
-        title="Krishi Pro AI | Smart Farming Bangladesh" 
-        description="Diagnose crop diseases, predict market prices, and optimize your harvest with Krishi Pro AI. The smartest tool for Bangladeshi farmers."
-        keywords="Krishi AI, Bangladesh Farmer, Crop Doctor, Vegetable Price BD, Agriculture AI"
+        title="Krishi Pro AI | স্মার্ট কৃষি সহকারী" 
+        description="শায়ক এআই-এর কৃষি প্রো টুলের মাধ্যমে ফসলের রোগ নির্ণয় করুন, বাজারের দাম জানুন এবং ফলন বাড়ান। বাংলাদেশের কৃষকদের জন্য সেরা স্মার্ট কৃষি সমাধান।"
+        keywords="স্মার্ট কৃষি, কৃষি এআই, শায়ক কৃষি, কৃষকের বন্ধু, রোগ শনাক্তকরণ, সার গণনা, ফসল নির্বাচন"
       />
       {/* Agriculture Header */}
       <section className="bg-green-600 rounded-[40px] p-8 text-white relative overflow-hidden">
@@ -130,6 +130,36 @@ export default function KrishiAI() {
              </div>
            ))}
         </div>
+      </section>
+
+      {/* Featured Learning Section (SEO Boost) */}
+      <section className="bg-brand/5 dark:bg-brand/10 rounded-[32px] p-6 border border-brand/20">
+         <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+               <BookOpen className="w-5 h-5 text-brand" />
+               {lang === 'bn' ? 'কৃষি শিক্ষা' : 'Agri-Learning'}
+            </h3>
+            <a href="/blog/smart-farming" className="text-[10px] font-black text-brand uppercase tracking-widest hover:underline">
+               {lang === 'bn' ? 'সব পড়ুন' : 'Read All'}
+            </a>
+         </div>
+         <a href="/blog/smart-farming" className="flex items-center gap-4 bg-white dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-brand transition-all group">
+            <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+               <img 
+                 src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=200" 
+                 className="w-full h-full object-cover group-hover:scale-110 transition-transform" 
+                 referrerPolicy="no-referrer"
+               />
+            </div>
+            <div className="space-y-1">
+               <h4 className="font-bold text-slate-800 dark:text-slate-100 leading-tight">
+                  {lang === 'bn' ? 'স্মার্ট কৃষি: ২০২৬ সালে সফল চাষাবাদের গোপন সূত্র' : 'Smart Farming: Secret to Success in 2026'}
+               </h4>
+               <p className="text-xs text-slate-500 line-clamp-2">
+                  {lang === 'bn' ? 'কিভাবে আধুনিক ড্রোন এবং এআই প্রযুক্তি ব্যবহার করে ফলন দ্বিগুণ করবেন তা জানুন।' : 'Learn how to double your yield using drones and AI technology.'}
+               </p>
+            </div>
+         </a>
       </section>
 
       {/* Modals */}

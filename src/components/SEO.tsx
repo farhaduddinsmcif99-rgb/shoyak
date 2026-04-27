@@ -15,40 +15,40 @@ export default function SEO({
   title, 
   description, 
   keywords, 
-  image = 'https://api.dicebear.com/7.x/bottts/svg?seed=Shoyakai', 
-  url = 'https://shoyakai.2com.workers.dev/',
+  image = 'https://images.unsplash.com/photo-1595113316349-9fa4eb24f884?q=80&w=1200&auto=format&fit=crop', 
+  url = 'https://shayok.ai/',
   type = 'WebApplication',
   schemaData
 }: SEOProps) {
-  const fullTitle = title ? `${title} | Shoyakai (Shoyaki AI)` : 'Shoyakai – Premium Shoyaki AI Tools & Ecosystem';
-  const fullDescription = description || 'Shoyakai (Shoyaki AI) is an all-in-one productivity powerhouse. Access advanced AI companions, visual tools, and professional utilities for free.';
-  const fullKeywords = keywords ? `${keywords}, shoyaki ai, shoyakai, ai tools, shoyakai labs` : 'shoyakai, shoyaki ai, ai assistant, productivity ecosystem, professional web tools, ai workspace';
+  const fullTitle = title ? `${title} | Shayok.AI (শায়ক এআই)` : 'Shayok.AI – আপনার পাশে, সবসময় | Smart AI Assistant Bangladesh';
+  const fullDescription = description || 'Shayok.AI is the smartest agricultural and productivity ecosystem in Bangladesh. Get Krishi AI help, scam protection, and 100+ AI tools for free.';
+  const fullKeywords = keywords ? `${keywords}, shayok ai, shoyakai, krishi ai, bangla ai, agricultural tools, scam check bangladesh` : 'shayok ai, krishi ai, bangla ai, agriculture assistant, ssc helper, scam check bangladesh, productivity tools, shoyakai';
   
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": type,
-    "name": title || "Shoyakai AI",
-    "alternateName": "Shoyaki AI",
+    "name": title || "Shayok.AI",
+    "alternateName": "শায়ক এআই",
     "operatingSystem": "All",
     "applicationCategory": "ProductivityApplication",
     "browserRequirements": "requires HTML5 support",
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "BDT"
     },
     "description": fullDescription,
     "url": url,
     "image": image,
     "author": {
       "@type": "Organization",
-      "name": "Shoyakai Labs",
-      "url": "https://shoyakai.2com.workers.dev/"
+      "name": "Shayok.AI Labs",
+      "url": "https://shayok.ai/"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.9",
-      "ratingCount": "2480"
+      "ratingCount": "2500"
     }
   };
 

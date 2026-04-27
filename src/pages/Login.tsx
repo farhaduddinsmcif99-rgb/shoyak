@@ -6,11 +6,12 @@ import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, Sparkles, ShieldChec
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  const { lang, t, login, signup } = useApp();
+  const { lang, t, login, signup, passkeyLogin } = useApp();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'passkey'>('login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [passkey, setPasskey] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -27,14 +28,16 @@ export default function Login() {
       let success = false;
       if (mode === 'login') {
         success = await login(formData.email, formData.password);
-      } else {
+      } else if (mode === 'signup') {
         success = await signup(formData.name, formData.email, formData.password);
+      } else if (mode === 'passkey') {
+        success = await passkeyLogin(passkey);
       }
 
       if (success) {
         navigate('/');
       } else {
-        setError(mode === 'login' ? 'Invalid credentials' : 'User already exists');
+        setError(mode === 'passkey' ? 'Invalid Passkey' : (mode === 'login' ? 'Invalid credentials' : 'User already exists'));
       }
     } catch (err) {
       setError('Something went wrong');
@@ -46,9 +49,9 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <SEO 
-        title="Login & Join | Shoyakai AI Ecosystem" 
-        description="Securely login or create an account on Shoyakai. Access your AI tools, personalized dashboard, and smart farming assistant."
-        keywords="shoyakai login, sign up shoyakai, ai tools account"
+        title="লগইন | Shayok.AI Community" 
+        description="শায়ক এআই কমিউনিটিতে যোগ দিন। আপনার কৃষি ড্যাশবোর্ড অ্যাক্সেস করতে লগইন করুন।"
+        keywords="লগইন, শায়ক আইডি, কৃষি পোর্টাল, স্মার্ট ড্যাশবোর্ড অ্যাক্সেস"
         type="WebPage"
       />
       {/* Abstract Background Decor */}
@@ -67,10 +70,10 @@ export default function Login() {
           </div>
           <div className="flex flex-col items-center gap-2">
             <h1 className="text-4xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-               Shayok<span className="text-brand">.AI</span>
+               Krishi<span className="text-brand">.AI</span>
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">
-               {lang === 'bn' ? 'আপনার পাশে সবসময় - লগইন করুন' : 'Always by your side - Login now'}
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">
+               {lang === 'bn' ? 'আপনার পাশে সবসময় - লগইন করুন' : 'Your Smart Agricultural Companion'}
             </p>
           </div>
         </div>
@@ -79,15 +82,21 @@ export default function Login() {
           <div className="flex border-b border-slate-100 dark:border-slate-800">
             <button
               onClick={() => setMode('login')}
-              className={`flex-1 py-5 text-sm font-black uppercase tracking-widest transition-all ${mode === 'login' ? 'text-brand border-b-4 border-brand bg-brand/5' : 'text-slate-400'}`}
+              className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'login' ? 'text-brand border-b-4 border-brand bg-brand/5' : 'text-slate-400'}`}
             >
               Login
             </button>
             <button
               onClick={() => setMode('signup')}
-              className={`flex-1 py-5 text-sm font-black uppercase tracking-widest transition-all ${mode === 'signup' ? 'text-brand border-b-4 border-brand bg-brand/5' : 'text-slate-400'}`}
+              className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'signup' ? 'text-brand border-b-4 border-brand bg-brand/5' : 'text-slate-400'}`}
             >
               Sign Up
+            </button>
+            <button
+              onClick={() => setMode('passkey')}
+              className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'passkey' ? 'text-brand border-b-4 border-brand bg-brand/5' : 'text-slate-400'}`}
+            >
+              Admin
             </button>
           </div>
 
@@ -97,7 +106,7 @@ export default function Login() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="p-3 bg-red-50 dark:bg-red-900/20 text-red-500 text-xs font-bold rounded-xl border border-red-100 dark:border-red-800 text-center"
+                  className="p-3 bg-red-50 dark:bg-red-900/20 text-red-500 text-[10px] font-bold rounded-xl border border-red-100 dark:border-red-800 text-center"
                 >
                   {error}
                 </motion.div>
@@ -105,52 +114,71 @@ export default function Login() {
             </AnimatePresence>
 
             <div className="space-y-4">
-              {mode === 'signup' && (
+              {mode === 'passkey' ? (
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Admin Passkey</label>
                   <div className="relative">
-                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input
-                      type="text"
+                      type="password"
                       required
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      value={passkey}
+                      onChange={(e) => setPasskey(e.target.value)}
                       className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:border-brand transition-all text-sm font-bold"
-                      placeholder="Enter your name"
+                      placeholder="Enter Admin Passkey"
                     />
                   </div>
                 </div>
+              ) : (
+                <>
+                  {mode === 'signup' && (
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                      <div className="relative">
+                        <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <input
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:border-brand transition-all text-sm font-bold"
+                          placeholder="Enter your name"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:border-brand transition-all text-sm font-bold"
+                        placeholder="name@example.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                      <input
+                        type="password"
+                        required
+                        value={formData.password}
+                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:border-brand transition-all text-sm font-bold"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:border-brand transition-all text-sm font-bold"
-                    placeholder="name@example.com"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <input
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:border-brand transition-all text-sm font-bold"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
             </div>
 
             <button
@@ -162,7 +190,7 @@ export default function Login() {
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  {mode === 'login' ? 'Sign In' : 'Create Account'}
+                  {mode === 'login' ? 'Sign In' : (mode === 'signup' ? 'Create Account' : 'Verify Passkey')}
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}

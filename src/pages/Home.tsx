@@ -34,9 +34,9 @@ export default function Home() {
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-700 pb-20">
       <SEO 
-        title="Dashboard | Shoyakai – Free Online Tools" 
-        description="Access your personalized toolbox and productivity suite on Shoyakai. Manage your favorite tools and work faster."
-        keywords="dashboard, shoyakai dashboard, productivity tools, user suite"
+        title="স্মার্ট ড্যাশবোর্ড" 
+        description="Shayok.AI ড্যাশবোর্ড থেকে আপনার প্রয়োজনীয় সব এআই টুলস এবং কৃষি সেবাগুলো এক জায়গায় অ্যাক্সেস করুন। কৃষকের ডিজিটাল সাথী।"
+        keywords="ড্যাশবোর্ড, শায়ক ড্যাশবোর্ড, এআই টুলস বাংলাদেশ, স্মার্ট কার্ড, কৃষি সমাধান"
       />
       {/* Editorial Header */}
       <section className="space-y-10">

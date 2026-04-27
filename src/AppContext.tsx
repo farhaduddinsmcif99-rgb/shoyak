@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Language, TranslationKey, translations } from './utils/translations';
 import { storage } from './utils/storage';
+import { auth, signInWithGoogle } from './lib/firebase';
+import { 
+  onAuthStateChanged, 
+  signOut, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
+import { getFirestoreDoc, setFirestoreDoc } from './lib/firestoreService';
 
 interface AppContextType {
   lang: Language;
@@ -14,7 +23,9 @@ interface AppContextType {
   isAdmin: boolean;
   login: (email: string, pass: string) => Promise<boolean>;
   signup: (name: string, email: string, pass: string) => Promise<boolean>;
+  googleLogin: () => Promise<void>;
   logout: () => void;
+  passkeyLogin: (passkey: string) => Promise<boolean>;
   notifications: any[];
   addNotification: (notif: any) => void;
   clearNotifications: () => void;
@@ -24,6 +35,7 @@ interface AppContextType {
   toggleFavorite: (id: string) => void;
   recentlyUsed: string[];
   addRecentlyUsed: (id: string) => void;
+  loading: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -31,9 +43,9 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>(storage.get('lang') || 'bn');
   const [darkMode, setDarkModeState] = useState<boolean>(storage.get('dark_mode') === true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(storage.get('auth_token') === 'fake-jwt-token');
-  const [user, setUserState] = useState(storage.get('user') || null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(storage.get('user')?.role === 'admin');
+  const [user, setUserState] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any[]>(storage.get('notifications') || []);
   const [favorites, setFavorites] = useState<string[]>(storage.get('favorites') || []);
   const [recentlyUsed, setRecentlyUsed] = useState<string[]>(storage.get('recently_used') || []);
@@ -43,6 +55,50 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     tips: true,
     business: true
   });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
+      if (firebaseUser) {
+        // Fetch or create user doc in Firestore
+        const userDoc = await getFirestoreDoc('users', firebaseUser.uid);
+        const userData = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          role: userDoc?.role || 'user',
+          farmData: userDoc?.farmData || {},
+          lastLogin: new Date().toISOString()
+        };
+
+        if (!userDoc) {
+          await setFirestoreDoc('users', firebaseUser.uid, {
+            ...userData,
+            createdAt: new Date().toISOString()
+          });
+        }
+
+        setUserState(userData);
+        setIsAdmin(userData.role === 'admin');
+        storage.set('user', userData);
+      } else {
+        // Check if we have an admin bypass session
+        const storedUser = storage.get('user');
+        if (storedUser && storedUser.uid === 'admin_bypass') {
+          setUserState(storedUser);
+          setIsAdmin(true);
+        } else {
+          setUserState(null);
+          setIsAdmin(false);
+          storage.remove('user');
+        }
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const setLang = (l: Language) => {
     setLangState(l);
@@ -61,49 +117,57 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setUserState(u);
     setIsAdmin(u?.role === 'admin');
     storage.set('user', u);
-  };
-
-  const isAdminPassword = (pass: string) => {
-    return /^tr\d{4}$/.test(pass);
+    if (u && auth.currentUser) {
+      setFirestoreDoc('users', auth.currentUser.uid, u);
+    }
   };
 
   const login = async (email: string, pass: string): Promise<boolean> => {
-    // Simulate server delay
-    await new Promise(r => setTimeout(r, 1000));
-    const users = storage.get('mock_users') || [];
-    const found = users.find((u: any) => u.email === email && u.password === pass);
-    
-    if (found) {
-      setUser(found);
-      setIsAuthenticated(true);
-      storage.set('auth_token', 'fake-jwt-token');
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
       return true;
+    } catch (e) {
+      console.error(e);
+      return false;
     }
-    return false;
   };
 
   const signup = async (name: string, email: string, pass: string): Promise<boolean> => {
-    await new Promise(r => setTimeout(r, 1000));
-    const users = storage.get('mock_users') || [];
-    if (users.find((u: any) => u.email === email)) return false;
+    try {
+      const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(firebaseUser, { displayName: name });
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
 
-    const role = isAdminPassword(pass) ? 'admin' : 'user';
-    const newUser = { name, email, password: pass, role, avatarId: Math.floor(Math.random() * 5) + 1 };
-    const updatedUsers = [...users, newUser];
-    storage.set('mock_users', updatedUsers);
-    
-    setUser(newUser);
-    setIsAuthenticated(true);
-    storage.set('auth_token', 'fake-jwt-token');
-    return true;
+  const googleLogin = async () => {
+    await signInWithGoogle();
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
-    setIsAdmin(false);
-    setUserState(null);
-    storage.remove('auth_token');
-    storage.remove('user');
+    signOut(auth);
+    storage.remove('admin_session');
+  };
+
+  const passkeyLogin = async (passkey: string): Promise<boolean> => {
+    if (passkey === 'tr0000') {
+      const adminUser = {
+        uid: 'admin_bypass',
+        email: 'admin@krishi.ai',
+        displayName: 'Master Admin',
+        role: 'admin',
+        lastLogin: new Date().toISOString()
+      };
+      setUserState(adminUser);
+      setIsAdmin(true);
+      storage.set('user', adminUser);
+      storage.set('admin_session', true);
+      return true;
+    }
+    return false;
   };
 
   const addNotification = (n: any) => {
@@ -151,6 +215,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return translations[lang][key] || key;
   };
 
+  const isAuthenticated = !!user;
+
   return (
     <AppContext.Provider 
       value={{ 
@@ -158,11 +224,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         darkMode, toggleDarkMode, 
         t, 
         user, setUser,
-        isAuthenticated, isAdmin, login, signup, logout,
+        isAuthenticated, isAdmin, login, signup, googleLogin, logout, passkeyLogin,
         notifications, addNotification, clearNotifications,
         notifPrefs, updateNotifPrefs,
         favorites, toggleFavorite,
-        recentlyUsed, addRecentlyUsed
+        recentlyUsed, addRecentlyUsed,
+        loading
       }}
     >
       {children}

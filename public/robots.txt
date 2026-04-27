@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
-Allow: /tools/
-Disallow: /profile/
-Disallow: /alerts/
-Disallow: /assistant/
 
-Sitemap: https://shoyakai.2com.workers.dev/sitemap.xml
+Sitemap: https://shayok.ai/sitemap.xml

@@ -596,8 +596,9 @@ export default function AIToolbox() {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
       <SEO 
-        title={selectedTool ? `${selectedTool.name_en} - AIToolbox` : "AI Toolbox"}
-        description={selectedTool ? selectedTool.description_en : "Access 100+ AI-powered tools for content creation, business, utility, and more in Bangladesh."}
+        title={selectedTool ? `${lang === 'bn' ? selectedTool.name_bn : selectedTool.name_en} | শায়ক এআই টুলবক্স` : "এআই টুলবক্স | ১০০+ ফ্রি এআই টুলস"}
+        description={selectedTool ? (lang === 'bn' ? selectedTool.description_bn : selectedTool.description_en) : "নিবন্ধ লেখা, সিভি তৈরি, বিজনেস প্ল্যান এবং আরও ১০০টির বেশি প্রয়োজনীয় এআই টুল অ্যাক্সেস করুন শায়ক এআই-তে। সম্পূর্ণ ফ্রি এবং দ্রুত।"}
+        keywords="এআই টুলবক্স, আরটিকেল রাইটার, সিভি বিল্ডার, বিজনেস প্ল্যান এআই, শায়ক টুলস, ফ্রি এআই টুলস বাংলাদেশ"
       />
       {!selectedTool && (
         <header className="space-y-8">

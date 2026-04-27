@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile and farm digital twin data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "farmData": {
+          "type": "object",
+          "properties": {
+            "landSize": { "type": "number" },
+            "crops": { "type": "array", "items": { "type": "string" } },
+            "soilType": { "type": "string" },
+            "location": { "type": "string" },
+            "irrigationType": { "type": "string" },
+            "healthScore": { "type": "number" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Job": {
+      "title": "Job listing",
+      "description": "Available jobs in the marketplace",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "company": { "type": "string" },
+        "location": { "type": "string" },
+        "type": { "type": "string" },
+        "salary": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "postedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "company", "postedBy"]
+    },
+    "Application": {
+      "title": "Job Application",
+      "description": "Applications sent by users for jobs",
+      "type": "object",
+      "properties": {
+        "jobId": { "type": "string" },
+        "userId": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["jobId", "userId"]
+    },
+    "ScamReport": {
+      "title": "Scam Report",
+      "description": "Reports of scams checked by users",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "content": { "type": "string" },
+        "result": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string" },
+            "score": { "type": "number" },
+            "detail": { "type": "string" }
+          }
+        },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Core user data and farm profiles"
+    },
+    "jobs/{jobId}": {
+      "schema": "Job",
+      "description": "Public job listings"
+    },
+    "applications/{applicationId}": {
+      "schema": "Application",
+      "description": "User applications for jobs"
+    },
+    "scamReports/{reportId}": {
+      "schema": "ScamReport",
+      "description": "Logs of user scam checks"
+    }
+  }
+}
